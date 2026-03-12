@@ -1,0 +1,58 @@
+# JetBrains Rider / IntelliJ
+
+.idea/
+*.sln.iml
+
+# User-specific files
+
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+
+bin/
+obj/
+
+# .NET build artifacts
+
+*.dll
+*.exe
+*.pdb
+*.cache
+*.log
+
+# Rider / IDE caches
+
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# Test result artifacts
+
+TestResults/
+*.trx
+
+# NuGet
+
+*.nupkg
+packages/
+.nuget/
+
+# Coverage / tooling
+
+coverage/
+*.coverage
+*.coveragexml
+
+# Temporary files
+
+*.tmp
+*.temp
+*.swp
