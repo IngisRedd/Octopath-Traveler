@@ -17,9 +17,8 @@ public class MainConsoleView
     public TeamsInfo GetTeamsInfo()
     {
         ShowPossibleTeamsFiles();
-        _view.ReadLine();
-        
-        return new TeamsInfo();
+        string teamChosenInput = _view.ReadLine();
+        return GenerateTeamsInfoFromFile(teamChosenInput);
     }
 
     private void ShowPossibleTeamsFiles()
@@ -35,6 +34,27 @@ public class MainConsoleView
             index++;
         }
     }
+
+    private TeamsInfo GenerateTeamsInfoFromFile(string teamChosenInput)
+    {
+        string[] files = Directory.GetFiles(_teamsFolder);
+        string chosenFilePath = "";
+        
+        int index = 0;
+        foreach (string file in files)
+        {
+            if (FileIsTheChosenOne(index, teamChosenInput))
+            {
+                chosenFilePath = file;
+            }
+            index++;
+        }
+
+        return new TeamsInfo(chosenFilePath);
+    }
+    
+    private bool FileIsTheChosenOne(int fileIndex, string teamChosenInput) =>
+        fileIndex.ToString() == teamChosenInput;
 
     public void ShowInvalidTeamMessage()
     {
