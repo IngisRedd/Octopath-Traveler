@@ -4,7 +4,7 @@ namespace Octopath_Traveler_Model;
 
 public class TeamsInfo
 {
-    private List<string> TravelerDescriptions = new();
+    private List<string> _travelerDescriptions = new();
     public List<string> BeastNames = new();
     public List<string> TravelerNames = new();
     public Dictionary<string, List<string>> TravelerSkills = new();
@@ -13,7 +13,6 @@ public class TeamsInfo
     {
         SplitTravelerAndBeastNames(pathToFile);
         SplitTravelerNamesAndSkills();
-        Console.WriteLine("POOP");
     }
 
     private void SplitTravelerAndBeastNames(string pathToFile)
@@ -33,14 +32,14 @@ public class TeamsInfo
             }
             else
             {
-                TravelerDescriptions.Add(line);
+                _travelerDescriptions.Add(line);
             }
         }
     }
     
     private void SplitTravelerNamesAndSkills()
     {
-        foreach (string traveler in TravelerDescriptions)
+        foreach (string traveler in _travelerDescriptions)
         {
             int skillsStart = traveler.IndexOf('(');
             int passiveSkillsStart = traveler.IndexOf('[');
@@ -56,12 +55,20 @@ public class TeamsInfo
         
                 TravelerSkills[travelerName] = skillsList;
             }
+            else
+            {
+                TravelerSkills[travelerName] = new List<string>();
+            }
             if (TravelerHasSkills(passiveSkillsStart))
             {
                 int skillsEnd = traveler.IndexOf(']', passiveSkillsStart);
                 List<string> skillsList = SplitSkillsIntoList(traveler, passiveSkillsStart, skillsEnd);            
         
                 TravelerPassiveSkills[travelerName] = skillsList;
+            }
+            else
+            {
+                TravelerPassiveSkills[travelerName] = new List<string>();
             }
 
             
@@ -72,18 +79,21 @@ public class TeamsInfo
     private int GetEndOfNamePosition(int skillsStart, int passiveSkillsStart, int stringLength)
     {
         List<int> specialIndexes = new List<int> { skillsStart, passiveSkillsStart };
-        IEnumerable<int> existingSpecialIndexes = specialIndexes.Where(i => i != -1);
+        IEnumerable<int> shiftedSpecialIndexes = specialIndexes.Select(x => x - 1);
+        IEnumerable<int> existingSpecialIndexes = shiftedSpecialIndexes.Where(i => i > -2);
         IEnumerable<int> specialIndexesEmptyCaseHandled = existingSpecialIndexes.DefaultIfEmpty(stringLength);
         return specialIndexesEmptyCaseHandled.Min();
     }
     
     private bool TravelerHasSkills(int skillStartPosition) => skillStartPosition != -1;
     
-    private List<string> SplitSkillsIntoList(string traveler, int skillsStart, int skillsEnd)
+    private List<string> SplitSkillsIntoList(string travelerDescription, int skillsStart, int skillsEnd)
     {
-        string skillsText = traveler.Substring(skillsStart + 1, skillsEnd - skillsStart - 1);
+        string skillsText = travelerDescription.Substring(skillsStart + 1, skillsEnd - skillsStart - 1);
         string[] splitSkills = skillsText.Split(',');
-        return splitSkills.ToList();
+        IEnumerable<string> trimmedSkills = splitSkills.Select(skill => skill.Trim());
+        
+        return trimmedSkills.ToList();
     }
 
 

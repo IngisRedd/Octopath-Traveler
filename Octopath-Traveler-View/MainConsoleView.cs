@@ -14,11 +14,11 @@ public class MainConsoleView
         _teamsFolder = teamsFolder;
     }
 
-    public TeamsInfo GetTeamsInfo()
+    public string GetTeamsFilePath()
     {
         ShowPossibleTeamsFiles();
         string teamChosenInput = _view.ReadLine();
-        return GenerateTeamsInfoFromFile(teamChosenInput);
+        return GetTeamsFilePath(teamChosenInput);
     }
 
     private void ShowPossibleTeamsFiles()
@@ -35,7 +35,7 @@ public class MainConsoleView
         }
     }
 
-    private TeamsInfo GenerateTeamsInfoFromFile(string teamChosenInput)
+    private string GetTeamsFilePath(string teamChosenInput)
     {
         string[] files = Directory.GetFiles(_teamsFolder);
         string chosenFilePath = "";
@@ -50,7 +50,7 @@ public class MainConsoleView
             index++;
         }
 
-        return new TeamsInfo(chosenFilePath);
+        return chosenFilePath;
     }
     
     private bool FileIsTheChosenOne(int fileIndex, string teamChosenInput) =>

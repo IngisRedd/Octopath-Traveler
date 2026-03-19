@@ -14,15 +14,15 @@ public class Game
 
     public void Play()
     {
-        // try
-        // {
-            TeamsInfo teamsInfo = _view.GetTeamsInfo();
+        try
+        {
+            TeamsInfo teamsInfo = new TeamsInfo(_view.GetTeamsFilePath());
             TeamsBuilder teamsBuilder = new TeamsBuilder(_state, teamsInfo);
             teamsBuilder.Build();
-        // }
-        // catch (Exception e)
-        // {
-        //     _view.ShowInvalidTeamMessage();
-        // }
+        }
+        catch (Exception e)
+        {
+            _view.ShowInvalidTeamMessage();
+        }
     }
 }

@@ -17,11 +17,31 @@ public class TeamsBuilder
 
     public void Build()
     {
+        ValidateTeams();
+        gameState.TravelerTeam = BuildTravelerTeam();
+        gameState.BeastTeam = BuildBeastTeam();
+    }
 
-        TravelerTeam travelerTeam = BuildTravelerTeam();
-        // BeastTeam beastTeam = BuildBeastTeam();
+    private void ValidateTeams()
+    {
+        CheckForUniqueness(_teamsInfo.TravelerNames);
+        int travelerTeamMax = 4;
+        CheckForMaxCapacity(_teamsInfo.TravelerNames, travelerTeamMax);
+
+        foreach (string traveler in _teamsInfo.TravelerNames)
+        {
+            CheckForUniqueness(_teamsInfo.TravelerSkills[traveler]);
+            int skillsMax = 8;
+            CheckForMaxCapacity(_teamsInfo.TravelerSkills[traveler], skillsMax);                        
+            
+            CheckForUniqueness(_teamsInfo.TravelerPassiveSkills[traveler]);
+            int passiveSkillsMax = 4;
+            CheckForMaxCapacity(_teamsInfo.TravelerPassiveSkills[traveler], passiveSkillsMax);                        
+        }
         
-        throw new Exception();
+        CheckForUniqueness(_teamsInfo.BeastNames);
+        int beastTeamMax = 5;
+        CheckForMaxCapacity(_teamsInfo.BeastNames, beastTeamMax);
     }
 
     private TravelerTeam BuildTravelerTeam()
@@ -30,44 +50,81 @@ public class TeamsBuilder
 
         string json = File.ReadAllText("data/characters.json");
         List<TravelerJsonData> deserializedJsonData = JsonSerializer.Deserialize<List<TravelerJsonData>>(json);
-        Dictionary<string, TravelerJsonData> travelerInfo = deserializedJsonData.ToDictionary(
+        Dictionary<string, TravelerJsonData> allTravelersInfo = deserializedJsonData.ToDictionary(
             traveler => traveler.Name,
             traveler => traveler
         );
         
         
-        // foreach (KeyValuePair<string,List<string>> pair in _teamsInfo.TravelerAndSkills)
-        // {
-        //     string travelerName = pair.Key;
-        //     List<string> travelerSkills = pair.Value;
-        //     TravelerJsonData jsonData = travelerInfo[travelerName];    
-        //     
-        //     Traveler newTraveler = new Traveler();
-        //     
-        //     newTraveler.Name = travelerName;
-        //     newTraveler.MaxHP = jsonData.Stats["HP"];
-        //     newTraveler.CurrentHP = jsonData.Stats["HP"];
-        //     newTraveler.PhysAtk = jsonData.Stats["PhysAtk"];
-        //     newTraveler.PhysDef = jsonData.Stats["PhysDef"];
-        //     newTraveler.ElemAtk = jsonData.Stats["ElemAtk"];
-        //     newTraveler.ElemDef = jsonData.Stats["ElemDef"];
-        //     newTraveler.Speed = jsonData.Stats["Speed"];
-        //     newTraveler.MaxSP = jsonData.Stats["SP"];
-        //     newTraveler.CurrentSP = jsonData.Stats["SP"];
-        //
-        //     newTraveler.Weapons = jsonData.Weapons;
-        //     newTraveler.Skills = travelerSkills;4
-        //
-        //     
-        // }
+        foreach (string travelerName in _teamsInfo.TravelerNames)
+        {
+            TravelerJsonData jsonData = allTravelersInfo[travelerName];    
+            
+            Traveler newTraveler = new Traveler();
+            
+            newTraveler.Name = travelerName;
+            newTraveler.MaxHP = jsonData.Stats["HP"];
+            newTraveler.CurrentHP = jsonData.Stats["HP"];
+            newTraveler.PhysAtk = jsonData.Stats["PhysAtk"];
+            newTraveler.PhysDef = jsonData.Stats["PhysDef"];
+            newTraveler.ElemAtk = jsonData.Stats["ElemAtk"];
+            newTraveler.ElemDef = jsonData.Stats["ElemDef"];
+            newTraveler.Speed = jsonData.Stats["Speed"];
+            newTraveler.MaxSP = jsonData.Stats["SP"];
+            newTraveler.CurrentSP = jsonData.Stats["SP"];
+        
+            newTraveler.Weapons = jsonData.Weapons;
+            newTraveler.Skills = _teamsInfo.TravelerSkills[travelerName];
+            newTraveler.PassiveSkills = _teamsInfo.TravelerPassiveSkills[travelerName];
+            
+            travelerTeam.Units.Add(newTraveler);
+        }
         
         return travelerTeam;
     }
-
-    private void CheckForUniqueness(List<string> listToCheck, string itemToAdd)
+    
+    private BeastTeam BuildBeastTeam()
     {
-        if (listToCheck.Contains(itemToAdd))
-            throw new InvalidOperationException("Item already exists.");
+        BeastTeam beastTeam = new BeastTeam();
+
+        string json = File.ReadAllText("data/enemies.json");
+        List<BeastJsonData> deserializedJsonData = JsonSerializer.Deserialize<List<BeastJsonData>>(json);
+        Dictionary<string, BeastJsonData> allBeastsInfo = deserializedJsonData.ToDictionary(
+            beast => beast.Name,
+            beast => beast
+        );
+        
+        
+        foreach (string beastName in _teamsInfo.BeastNames)
+        {
+            BeastJsonData jsonData = allBeastsInfo[beastName];    
+            
+            Beast newBeast = new Beast();
+            
+            newBeast.Name = beastName;
+            newBeast.MaxHP = jsonData.Stats["HP"];
+            newBeast.CurrentHP = jsonData.Stats["HP"];
+            newBeast.PhysAtk = jsonData.Stats["PhysAtk"];
+            newBeast.PhysDef = jsonData.Stats["PhysDef"];
+            newBeast.ElemAtk = jsonData.Stats["ElemAtk"];
+            newBeast.ElemDef = jsonData.Stats["ElemDef"];
+            newBeast.Speed = jsonData.Stats["Speed"];
+        
+            newBeast.Skill = jsonData.Skill;
+            newBeast.MaxShields = jsonData.Shields;
+            newBeast.CurrentShields = jsonData.Shields;
+            newBeast.Weaknesses = jsonData.Weaknesses;
+            
+            beastTeam.Units.Add(newBeast);
+        }
+        
+        return beastTeam;
+    }
+    
+    private void CheckForUniqueness(List<string> listToCheck)
+    {
+        if (listToCheck.Count != listToCheck.Distinct().Count())
+            throw new InvalidOperationException("There are repeated items in list.");
     }
 
     private void CheckForMaxCapacity(List<string> listToCheck, int maxSize)
