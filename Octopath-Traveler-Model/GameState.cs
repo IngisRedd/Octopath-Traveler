@@ -11,8 +11,8 @@ public class GameState
 
     public void ResetTurnQueues()
     {
-        TurnQueue.AddRange(TravelerTeam.Units);
-        TurnQueue.AddRange(BeastTeam.Units);
+        TurnQueue.AddRange(TravelerTeam.AliveUnits);
+        TurnQueue.AddRange(BeastTeam.AliveUnits);
         TurnQueue.Sort((unit1, unit2) => unit2.Speed.CompareTo(unit1.Speed));
         
         NextTurnQueue = TurnQueue.ToList();

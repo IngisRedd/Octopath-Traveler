@@ -7,7 +7,6 @@ public class Game
 {
     private MainConsoleView _view;
     private GameState _state = new();
-    private bool _isGameStillGoing = true;
     private BattleController _battleController;
     public Game(View view, string teamsFolder)
     {
@@ -17,18 +16,19 @@ public class Game
 
     public void Play()
     {
-        // try
-        // {
+        try
+        {
             TeamsInfo teamsInfo = new TeamsInfo(_view.GetTeamsFilePath());
             TeamsBuilder teamsBuilder = new TeamsBuilder(_state, teamsInfo);
             teamsBuilder.Build();
-        // }
-        // catch (Exception e)
-        // {
-        //     _view.ShowInvalidTeamMessage();
-        // }
+        }
+        catch (Exception e)
+        {
+            _view.ShowInvalidTeamMessage();
+            _battleController.IsGameStillGoing = false;
+        }
 
-        while (_isGameStillGoing)
+        while (_battleController.IsGameStillGoing)
         {
             _battleController.RunBattleRound();
         }

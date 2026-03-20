@@ -1,10 +1,12 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
+using Octopath_Traveler.Exceptions;
 
 namespace Octopath_Traveler;
 
 public class BattleController
 {
+    public bool IsGameStillGoing = true;
     private MainConsoleView _view;
     private GameState _gameState;
 
@@ -18,11 +20,18 @@ public class BattleController
         _gameState.RoundCounter++;
         _gameState.ResetTurnQueues();
         _view.ShowRoundHeader();
-        while (_gameState.TurnQueue.Count > 0)
+        try
         {
-            RunTurn();
+            while (_gameState.TurnQueue.Count > 0)
+            {
+                RunTurn();
+            }
+            _gameState.TravelerTeam.IncreaseBPs();
         }
-        _gameState.TravelerTeam.IncreaseBPs();
+        catch (GameOverException exception)
+        {
+            IsGameStillGoing = false;
+        }
     }
 
     private void RunTurn()
@@ -39,6 +48,8 @@ public class BattleController
             RunBeastTurn();
         }
         _gameState.UpdateTurnQueue();
+
+        CheckIfGameIsOver();
     }
     
     private void RunTravelerTurn()
@@ -121,5 +132,26 @@ public class BattleController
         string damageType = "Physical";
         MakeBasicAttack(attackTarget, damageType);
     }
+
+    private void CheckIfGameIsOver()
+    {
+        if (AreAllBeastsDefeated())
+        {
+            _view.ShowVictoryMessage();
+            throw new GameOverException("All enemies defeated");
+        }
+        if (AreAllTravelersDefeated())
+        {
+            _view.ShowLostGameMessage();
+            throw new GameOverException("All travelers in team defeated");
+        }
+        
+    }
+
+    private bool AreAllBeastsDefeated()
+        => _gameState.BeastTeam.AliveUnits.Count <= 0;
+    private bool AreAllTravelersDefeated()
+        => _gameState.TravelerTeam.AliveUnits.Count <= 0;
+
 
 }

@@ -190,4 +190,15 @@ public class MainConsoleView
         _view.WriteLine($"{attackTarget.Name} termina con HP:{attackTarget.CurrentHP}");
     }
 
+    public void ShowVictoryMessage()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine("Gana equipo del jugador");
+    }
+
+    public void ShowLostGameMessage()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine("Gana equipo del enemigo");
+    }
 }
