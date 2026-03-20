@@ -6,20 +6,20 @@ namespace Octopath_Traveler;
 
 public class TeamsBuilder
 {
-    private GameState gameState;
+    private GameState _gameState;
     private TeamsInfo _teamsInfo;
     
-    public TeamsBuilder(GameState _gameState, TeamsInfo teamsInfo)
+    public TeamsBuilder(GameState gameState, TeamsInfo teamsInfo)
     {
-        _gameState = _gameState;
+        _gameState = gameState;
         _teamsInfo = teamsInfo;
     }
 
     public void Build()
     {
         ValidateTeams();
-        gameState.TravelerTeam = BuildTravelerTeam();
-        gameState.BeastTeam = BuildBeastTeam();
+        _gameState.TravelerTeam = BuildTravelerTeam();
+        _gameState.BeastTeam = BuildBeastTeam();
     }
 
     private void ValidateTeams()
@@ -76,6 +76,8 @@ public class TeamsBuilder
             newTraveler.Weapons = jsonData.Weapons;
             newTraveler.Skills = _teamsInfo.TravelerSkills[travelerName];
             newTraveler.PassiveSkills = _teamsInfo.TravelerPassiveSkills[travelerName];
+            int initialBP = 1;
+            newTraveler.BP = initialBP;
             
             travelerTeam.Units.Add(newTraveler);
         }

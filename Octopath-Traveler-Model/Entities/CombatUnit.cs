@@ -4,7 +4,11 @@ public class CombatUnit
 {
     public string Name { get; set; }
     public int MaxHP { get; set; }
-    public int CurrentHP { get; set; }
+    private int _hp { get; set; }
+    public int CurrentHP {
+        get => _hp;
+        set => _hp = Math.Max(0, value);
+    }
     public int PhysAtk { get; set; }
     public int PhysDef { get; set; }
     public int ElemAtk { get; set; }

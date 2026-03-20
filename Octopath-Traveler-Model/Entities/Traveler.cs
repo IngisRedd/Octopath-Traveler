@@ -7,4 +7,6 @@ public class Traveler : CombatUnit
     public List<string> Weapons { get; set; }
     public List<string> Skills { get; set; }
     public List<string> PassiveSkills { get; set; }
+    
+    public int BP { get; set; }
 }

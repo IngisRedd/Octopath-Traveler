@@ -60,4 +60,134 @@ public class MainConsoleView
     {
         _view.WriteLine("Archivo de equipos no válido");
     }
+
+    public void ShowRoundHeader()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine($"INICIA RONDA {_gameState.RoundCounter}");
+    }
+
+    private void PrintHorizontalRule()
+    {
+        _view.WriteLine("----------------------------------------");
+    }
+    
+    public void ShowAllUnitInformation()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine("Equipo del jugador");
+        char labelLetter = 'A';
+        foreach (Traveler traveler in _gameState.TravelerTeam.Units)
+        {
+            _view.WriteLine(
+                $"{labelLetter}-{traveler.Name} - " +
+                $"HP:{traveler.CurrentHP}/{traveler.MaxHP} " +
+                $"SP:{traveler.CurrentSP}/{traveler.MaxSP} " +
+                $"BP:{traveler.BP}"
+            );
+            labelLetter++;
+        }
+        
+        _view.WriteLine("Equipo del enemigo");
+        labelLetter = 'A';
+        foreach (Beast beast in _gameState.BeastTeam.Units)
+        {
+            _view.WriteLine(
+                $"{labelLetter}-{beast.Name} - " +
+                $"HP:{beast.CurrentHP}/{beast.MaxHP} " +
+                $"Shields:{beast.CurrentShields}"
+            );
+            labelLetter++;
+        }
+    }
+    
+    public void ShowTurnQueues()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine("Turnos de la ronda");
+        int label = 1;
+        foreach (CombatUnit unit in _gameState.TurnQueue)
+        {
+            _view.WriteLine($"{label}.{unit.Name}");
+            label++;
+        }
+        
+        PrintHorizontalRule();
+        _view.WriteLine("Turnos de la siguiente ronda");
+        label = 1;
+        foreach (CombatUnit unit in _gameState.NextTurnQueue)
+        {
+            _view.WriteLine($"{label}.{unit.Name}");
+            label++;
+        }
+
+    }
+
+    public void ShowTravelerActions()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine($"Turno de {_gameState.CurrentUnit.Name}");
+        string turnOptionsText = "1: Ataque básico\n2: Usar habilidad\n3: Defender\n4: Huir";
+        _view.WriteLine(turnOptionsText);
+    }
+
+    public string AskForPlayerInput()
+    {
+        return _view.ReadLine();
+    }
+
+    public void ShowAvailableWeapons()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine("Seleccione un arma");
+        int label = 1;
+        Traveler currentTraveler = (Traveler)_gameState.CurrentUnit;
+        foreach (string weapon in currentTraveler.Weapons)
+        {
+            _view.WriteLine($"{label}: {weapon}");
+            label++;
+        }
+        _view.WriteLine($"{label}: Cancelar");
+    }
+    
+    public void ShowAvailableTargets()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");
+        int label = 1;
+        List<Beast> aliveBeasts = _gameState.BeastTeam.AliveUnits;
+        foreach (Beast beast in aliveBeasts)
+        {
+            _view.WriteLine(
+                $"{label}: {beast.Name} - " +
+                $"HP:{beast.CurrentHP}/{beast.MaxHP} " +
+                $"Shields:{beast.CurrentShields}"
+            );
+            label++;
+        }
+        _view.WriteLine($"{label}: Cancelar");
+    }
+
+    public void AskForBPUsage()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine($"Seleccione cuantos BP utilizar");
+    }
+
+    public void ShowAttackResults(CombatUnit attackTarget, Damage damage)
+    {
+        PrintHorizontalRule();
+        if (_gameState.CurrentUnit is Traveler)
+        {
+            _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
+            _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type}");
+        }
+        else
+        {
+            _view.WriteLine($"{_gameState.CurrentUnit.Name} usa Attack");
+            _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño físico");
+        }
+        _view.WriteLine($"{attackTarget.Name} termina con HP:{attackTarget.CurrentHP}");
+    }
+
 }
