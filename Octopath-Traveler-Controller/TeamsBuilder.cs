@@ -18,8 +18,9 @@ public class TeamsBuilder
     public void Build()
     {
         ValidateTeams();
-        _gameState.TravelerTeam = BuildTravelerTeam();
-        _gameState.BeastTeam = BuildBeastTeam();
+        BuildTravelerTeam();
+        BuildBeastTeam();
+        BuildTravelerSkills();
     }
 
     private void ValidateTeams()
@@ -44,11 +45,12 @@ public class TeamsBuilder
         CheckForMaxCapacity(_teamsInfo.BeastNames, beastTeamMax);
     }
 
-    private TravelerTeam BuildTravelerTeam()
+    private void BuildTravelerTeam()
     {
         TravelerTeam travelerTeam = new TravelerTeam();
 
-        string json = File.ReadAllText("data/characters.json");
+        string jsonFilePath = "data/characters.json";
+        string json = File.ReadAllText(jsonFilePath);
         List<TravelerJsonData> deserializedJsonData = JsonSerializer.Deserialize<List<TravelerJsonData>>(json);
         Dictionary<string, TravelerJsonData> allTravelersInfo = deserializedJsonData.ToDictionary(
             traveler => traveler.Name,
@@ -74,22 +76,23 @@ public class TeamsBuilder
             newTraveler.CurrentSP = jsonData.Stats["SP"];
         
             newTraveler.Weapons = jsonData.Weapons;
-            newTraveler.Skills = _teamsInfo.TravelerSkills[travelerName];
             newTraveler.PassiveSkills = _teamsInfo.TravelerPassiveSkills[travelerName];
             int initialBP = 1;
             newTraveler.BP = initialBP;
             
             travelerTeam.Units.Add(newTraveler);
+            _gameState.AllUnits.Add(newTraveler);
         }
         
-        return travelerTeam;
+        _gameState.TravelerTeam = travelerTeam;
     }
     
-    private BeastTeam BuildBeastTeam()
+    private void BuildBeastTeam()
     {
         BeastTeam beastTeam = new BeastTeam();
 
-        string json = File.ReadAllText("data/enemies.json");
+        string jsonFilePath = "data/enemies.json";
+        string json = File.ReadAllText(jsonFilePath);
         List<BeastJsonData> deserializedJsonData = JsonSerializer.Deserialize<List<BeastJsonData>>(json);
         Dictionary<string, BeastJsonData> allBeastsInfo = deserializedJsonData.ToDictionary(
             beast => beast.Name,
@@ -118,11 +121,43 @@ public class TeamsBuilder
             newBeast.Weaknesses = jsonData.Weaknesses;
             
             beastTeam.Units.Add(newBeast);
+            _gameState.AllUnits.Add(newBeast);
         }
         
-        return beastTeam;
+        _gameState.BeastTeam = beastTeam;
     }
     
+    private void BuildTravelerSkills()
+    {
+        string jsonFilePath = "data/skills.json";
+        string json = File.ReadAllText(jsonFilePath);
+        List<TravelerSkillJsonData> deserializedJsonData = JsonSerializer.Deserialize<List<TravelerSkillJsonData>>(json);
+        Dictionary<string, TravelerSkillJsonData> allSkillsInfo = deserializedJsonData.ToDictionary(
+            skill => skill.Name,
+            skill => skill
+        );
+
+        foreach (Traveler traveler in _gameState.TravelerTeam.Units)
+        {
+            foreach (string skillName in _teamsInfo.TravelerSkills[traveler.Name])
+            {
+                TravelerSkillJsonData jsonData = allSkillsInfo[skillName];    
+            
+                Skill newSkill = new Skill();
+            
+                newSkill.Name = skillName;
+                newSkill.SP = jsonData.SP;
+                newSkill.Type = jsonData.Type;
+                newSkill.Description = jsonData.Description;
+                newSkill.Target = jsonData.Target;
+                newSkill.Modifier = jsonData.Modifier;
+                newSkill.Boost = jsonData.Boost;
+            
+                traveler.Skills.Add(newSkill);
+            }            
+        }
+    }
+
     private void CheckForUniqueness(List<string> listToCheck)
     {
         if (listToCheck.Count != listToCheck.Distinct().Count())

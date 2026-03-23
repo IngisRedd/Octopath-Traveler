@@ -3,7 +3,10 @@ namespace Octopath_Traveler_Model;
 public class Skill
 {
     public string Name { get; set; }
-    public float Modifier { get; set; }
+    public int SP { get; set; }
+    public string Type { get; set; }
     public string Description { get; set; }
     public string Target { get; set; }
+    public float Modifier { get; set; }
+    public string Boost { get; set; }
 }

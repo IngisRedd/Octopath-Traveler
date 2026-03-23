@@ -21,8 +21,9 @@ public class Game
             TeamsInfo teamsInfo = new TeamsInfo(_view.GetTeamsFilePath());
             TeamsBuilder teamsBuilder = new TeamsBuilder(_state, teamsInfo);
             teamsBuilder.Build();
+            _state.ResetNextTurnQueue();
         }
-        catch (Exception e)
+        catch (InvalidOperationException exception)
         {
             _view.ShowInvalidTeamMessage();
             _battleController.IsGameStillGoing = false;

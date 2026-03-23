@@ -106,7 +106,7 @@ public class MainConsoleView
         PrintHorizontalRule();
         _view.WriteLine("Turnos de la ronda");
         int label = 1;
-        foreach (CombatUnit unit in _gameState.TurnQueue)
+        foreach (CombatUnit unit in _gameState.CurrentTurnQueue)
         {
             _view.WriteLine($"{label}.{unit.Name}");
             label++;
@@ -189,7 +189,28 @@ public class MainConsoleView
         }
         _view.WriteLine($"{attackTarget.Name} termina con HP:{attackTarget.CurrentHP}");
     }
+    
+    public void ShowAvailableSkills()
+    {
+        PrintHorizontalRule();
+        Traveler currentTraveler = (Traveler)_gameState.CurrentUnit;
+        _view.WriteLine($"Seleccione una habilidad para {currentTraveler.Name}");
+        int label = 1;
+        foreach (Skill skill in currentTraveler.AvailableSkills)
+        {
+            _view.WriteLine($"{label}: {skill.Name}");
+            label++;
+        }
+        _view.WriteLine($"{label}: Cancelar");
+    }
 
+    public void ShowFleeMessage()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine("El equipo de viajeros ha huido!");
+        PrintHorizontalRule();
+    }
+    
     public void ShowVictoryMessage()
     {
         PrintHorizontalRule();
