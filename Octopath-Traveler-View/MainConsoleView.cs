@@ -208,7 +208,7 @@ public class MainConsoleView
     {
         PrintHorizontalRule();
         _view.WriteLine("El equipo de viajeros ha huido!");
-        PrintHorizontalRule();
+        ShowLostGameMessage();
     }
     
     public void ShowVictoryMessage()
