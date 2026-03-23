@@ -47,7 +47,7 @@ public class BattleController
         {
             RunBeastTurn();
         }
-        _gameState.UpdateCurrentTurnQueue();
+        _gameState.UpdateTurnQueues();
 
         CheckIfGameIsOver();
     }

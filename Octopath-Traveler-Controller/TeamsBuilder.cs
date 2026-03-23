@@ -166,7 +166,7 @@ public class TeamsBuilder
 
     private void CheckForMaxCapacity(List<string> listToCheck, int maxSize)
     {
-        if (listToCheck.Count >= maxSize)
+        if (listToCheck.Count > maxSize)
             throw new InvalidOperationException("Maximum capacity reached.");
     }
 }
