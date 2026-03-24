@@ -9,7 +9,7 @@ public class TravelerTeam
     public void IncreaseBPs()
     {
         int maxBP = 5;
-        foreach (Traveler traveler in Units)
+        foreach (Traveler traveler in AliveUnits)
         {
             if (traveler.BP < maxBP)
             {

@@ -17,8 +17,7 @@ public class BattleController
     }
     public void RunBattleRound()
     {
-        _gameState.RoundCounter++;
-        _gameState.StartOfRoundQueueUpdate();
+        PerformStartOfRoundUpdates();
         _view.ShowRoundHeader();
         try
         {
@@ -26,15 +25,20 @@ public class BattleController
             {
                 RunTurn();
             }
-            _gameState.TravelerTeam.IncreaseBPs();
-            _gameState.UpdateStatusEffectDuration();
         }
         catch (GameOverException exception)
         {
             IsGameStillGoing = false;
         }
+        PerformEndOfRoundUpdates();
     }
 
+    private void PerformStartOfRoundUpdates()
+    {
+        _gameState.RoundCounter++;
+        _gameState.StartOfRoundQueueUpdate();
+    }
+    
     private void RunTurn()
     {
         _gameState.UpdateCurrentUnit();
@@ -173,6 +177,13 @@ public class BattleController
         string damageType = "Physical";
         MakeBasicAttack(attackTarget, damageType);
     }
+    
+    private void PerformEndOfRoundUpdates()
+    {
+        _gameState.TravelerTeam.IncreaseBPs();
+        _gameState.UpdateStatusEffectDuration();
+    }
+
 
     private void CheckIfGameIsOver()
     {

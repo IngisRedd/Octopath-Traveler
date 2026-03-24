@@ -28,7 +28,8 @@ public class Game
     {
         try
         {
-            TeamsInfo teamsInfo = new TeamsInfo(_view.GetTeamsFilePath());
+            TeamsInfoParser teamsInfoParser = new TeamsInfoParser();
+            TeamsInfo teamsInfo = teamsInfoParser.ParseFileData(_view.GetTeamsFilePath());
             TeamsBuilder teamsBuilder = new TeamsBuilder(_state, teamsInfo);
             teamsBuilder.Build();
             _state.ResetNextTurnQueue();
