@@ -184,7 +184,6 @@ public class BattleController
         _gameState.UpdateStatusEffectDuration();
     }
 
-
     private void CheckIfGameIsOver()
     {
         if (AreAllBeastsDefeated())
