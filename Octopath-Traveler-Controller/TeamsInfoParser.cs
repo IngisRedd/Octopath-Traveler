@@ -5,14 +5,14 @@ namespace Octopath_Traveler_Model;
 
 public class TeamsInfoParser
 {
-    private TeamsInfo _teamsInfo = new();
+    private ParsedTeamsInfo _parsedTeamsInfo = new();
     private List<string> _travelerDescriptions = new();
 
-    public TeamsInfo ParseFileData(string pathToFile)
+    public ParsedTeamsInfo ParseFileData(string pathToFile)
     {
         SplitTravelerAndBeastNames(pathToFile);
         SplitTravelerNamesAndSkills();
-        return _teamsInfo;
+        return _parsedTeamsInfo;
     }
 
     private void SplitTravelerAndBeastNames(string pathToFile)
@@ -28,7 +28,7 @@ public class TeamsInfoParser
 
             if (isUnitBeast)
             {
-                _teamsInfo.BeastNames.Add(line);
+                _parsedTeamsInfo.BeastNames.Add(line);
             }
             else
             {
@@ -43,24 +43,24 @@ public class TeamsInfoParser
         {
             int endOfNameIndex = GetEndOfNamePosition(travelerDescription);
             string travelerName = ParseTravelerName(travelerDescription);
-            _teamsInfo.TravelerNames.Add(travelerName);
+            _parsedTeamsInfo.TravelerNames.Add(travelerName);
 
             int skillsStart = travelerDescription.IndexOf('(');
             int skillsEnd = travelerDescription.IndexOf(')');
             int passiveSkillsStart = travelerDescription.IndexOf('[');
             int passiveSkillsEnd = travelerDescription.IndexOf(']');
             
-            _teamsInfo.TravelerSkills[travelerName] = new List<string>();
-            _teamsInfo.TravelerPassiveSkills[travelerName] = new List<string>();
+            _parsedTeamsInfo.TravelerSkills[travelerName] = new List<string>();
+            _parsedTeamsInfo.TravelerPassiveSkills[travelerName] = new List<string>();
             if (TravelerHasSkills(skillsStart))
             {
                 List<string> skillsList = SplitSkillsIntoList(travelerDescription, skillsStart, skillsEnd);            
-                _teamsInfo.TravelerSkills[travelerName] = skillsList;
+                _parsedTeamsInfo.TravelerSkills[travelerName] = skillsList;
             }
             if (TravelerHasSkills(passiveSkillsStart))
             {
                 List<string> passiveSkillsList = SplitSkillsIntoList(travelerDescription, passiveSkillsStart, passiveSkillsEnd);            
-                _teamsInfo.TravelerPassiveSkills[travelerName] = passiveSkillsList;
+                _parsedTeamsInfo.TravelerPassiveSkills[travelerName] = passiveSkillsList;
             }
         }
     }

@@ -7,12 +7,12 @@ namespace Octopath_Traveler;
 public class TeamsBuilder
 {
     private GameState _gameState;
-    private TeamsInfo _teamsInfo;
+    private ParsedTeamsInfo _parsedTeamsInfo;
     
-    public TeamsBuilder(GameState gameState, TeamsInfo teamsInfo)
+    public TeamsBuilder(GameState gameState, ParsedTeamsInfo parsedTeamsInfo)
     {
         _gameState = gameState;
-        _teamsInfo = teamsInfo;
+        _parsedTeamsInfo = parsedTeamsInfo;
     }
 
     public void Build()
@@ -25,24 +25,24 @@ public class TeamsBuilder
 
     private void ValidateTeams()
     {
-        CheckForUniqueness(_teamsInfo.TravelerNames);
+        CheckForUniqueness(_parsedTeamsInfo.TravelerNames);
         int travelerTeamMax = 4;
-        CheckForMaxCapacity(_teamsInfo.TravelerNames, travelerTeamMax);
+        CheckForMaxCapacity(_parsedTeamsInfo.TravelerNames, travelerTeamMax);
 
-        foreach (string traveler in _teamsInfo.TravelerNames)
+        foreach (string traveler in _parsedTeamsInfo.TravelerNames)
         {
-            CheckForUniqueness(_teamsInfo.TravelerSkills[traveler]);
+            CheckForUniqueness(_parsedTeamsInfo.TravelerSkills[traveler]);
             int skillsMax = 8;
-            CheckForMaxCapacity(_teamsInfo.TravelerSkills[traveler], skillsMax);                        
+            CheckForMaxCapacity(_parsedTeamsInfo.TravelerSkills[traveler], skillsMax);                        
             
-            CheckForUniqueness(_teamsInfo.TravelerPassiveSkills[traveler]);
+            CheckForUniqueness(_parsedTeamsInfo.TravelerPassiveSkills[traveler]);
             int passiveSkillsMax = 4;
-            CheckForMaxCapacity(_teamsInfo.TravelerPassiveSkills[traveler], passiveSkillsMax);                        
+            CheckForMaxCapacity(_parsedTeamsInfo.TravelerPassiveSkills[traveler], passiveSkillsMax);                        
         }
         
-        CheckForUniqueness(_teamsInfo.BeastNames);
+        CheckForUniqueness(_parsedTeamsInfo.BeastNames);
         int beastTeamMax = 5;
-        CheckForMaxCapacity(_teamsInfo.BeastNames, beastTeamMax);
+        CheckForMaxCapacity(_parsedTeamsInfo.BeastNames, beastTeamMax);
     }
 
     private void BuildTravelerTeam()
@@ -54,7 +54,7 @@ public class TeamsBuilder
             t => t.Name
         );
         
-        foreach (string travelerName in _teamsInfo.TravelerNames)
+        foreach (string travelerName in _parsedTeamsInfo.TravelerNames)
         {
             TravelerJsonData jsonData = allTravelersInfo[travelerName];    
             
@@ -72,7 +72,7 @@ public class TeamsBuilder
             newTraveler.CurrentSP = jsonData.Stats["SP"];
         
             newTraveler.Weapons = jsonData.Weapons;
-            newTraveler.PassiveSkills = _teamsInfo.TravelerPassiveSkills[travelerName];
+            newTraveler.PassiveSkills = _parsedTeamsInfo.TravelerPassiveSkills[travelerName];
             int initialBP = 1;
             newTraveler.BP = initialBP;
             
@@ -101,7 +101,7 @@ public class TeamsBuilder
             t => t.Name
         );
         
-        foreach (string beastName in _teamsInfo.BeastNames)
+        foreach (string beastName in _parsedTeamsInfo.BeastNames)
         {
             BeastJsonData jsonData = allBeastsInfo[beastName];    
             
@@ -137,7 +137,7 @@ public class TeamsBuilder
 
         foreach (Traveler traveler in _gameState.TravelerTeam.Units)
         {
-            foreach (string skillName in _teamsInfo.TravelerSkills[traveler.Name])
+            foreach (string skillName in _parsedTeamsInfo.TravelerSkills[traveler.Name])
             {
                 TravelerSkillJsonData jsonData = allSkillsInfo[skillName];    
             

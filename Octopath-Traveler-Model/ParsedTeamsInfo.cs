@@ -2,7 +2,7 @@ using Octopath_Traveler_Model;
 
 namespace Octopath_Traveler;
 
-public class TeamsInfo
+public class ParsedTeamsInfo
 {
     public List<string> BeastNames = new();
     public List<string> TravelerNames = new();
