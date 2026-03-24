@@ -20,7 +20,7 @@ public class Game
         
         while (_battleController.IsGameStillGoing)
         {
-            _battleController.RunBattleRound();
+            _battleController.ExecuteBattleRound();
         }
     }
 

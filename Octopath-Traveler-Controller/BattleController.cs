@@ -15,7 +15,7 @@ public class BattleController
         _view = view;
         _gameState = gameState;
     }
-    public void RunBattleRound()
+    public void ExecuteBattleRound()
     {
         PerformStartOfRoundUpdates();
         _view.ShowRoundHeader();
@@ -23,7 +23,7 @@ public class BattleController
         {
             while (_gameState.CurrentTurnQueue.Count > 0)
             {
-                RunTurn();
+                ExecuteTurn();
             }
         }
         catch (GameOverException exception)
@@ -39,25 +39,25 @@ public class BattleController
         _gameState.StartOfRoundQueueUpdate();
     }
     
-    private void RunTurn()
+    private void ExecuteTurn()
     {
         _gameState.UpdateCurrentUnit();
         _view.ShowAllUnitInformation();
         _view.ShowTurnQueues();
         if (_gameState.CurrentUnit is Traveler)
         {
-            RunTravelerTurn();
+            ExecuteTravelerTurn();
         }
         else
         {
-            RunBeastTurn();
+            ExecuteBeastTurn();
         }
         _gameState.EndOfTurnUpdateTurnQueues();
 
         CheckIfGameIsOver();
     }
 
-    private void RunTravelerTurn()
+    private void ExecuteTravelerTurn()
     {
         bool isValidActionSelected = false;
         while (!isValidActionSelected)
@@ -66,42 +66,37 @@ public class BattleController
             {
                 _view.ShowTravelerActions();
                 string playerInput = _view.AskForPlayerInput();
-                Act(playerInput);
+                ExecuteTravelerAction(playerInput);
                 isValidActionSelected = true;
             }
             catch (ArgumentOutOfRangeException exception){}
         }
     }
 
-    private void Act(string playerInput)
+    private void ExecuteTravelerAction(string playerInput)
     {
         switch (playerInput)
         {
             case "1":
-                RunAttackAction();
+                ExecuteAttack();
                 break;
             case "2":
-                RunUseSkillAction();
+                ExecuteUseSkill();
                 break;
             case "3":
-                RunDefendAction();
+                ExecuteDefend();
                 break;
             case "4":
-                RunFleeAction();
+                ExecuteFlee();
                 break;
         }
     }
 
-    private void RunAttackAction()
+    private void ExecuteAttack()
     {
         string selectedWeapon = SelectWeapon();
         Beast attackTarget = SelectTarget();
-
-        int BPToUse = 0;
-        if (AreThereAnyBPLeft())
-        {
-            BPToUse = AskForBPToUse();
-        }
+        int BPToUse = AskForBPToUseIfAvailable();
 
         MakeBasicAttack(attackTarget, selectedWeapon);
     }
@@ -109,30 +104,33 @@ public class BattleController
     private string SelectWeapon()
     {
         _view.ShowAvailableWeapons();
-        string playerInput = _view.AskForPlayerInput();
-        
-        int inputToInt = Convert.ToInt32(playerInput);
-        Traveler currentTraveler = (Traveler)_gameState.CurrentUnit;
-        return currentTraveler.Weapons[inputToInt - 1];
+        int selectedIndex = ReadPlayerInput() - 1;
+        return _gameState.CurrentTraveler.Weapons[selectedIndex];
+    }
+    
+    private int ReadPlayerInput()
+    {
+        string input = _view.AskForPlayerInput();
+        return Convert.ToInt32(input);
     }
     
     private Beast SelectTarget()
     {
         _view.ShowAvailableTargets();
-        string playerInput = _view.AskForPlayerInput();
-        int inputToInt = Convert.ToInt32(playerInput);
-        return _gameState.BeastTeam.AliveUnits[inputToInt - 1];
+        int selectedIndex = ReadPlayerInput() - 1;
+        return _gameState.BeastTeam.AliveUnits[selectedIndex];
     }
-    
-    private bool AreThereAnyBPLeft()
-        => ((Traveler)_gameState.CurrentUnit).BP > 0;
 
-    private int AskForBPToUse()
+    private int AskForBPToUseIfAvailable()
     {
+        if (!AreThereAnyBPLeft())
+            return 0;
+
         _view.AskForBPUsage();
-        string playerInput = _view.AskForPlayerInput();
-        return Convert.ToInt32(playerInput);
+        return ReadPlayerInput();
     }
+    private bool AreThereAnyBPLeft()
+        => (_gameState.CurrentTraveler.BP > 0);
     
     private void MakeBasicAttack(CombatUnit target, string weapon)
     {
@@ -147,31 +145,33 @@ public class BattleController
         target.CurrentHP -= damage.Value;
     }
     
-    private void RunUseSkillAction()
+    private void ExecuteUseSkill()
     {
         _view.ShowAvailableSkills();
-        string playerInput = _view.AskForPlayerInput();
 
-        int inputToInt = Convert.ToInt32(playerInput);
-        Traveler currentTraveler = (Traveler)_gameState.CurrentUnit;
-        Skill selectedSkill = currentTraveler.AvailableSkills[inputToInt - 1];
+        int selectedIndex = ReadPlayerInput() - 1;
+        Skill selectedSkill = _gameState.CurrentTraveler.AvailableSkills[selectedIndex];
     }
     
-    private void RunDefendAction()
+    private void ExecuteDefend()
     {
         _gameState.CurrentUnit.StatusEffects[StatusType.Defend].Duration = 1;
-        
+        MoveCurrentUnitToFrontOfNextTurnQueue();        
+    }
+
+    private void MoveCurrentUnitToFrontOfNextTurnQueue()
+    {
         _gameState.NextTurnQueue.Remove(_gameState.CurrentUnit);
         _gameState.NextTurnQueue.Insert(0, _gameState.CurrentUnit);
     }
 
-    private void RunFleeAction()
+    private void ExecuteFlee()
     {
          _view.ShowFleeMessage();
          throw new GameOverException("Player team surrendered");
     }
 
-    private void RunBeastTurn()
+    private void ExecuteBeastTurn()
     {
         Traveler attackTarget = _gameState.TravelerTeam.HealthiestUnit;
         string damageType = "Physical";

@@ -17,64 +17,25 @@ public class TeamsBuilder
 
     public void Build()
     {
-        ValidateTeams();
+        TeamsValidator.Validate(_parsedTeamsInfo);
         BuildTravelerTeam();
         BuildBeastTeam();
         BuildTravelerSkills();
-    }
-
-    private void ValidateTeams()
-    {
-        CheckForUniqueness(_parsedTeamsInfo.TravelerNames);
-        int travelerTeamMax = 4;
-        CheckForMaxCapacity(_parsedTeamsInfo.TravelerNames, travelerTeamMax);
-
-        foreach (string traveler in _parsedTeamsInfo.TravelerNames)
-        {
-            CheckForUniqueness(_parsedTeamsInfo.TravelerSkills[traveler]);
-            int skillsMax = 8;
-            CheckForMaxCapacity(_parsedTeamsInfo.TravelerSkills[traveler], skillsMax);                        
-            
-            CheckForUniqueness(_parsedTeamsInfo.TravelerPassiveSkills[traveler]);
-            int passiveSkillsMax = 4;
-            CheckForMaxCapacity(_parsedTeamsInfo.TravelerPassiveSkills[traveler], passiveSkillsMax);                        
-        }
-        
-        CheckForUniqueness(_parsedTeamsInfo.BeastNames);
-        int beastTeamMax = 5;
-        CheckForMaxCapacity(_parsedTeamsInfo.BeastNames, beastTeamMax);
     }
 
     private void BuildTravelerTeam()
     {
         TravelerTeam travelerTeam = new TravelerTeam();
         
-        Dictionary<string, TravelerJsonData> allTravelersInfo = LoadDictionaryFromJsonFile<TravelerJsonData>(
+        Dictionary<string, TravelerJsonData> allTravelersData = LoadJsonDataByName<TravelerJsonData>(
             "data/characters.json",
             t => t.Name
         );
         
-        foreach (string travelerName in _parsedTeamsInfo.TravelerNames)
+        foreach (string name in _parsedTeamsInfo.TravelerNames)
         {
-            TravelerJsonData jsonData = allTravelersInfo[travelerName];    
-            
-            Traveler newTraveler = new Traveler();
-            
-            newTraveler.Name = travelerName;
-            newTraveler.MaxHP = jsonData.Stats["HP"];
-            newTraveler.CurrentHP = jsonData.Stats["HP"];
-            newTraveler.PhysAtk = jsonData.Stats["PhysAtk"];
-            newTraveler.PhysDef = jsonData.Stats["PhysDef"];
-            newTraveler.ElemAtk = jsonData.Stats["ElemAtk"];
-            newTraveler.ElemDef = jsonData.Stats["ElemDef"];
-            newTraveler.Speed = jsonData.Stats["Speed"];
-            newTraveler.MaxSP = jsonData.Stats["SP"];
-            newTraveler.CurrentSP = jsonData.Stats["SP"];
-        
-            newTraveler.Weapons = jsonData.Weapons;
-            newTraveler.PassiveSkills = _parsedTeamsInfo.TravelerPassiveSkills[travelerName];
-            int initialBP = 1;
-            newTraveler.BP = initialBP;
+            Traveler newTraveler = CreateTraveler(allTravelersData[name]);
+            newTraveler.PassiveSkills = _parsedTeamsInfo.TravelerPassiveSkills[name];
             
             travelerTeam.Units.Add(newTraveler);
             _gameState.AllUnits.Add(newTraveler);
@@ -83,7 +44,7 @@ public class TeamsBuilder
         _gameState.TravelerTeam = travelerTeam;
     }
     
-    public Dictionary<string, T> LoadDictionaryFromJsonFile<T>(
+    public Dictionary<string, T> LoadJsonDataByName<T>(
         string jsonFilePath,
         Func<T, string> keySelector)
     {
@@ -92,34 +53,40 @@ public class TeamsBuilder
         return items.ToDictionary(keySelector);
     }
     
+    private Traveler CreateTraveler(TravelerJsonData data)
+    {
+        int initialBP = 1;
+
+        return new Traveler
+        {
+            Name = data.Name,
+            MaxHP = data.Stats["HP"],
+            CurrentHP = data.Stats["HP"],
+            PhysAtk = data.Stats["PhysAtk"],
+            PhysDef = data.Stats["PhysDef"],
+            ElemAtk = data.Stats["ElemAtk"],
+            ElemDef = data.Stats["ElemDef"],
+            Speed = data.Stats["Speed"],
+            MaxSP = data.Stats["SP"],
+            CurrentSP = data.Stats["SP"],
+            
+            Weapons = data.Weapons,
+            BP = initialBP
+        };
+    }
+    
     private void BuildBeastTeam()
     {
         BeastTeam beastTeam = new BeastTeam();
         
-        Dictionary<string, BeastJsonData> allBeastsInfo = LoadDictionaryFromJsonFile<BeastJsonData>(
+        Dictionary<string, BeastJsonData> allBeastsData = LoadJsonDataByName<BeastJsonData>(
             "data/enemies.json",
             t => t.Name
         );
         
         foreach (string beastName in _parsedTeamsInfo.BeastNames)
         {
-            BeastJsonData jsonData = allBeastsInfo[beastName];    
-            
-            Beast newBeast = new Beast();
-            
-            newBeast.Name = beastName;
-            newBeast.MaxHP = jsonData.Stats["HP"];
-            newBeast.CurrentHP = jsonData.Stats["HP"];
-            newBeast.PhysAtk = jsonData.Stats["PhysAtk"];
-            newBeast.PhysDef = jsonData.Stats["PhysDef"];
-            newBeast.ElemAtk = jsonData.Stats["ElemAtk"];
-            newBeast.ElemDef = jsonData.Stats["ElemDef"];
-            newBeast.Speed = jsonData.Stats["Speed"];
-        
-            newBeast.Skill = jsonData.Skill;
-            newBeast.MaxShields = jsonData.Shields;
-            newBeast.CurrentShields = jsonData.Shields;
-            newBeast.Weaknesses = jsonData.Weaknesses;
+            Beast newBeast = CreateBeast(allBeastsData[beastName]);
             
             beastTeam.Units.Add(newBeast);
             _gameState.AllUnits.Add(newBeast);
@@ -128,9 +95,29 @@ public class TeamsBuilder
         _gameState.BeastTeam = beastTeam;
     }
     
+    private Beast CreateBeast(BeastJsonData data)
+    {
+        return new Beast
+        {
+            Name = data.Name,
+            MaxHP = data.Stats["HP"],
+            CurrentHP = data.Stats["HP"],
+            PhysAtk = data.Stats["PhysAtk"],
+            PhysDef = data.Stats["PhysDef"],
+            ElemAtk = data.Stats["ElemAtk"],
+            ElemDef = data.Stats["ElemDef"],
+            Speed = data.Stats["Speed"],
+           
+            Skill = data.Skill,
+            MaxShields = data.Shields,
+            CurrentShields = data.Shields,
+            Weaknesses = data.Weaknesses
+        };
+    }
+    
     private void BuildTravelerSkills()
     {
-        Dictionary<string, TravelerSkillJsonData> allSkillsInfo = LoadDictionaryFromJsonFile<TravelerSkillJsonData>(
+        Dictionary<string, TravelerSkillJsonData> allSkillsData = LoadJsonDataByName<TravelerSkillJsonData>(
             "data/skills.json",
             t => t.Name
         );
@@ -139,32 +126,24 @@ public class TeamsBuilder
         {
             foreach (string skillName in _parsedTeamsInfo.TravelerSkills[traveler.Name])
             {
-                TravelerSkillJsonData jsonData = allSkillsInfo[skillName];    
-            
-                Skill newSkill = new Skill();
-            
-                newSkill.Name = skillName;
-                newSkill.SP = jsonData.SP;
-                newSkill.Type = jsonData.Type;
-                newSkill.Description = jsonData.Description;
-                newSkill.Target = jsonData.Target;
-                newSkill.Modifier = jsonData.Modifier;
-                newSkill.Boost = jsonData.Boost;
+                Skill newSkill = CreateSkill(allSkillsData[skillName]);
             
                 traveler.Skills.Add(newSkill);
             }            
         }
     }
-
-    private void CheckForUniqueness(List<string> listToCheck)
+    
+    private Skill CreateSkill(TravelerSkillJsonData data)
     {
-        if (listToCheck.Count != listToCheck.Distinct().Count())
-            throw new InvalidOperationException("There are repeated items in list.");
-    }
-
-    private void CheckForMaxCapacity(List<string> listToCheck, int maxSize)
-    {
-        if (listToCheck.Count > maxSize)
-            throw new InvalidOperationException("Maximum capacity reached.");
+        return new Skill
+        {
+            Name = data.Name,
+            SP = data.SP,
+            Type = data.Type,
+            Description = data.Description,
+            Target = data.Target,
+            Modifier = data.Modifier,
+            Boost = data.Boost
+        };
     }
 }

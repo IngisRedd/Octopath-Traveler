@@ -140,8 +140,7 @@ public class MainConsoleView
         PrintHorizontalRule();
         _view.WriteLine("Seleccione un arma");
         int label = 1;
-        Traveler currentTraveler = (Traveler)_gameState.CurrentUnit;
-        foreach (string weapon in currentTraveler.Weapons)
+        foreach (string weapon in _gameState.CurrentTraveler.Weapons)
         {
             _view.WriteLine($"{label}: {weapon}");
             label++;
@@ -192,7 +191,7 @@ public class MainConsoleView
     public void ShowAvailableSkills()
     {
         PrintHorizontalRule();
-        Traveler currentTraveler = (Traveler)_gameState.CurrentUnit;
+        Traveler currentTraveler = _gameState.CurrentTraveler;
         _view.WriteLine($"Seleccione una habilidad para {currentTraveler.Name}");
         int label = 1;
         foreach (Skill skill in currentTraveler.AvailableSkills)
