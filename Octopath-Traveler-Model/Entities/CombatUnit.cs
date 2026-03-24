@@ -1,6 +1,6 @@
 namespace Octopath_Traveler_Model;
 
-public class CombatUnit
+public abstract class CombatUnit
 {
     public string Name { get; set; }
     public int MaxHP { get; set; }
@@ -9,6 +9,7 @@ public class CombatUnit
         get => _hp;
         set => _hp = Math.Max(0, value);
     }
+    public bool IsAlive => _hp > 0;
     public int PhysAtk { get; set; }
     public int PhysDef { get; set; }
     public int ElemAtk { get; set; }

@@ -16,6 +16,16 @@ public class Game
 
     public void Play()
     {
+        GameSetup();
+        
+        while (_battleController.IsGameStillGoing)
+        {
+            _battleController.RunBattleRound();
+        }
+    }
+
+    private void GameSetup()
+    {
         try
         {
             TeamsInfo teamsInfo = new TeamsInfo(_view.GetTeamsFilePath());
@@ -27,11 +37,6 @@ public class Game
         {
             _view.ShowInvalidTeamMessage();
             _battleController.IsGameStillGoing = false;
-        }
-
-        while (_battleController.IsGameStillGoing)
-        {
-            _battleController.RunBattleRound();
         }
     }
 }

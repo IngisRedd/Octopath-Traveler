@@ -26,12 +26,12 @@ public class GameState
         NextTurnQueue.Sort((unit1, unit2) => unit2.Speed.CompareTo(unit1.Speed));
     }
     
-    public void UpdateTurnQueues()
+    public void EndOfTurnUpdateTurnQueues()
     {
         CurrentTurnQueue.RemoveAt(0);
-        CurrentTurnQueue = CurrentTurnQueue.Where(unit => unit.CurrentHP > 0).ToList();
         
-        NextTurnQueue = NextTurnQueue.Where(unit => unit.CurrentHP > 0).ToList();
+        CurrentTurnQueue = CurrentTurnQueue.Where(unit => unit.IsAlive).ToList();
+        NextTurnQueue = NextTurnQueue.Where(unit => unit.IsAlive).ToList();
     }
     
     public void UpdateCurrentUnit()

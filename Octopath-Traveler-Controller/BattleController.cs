@@ -27,6 +27,7 @@ public class BattleController
                 RunTurn();
             }
             _gameState.TravelerTeam.IncreaseBPs();
+            _gameState.UpdateStatusEffectDuration();
         }
         catch (GameOverException exception)
         {
@@ -47,7 +48,7 @@ public class BattleController
         {
             RunBeastTurn();
         }
-        _gameState.UpdateTurnQueues();
+        _gameState.EndOfTurnUpdateTurnQueues();
 
         CheckIfGameIsOver();
     }
@@ -89,53 +90,54 @@ public class BattleController
 
     private void RunAttackAction()
     {
-        _view.ShowAvailableWeapons();
-        string playerInput = _view.AskForPlayerInput();
-        
-        int inputToInt = Convert.ToInt32(playerInput);
-        Traveler currentTraveler = (Traveler)_gameState.CurrentUnit;
-        string selectedWeapon = currentTraveler.Weapons[inputToInt - 1];
-        
-        _view.ShowAvailableTargets();
-        playerInput = _view.AskForPlayerInput();
-        inputToInt = Convert.ToInt32(playerInput);
-        Beast attackTarget = _gameState.BeastTeam.AliveUnits[inputToInt - 1];
-        
+        string selectedWeapon = SelectWeapon();
+        Beast attackTarget = SelectTarget();
+
         int BPToUse = 0;
         if (AreThereAnyBPLeft())
         {
-            _view.AskForBPUsage();
-            playerInput = _view.AskForPlayerInput();
-            BPToUse = Convert.ToInt32(playerInput);
+            BPToUse = AskForBPToUse();
         }
 
         MakeBasicAttack(attackTarget, selectedWeapon);
     }
 
-    private void MakeBasicAttack(CombatUnit target, string weapon)
+    private string SelectWeapon()
     {
-        double basicAttackModifier = 1.3;
-        Damage damage = CreateDamage(basicAttackModifier, target, weapon);
-        AttackTarget(target, damage);
-        _view.ShowAttackResults(target, damage);
+        _view.ShowAvailableWeapons();
+        string playerInput = _view.AskForPlayerInput();
+        
+        int inputToInt = Convert.ToInt32(playerInput);
+        Traveler currentTraveler = (Traveler)_gameState.CurrentUnit;
+        return currentTraveler.Weapons[inputToInt - 1];
+    }
+    
+    private Beast SelectTarget()
+    {
+        _view.ShowAvailableTargets();
+        string playerInput = _view.AskForPlayerInput();
+        int inputToInt = Convert.ToInt32(playerInput);
+        return _gameState.BeastTeam.AliveUnits[inputToInt - 1];
     }
     
     private bool AreThereAnyBPLeft()
         => ((Traveler)_gameState.CurrentUnit).BP > 0;
 
-    private Damage CreateDamage(double modifier, CombatUnit target, string weapon)
+    private int AskForBPToUse()
     {
-        double damageValue = _gameState.CurrentUnit.PhysAtk * modifier - target.PhysDef;
-        if (target.StatusEffects[StatusType.Defend].IsActive)
-        {
-            damageValue = damageValue * 0.5;
-        }
-        int damageValueResult = (int)damageValue;
-        damageValueResult = Math.Max(0, damageValueResult);
-        
-        return new Damage(damageValueResult, weapon);
+        _view.AskForBPUsage();
+        string playerInput = _view.AskForPlayerInput();
+        return Convert.ToInt32(playerInput);
     }
-
+    
+    private void MakeBasicAttack(CombatUnit target, string weapon)
+    {
+        double basicAttackModifier = 1.3;
+        Damage damage = new Damage(basicAttackModifier, _gameState.CurrentUnit, target, weapon);
+        AttackTarget(target, damage);
+        _view.ShowAttackResults(target, damage);
+    }
+    
     private void AttackTarget(CombatUnit target, Damage damage)
     {
         target.CurrentHP -= damage.Value;
@@ -184,7 +186,6 @@ public class BattleController
             _view.ShowLostGameMessage();
             throw new GameOverException("All travelers in team defeated");
         }
-        
     }
 
     private bool AreAllBeastsDefeated()

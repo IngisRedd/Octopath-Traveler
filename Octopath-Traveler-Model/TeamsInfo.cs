@@ -44,7 +44,7 @@ public class TeamsInfo
             int skillsStart = traveler.IndexOf('(');
             int passiveSkillsStart = traveler.IndexOf('[');
 
-            int endOfNameIndex = GetEndOfNamePosition(skillsStart, passiveSkillsStart, traveler.Length);
+            int endOfNameIndex = GetEndOfNamePosition(traveler);
             string travelerName = traveler.Substring(0, endOfNameIndex);
             TravelerNames.Add(travelerName);
             
@@ -70,18 +70,19 @@ public class TeamsInfo
             {
                 TravelerPassiveSkills[travelerName] = new List<string>();
             }
-
-            
         }
         
     }
 
-    private int GetEndOfNamePosition(int skillsStart, int passiveSkillsStart, int stringLength)
+    private int GetEndOfNamePosition(string travelerDescription)
     {
+        int skillsStart = travelerDescription.IndexOf('(');
+        int passiveSkillsStart = travelerDescription.IndexOf('[');
+
         List<int> specialIndexes = new List<int> { skillsStart, passiveSkillsStart };
         IEnumerable<int> shiftedSpecialIndexes = specialIndexes.Select(x => x - 1);
         IEnumerable<int> existingSpecialIndexes = shiftedSpecialIndexes.Where(i => i > -2);
-        IEnumerable<int> specialIndexesEmptyCaseHandled = existingSpecialIndexes.DefaultIfEmpty(stringLength);
+        IEnumerable<int> specialIndexesEmptyCaseHandled = existingSpecialIndexes.DefaultIfEmpty(travelerDescription.Length);
         return specialIndexesEmptyCaseHandled.Min();
     }
     

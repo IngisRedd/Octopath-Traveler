@@ -48,15 +48,11 @@ public class TeamsBuilder
     private void BuildTravelerTeam()
     {
         TravelerTeam travelerTeam = new TravelerTeam();
-
-        string jsonFilePath = "data/characters.json";
-        string json = File.ReadAllText(jsonFilePath);
-        List<TravelerJsonData> deserializedJsonData = JsonSerializer.Deserialize<List<TravelerJsonData>>(json);
-        Dictionary<string, TravelerJsonData> allTravelersInfo = deserializedJsonData.ToDictionary(
-            traveler => traveler.Name,
-            traveler => traveler
-        );
         
+        Dictionary<string, TravelerJsonData> allTravelersInfo = LoadDictionaryFromJsonFile<TravelerJsonData>(
+            "data/characters.json",
+            t => t.Name
+        );
         
         foreach (string travelerName in _teamsInfo.TravelerNames)
         {
@@ -87,18 +83,23 @@ public class TeamsBuilder
         _gameState.TravelerTeam = travelerTeam;
     }
     
+    public Dictionary<string, T> LoadDictionaryFromJsonFile<T>(
+        string jsonFilePath,
+        Func<T, string> keySelector)
+    {
+        string json = File.ReadAllText(jsonFilePath);
+        List<T> items = JsonSerializer.Deserialize<List<T>>(json);
+        return items.ToDictionary(keySelector);
+    }
+    
     private void BuildBeastTeam()
     {
         BeastTeam beastTeam = new BeastTeam();
-
-        string jsonFilePath = "data/enemies.json";
-        string json = File.ReadAllText(jsonFilePath);
-        List<BeastJsonData> deserializedJsonData = JsonSerializer.Deserialize<List<BeastJsonData>>(json);
-        Dictionary<string, BeastJsonData> allBeastsInfo = deserializedJsonData.ToDictionary(
-            beast => beast.Name,
-            beast => beast
-        );
         
+        Dictionary<string, BeastJsonData> allBeastsInfo = LoadDictionaryFromJsonFile<BeastJsonData>(
+            "data/enemies.json",
+            t => t.Name
+        );
         
         foreach (string beastName in _teamsInfo.BeastNames)
         {
@@ -129,12 +130,9 @@ public class TeamsBuilder
     
     private void BuildTravelerSkills()
     {
-        string jsonFilePath = "data/skills.json";
-        string json = File.ReadAllText(jsonFilePath);
-        List<TravelerSkillJsonData> deserializedJsonData = JsonSerializer.Deserialize<List<TravelerSkillJsonData>>(json);
-        Dictionary<string, TravelerSkillJsonData> allSkillsInfo = deserializedJsonData.ToDictionary(
-            skill => skill.Name,
-            skill => skill
+        Dictionary<string, TravelerSkillJsonData> allSkillsInfo = LoadDictionaryFromJsonFile<TravelerSkillJsonData>(
+            "data/skills.json",
+            t => t.Name
         );
 
         foreach (Traveler traveler in _gameState.TravelerTeam.Units)

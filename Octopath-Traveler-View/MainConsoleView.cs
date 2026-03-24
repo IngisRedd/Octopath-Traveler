@@ -105,30 +105,29 @@ public class MainConsoleView
     {
         PrintHorizontalRule();
         _view.WriteLine("Turnos de la ronda");
-        int label = 1;
-        foreach (CombatUnit unit in _gameState.CurrentTurnQueue)
-        {
-            _view.WriteLine($"{label}.{unit.Name}");
-            label++;
-        }
+        ShowTurnQueue(_gameState.CurrentTurnQueue);
         
         PrintHorizontalRule();
         _view.WriteLine("Turnos de la siguiente ronda");
-        label = 1;
-        foreach (CombatUnit unit in _gameState.NextTurnQueue)
+        ShowTurnQueue(_gameState.NextTurnQueue);
+    }
+
+    private void ShowTurnQueue(List<CombatUnit> turnQueue)
+    {
+        int label = 1;
+        foreach (CombatUnit unit in turnQueue)
         {
             _view.WriteLine($"{label}.{unit.Name}");
             label++;
         }
-
     }
 
     public void ShowTravelerActions()
     {
         PrintHorizontalRule();
         _view.WriteLine($"Turno de {_gameState.CurrentUnit.Name}");
-        string turnOptionsText = "1: Ataque básico\n2: Usar habilidad\n3: Defender\n4: Huir";
-        _view.WriteLine(turnOptionsText);
+        string travelerActionOptions = "1: Ataque básico\n2: Usar habilidad\n3: Defender\n4: Huir";
+        _view.WriteLine(travelerActionOptions);
     }
 
     public string AskForPlayerInput()
