@@ -1,5 +1,6 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
+using Octopath_Traveler.Actions;
 using Octopath_Traveler.Exceptions;
 
 namespace Octopath_Traveler;
@@ -36,12 +37,12 @@ public class BattleController
     private void PerformStartOfRoundUpdates()
     {
         _gameState.RoundCounter++;
-        _gameState.StartOfRoundQueueUpdate();
+        GameStateUpdater.StartOfRoundQueueUpdate(_gameState);
     }
     
     private void ExecuteTurn()
     {
-        _gameState.UpdateCurrentUnit();
+        GameStateUpdater.UpdateCurrentUnit(_gameState);
         _view.ShowAllUnitInformation();
         _view.ShowTurnQueues();
         if (_gameState.CurrentUnit is Traveler)
@@ -52,9 +53,9 @@ public class BattleController
         {
             ExecuteBeastTurn();
         }
-        _gameState.EndOfTurnUpdateTurnQueues();
+        GameStateUpdater.EndOfTurnUpdateTurnQueues(_gameState);
 
-        CheckIfGameIsOver();
+        EndOfGameValidator.CheckIfGameIsOver(_gameState, _view);
     }
 
     private void ExecuteTravelerTurn()
@@ -94,75 +95,22 @@ public class BattleController
 
     private void ExecuteAttack()
     {
-        string selectedWeapon = SelectWeapon();
-        Beast attackTarget = SelectTarget();
-        int BPToUse = AskForBPToUseIfAvailable();
-
-        MakeBasicAttack(attackTarget, selectedWeapon);
-    }
-
-    private string SelectWeapon()
-    {
-        _view.ShowAvailableWeapons();
-        int selectedIndex = ReadPlayerInput() - 1;
-        return _gameState.CurrentTraveler.Weapons[selectedIndex];
-    }
-    
-    private int ReadPlayerInput()
-    {
-        string input = _view.AskForPlayerInput();
-        return Convert.ToInt32(input);
-    }
-    
-    private Beast SelectTarget()
-    {
-        _view.ShowAvailableTargets();
-        int selectedIndex = ReadPlayerInput() - 1;
-        return _gameState.BeastTeam.AliveUnits[selectedIndex];
-    }
-
-    private int AskForBPToUseIfAvailable()
-    {
-        if (!AreThereAnyBPLeft())
-            return 0;
-
-        _view.AskForBPUsage();
-        return ReadPlayerInput();
-    }
-    private bool AreThereAnyBPLeft()
-        => (_gameState.CurrentTraveler.BP > 0);
-    
-    private void MakeBasicAttack(CombatUnit target, string weapon)
-    {
-        double basicAttackModifier = 1.3;
-        Damage damage = new Damage(basicAttackModifier, _gameState.CurrentUnit, target, weapon);
-        AttackTarget(target, damage);
-        _view.ShowAttackResults(target, damage);
-    }
-    
-    private void AttackTarget(CombatUnit target, Damage damage)
-    {
-        target.CurrentHP -= damage.Value;
+        AttackAction attackAction = new AttackAction(_gameState, _view);
+        attackAction.Execute();
     }
     
     private void ExecuteUseSkill()
     {
         _view.ShowAvailableSkills();
 
-        int selectedIndex = ReadPlayerInput() - 1;
-        Skill selectedSkill = _gameState.CurrentTraveler.AvailableSkills[selectedIndex];
+        int selectedIndex = Utils.ReadPlayerInput(_view) - 1;
+        SkillInfo selectedSkillInfo = _gameState.CurrentTraveler.AvailableSkills[selectedIndex];
     }
     
     private void ExecuteDefend()
     {
-        _gameState.CurrentUnit.StatusEffects[StatusType.Defend].Duration = 1;
-        MoveCurrentUnitToFrontOfNextTurnQueue();        
-    }
-
-    private void MoveCurrentUnitToFrontOfNextTurnQueue()
-    {
-        _gameState.NextTurnQueue.Remove(_gameState.CurrentUnit);
-        _gameState.NextTurnQueue.Insert(0, _gameState.CurrentUnit);
+        DefendAction defendAction = new DefendAction(_gameState, _view);
+        defendAction.Execute();
     }
 
     private void ExecuteFlee()
@@ -173,36 +121,17 @@ public class BattleController
 
     private void ExecuteBeastTurn()
     {
-        Traveler attackTarget = _gameState.TravelerTeam.HealthiestUnit;
-        string damageType = "Physical";
-        MakeBasicAttack(attackTarget, damageType);
+        BeastTurnController beastTurnController = new BeastTurnController(_gameState, _view);
+        beastTurnController.Execute();
     }
     
     private void PerformEndOfRoundUpdates()
     {
         _gameState.TravelerTeam.IncreaseBPs();
-        _gameState.UpdateStatusEffectDuration();
+        GameStateUpdater.UpdateStatusEffectDuration(_gameState);
     }
 
 
-    private void CheckIfGameIsOver()
-    {
-        if (AreAllBeastsDefeated())
-        {
-            _view.ShowVictoryMessage();
-            throw new GameOverException("All enemies defeated");
-        }
-        if (AreAllTravelersDefeated())
-        {
-            _view.ShowLostGameMessage();
-            throw new GameOverException("All travelers in team defeated");
-        }
-    }
-
-    private bool AreAllBeastsDefeated()
-        => _gameState.BeastTeam.AliveUnits.Count <= 0;
-    private bool AreAllTravelersDefeated()
-        => _gameState.TravelerTeam.AliveUnits.Count <= 0;
 
 
 }

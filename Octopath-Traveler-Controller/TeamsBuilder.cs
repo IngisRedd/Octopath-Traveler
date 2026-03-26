@@ -126,16 +126,16 @@ public class TeamsBuilder
         {
             foreach (string skillName in _parsedTeamsInfo.TravelerSkills[traveler.Name])
             {
-                Skill newSkill = CreateSkill(allSkillsData[skillName]);
+                SkillInfo newSkillInfo = CreateSkill(allSkillsData[skillName]);
             
-                traveler.Skills.Add(newSkill);
+                traveler.Skills.Add(newSkillInfo);
             }            
         }
     }
     
-    private Skill CreateSkill(TravelerSkillJsonData data)
+    private SkillInfo CreateSkill(TravelerSkillJsonData data)
     {
-        return new Skill
+        return new SkillInfo
         {
             Name = data.Name,
             SP = data.SP,

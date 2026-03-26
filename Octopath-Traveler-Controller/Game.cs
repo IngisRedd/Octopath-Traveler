@@ -32,7 +32,7 @@ public class Game
             ParsedTeamsInfo parsedTeamsInfo = teamsInfoParser.ParseFileData(_view.GetTeamsFilePath());
             TeamsBuilder teamsBuilder = new TeamsBuilder(_state, parsedTeamsInfo);
             teamsBuilder.Build();
-            _state.ResetNextTurnQueue();
+            GameStateUpdater.ResetNextTurnQueue(_state);
         }
         catch (InvalidOperationException exception)
         {

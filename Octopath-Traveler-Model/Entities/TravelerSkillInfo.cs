@@ -1,6 +1,6 @@
 namespace Octopath_Traveler_Model;
 
-public class TravelerSkill : Skill
+public class TravelerSkillInfo : SkillInfo
 {
     public int SP { get; set; }
     public string Type { get; set; }

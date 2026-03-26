@@ -194,7 +194,7 @@ public class MainConsoleView
         Traveler currentTraveler = _gameState.CurrentTraveler;
         _view.WriteLine($"Seleccione una habilidad para {currentTraveler.Name}");
         int label = 1;
-        foreach (Skill skill in currentTraveler.AvailableSkills)
+        foreach (SkillInfo skill in currentTraveler.AvailableSkills)
         {
             _view.WriteLine($"{label}: {skill.Name}");
             label++;
