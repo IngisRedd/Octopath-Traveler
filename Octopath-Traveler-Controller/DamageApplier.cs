@@ -17,7 +17,9 @@ public class DamageApplier
     public void MakeBasicAttack(CombatUnit target, string weapon)
     {
         double basicAttackModifier = 1.3;
-        Damage damage = new Damage(basicAttackModifier, _gameState.CurrentUnit, target, weapon);
+        DamageCalculator damageCalculator =
+            new DamageCalculator(basicAttackModifier, _gameState.CurrentUnit, target, weapon);
+        Damage damage = damageCalculator.Calculate();
         AttackTarget(target, damage);
         _view.ShowAttackResults(target, damage);
     }
