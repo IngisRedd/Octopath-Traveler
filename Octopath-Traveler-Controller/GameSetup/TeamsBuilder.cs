@@ -139,7 +139,7 @@ public class TeamsBuilder
         {
             Name = data.Name,
             SP = data.SP,
-            Type = data.Type,
+            Type = Utils.ParseDamageType(data.Type),
             Description = data.Description,
             Target = data.Target,
             Modifier = data.Modifier,

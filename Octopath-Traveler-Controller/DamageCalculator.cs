@@ -8,10 +8,12 @@ public class DamageCalculator
     private double _modifier;
     private CombatUnit _attacker { get; }
     private CombatUnit _target { get; }
-    private string _type { get; set; }
+    private DamageType _type { get; set; }
     private double _value { get; set; }
 
-    public DamageCalculator(double modifier, CombatUnit attacker, CombatUnit target, string type)
+    private List<string> elementalTypes = new List<string> { };
+
+    public DamageCalculator(double modifier, CombatUnit attacker, CombatUnit target, DamageType type)
     {
         _modifier = modifier;
         _attacker = attacker;
@@ -21,7 +23,15 @@ public class DamageCalculator
 
     public Damage Calculate()
     {
-        _value = _attacker.PhysAtk * _modifier - _target.PhysDef;
+        
+        if (_type.IsPhysical())
+        {
+            _value = _attacker.PhysAtk * _modifier - _target.PhysDef;
+        }
+        else
+        {
+            _value = _attacker.ElemAtk * _modifier - _target.ElemDef;
+        }
         ApplyStatusEffectEffects();
         _value = Math.Max(0, _value);
         

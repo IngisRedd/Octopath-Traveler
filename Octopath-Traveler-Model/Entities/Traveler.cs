@@ -10,4 +10,6 @@ public class Traveler : CombatUnit
     public List<string> PassiveSkills { get; set; }
     
     public int BP { get; set; }
+    public bool AreThereAnyBPLeft => (BP > 0);
+
 }

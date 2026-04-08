@@ -17,7 +17,7 @@ public class BeastTurnController
     public void Execute()
     {
         Traveler attackTarget = _gameState.TravelerTeam.HealthiestUnit;
-        string damageType = "Physical";
+        DamageType damageType = DamageType.Phys;
         
         DamageApplier damageApplier = new DamageApplier(_gameState, _view);
         damageApplier.MakeBasicAttack(attackTarget, damageType);

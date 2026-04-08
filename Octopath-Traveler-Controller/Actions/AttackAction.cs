@@ -10,9 +10,9 @@ public class AttackAction : CombatAction
     
     public override void Execute()
     {
-        string selectedWeapon = SelectWeapon();
-        Beast attackTarget = SelectTarget();
-        int BPToUse = AskForBPToUseIfAvailable();
+        DamageType selectedWeapon = Utils.ParseDamageType(SelectWeapon());
+        Beast attackTarget = Utils.SelectTarget(_gameState, _view);
+        int BPToUse = Utils.AskForBPToUseIfAvailable(_gameState, _view);
 
         DamageApplier damageApplier = new DamageApplier(_gameState, _view);
         damageApplier.MakeBasicAttack(attackTarget, selectedWeapon);
@@ -24,22 +24,4 @@ public class AttackAction : CombatAction
         int selectedIndex = Utils.ReadPlayerInput(_view) - 1;
         return _gameState.CurrentTraveler.Weapons[selectedIndex];
     }
-    
-    private Beast SelectTarget()
-    {
-        _view.ShowAvailableTargets();
-        int selectedIndex = Utils.ReadPlayerInput(_view) - 1;
-        return _gameState.BeastTeam.AliveUnits[selectedIndex];
-    }
-
-    private int AskForBPToUseIfAvailable()
-    {
-        if (!AreThereAnyBPLeft())
-            return 0;
-
-        _view.AskForBPUsage();
-        return Utils.ReadPlayerInput(_view);
-    }
-    private bool AreThereAnyBPLeft()
-        => (_gameState.CurrentTraveler.BP > 0);
-}
+ }
