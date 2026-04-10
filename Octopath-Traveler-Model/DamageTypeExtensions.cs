@@ -27,7 +27,7 @@ public static class DamageTypeExtensions
             DamageType.Lightning or
             DamageType.Wind or
             DamageType.Light or
-            DamageType.Darkness => true,
+            DamageType.Dark => true,
             _ => false
         };
     }

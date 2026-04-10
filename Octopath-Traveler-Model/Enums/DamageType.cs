@@ -16,5 +16,5 @@ public enum DamageType
     Lightning,
     Wind,
     Light,
-    Darkness
+    Dark
 }

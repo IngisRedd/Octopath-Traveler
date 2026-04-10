@@ -15,13 +15,12 @@ public class DamagingSkill : ISkill
     
     public void Use(GameState gameState, MainConsoleView view)
     {
-        int BPToUse = Utils.AskForBPToUseIfAvailable(gameState, view);
-
         List<Beast> targets = gameState.BeastTeam.AliveUnits;
         if (IsSkillSingleTarget())
         {
             targets = new List<Beast> { Utils.SelectTarget(gameState, view) };
         }
+        int BPToUse = Utils.AskForBPToUseIfAvailable(gameState, view);
         
         view.ShowSkillUsage(_info.Name);
         gameState.CurrentTraveler.CurrentSP -= _info.SP;
