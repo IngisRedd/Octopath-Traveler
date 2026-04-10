@@ -5,7 +5,6 @@ using Octopath_Traveler.Skills;
 namespace Octopath_Traveler.Actions;
 
 public class UseSkillAction : CombatAction
-// public class UseSkillAction : TargetedCombatAction
 {
     public UseSkillAction(GameState gameState, MainConsoleView view)
         : base(gameState, view){}

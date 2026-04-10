@@ -101,10 +101,8 @@ public class BattleController
     
     private void ExecuteUseSkill()
     {
-        _view.ShowAvailableSkills();
-
-        int selectedIndex = Utils.ReadPlayerInput(_view) - 1;
-        SkillInfo selectedSkillInfo = _gameState.CurrentTraveler.AvailableSkills[selectedIndex];
+        UseSkillAction useSkillAction = new UseSkillAction(_gameState, _view);
+        useSkillAction.Execute();
     }
     
     private void ExecuteDefend()

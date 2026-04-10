@@ -9,7 +9,7 @@ public class SkillFactory
     {
         if (skillInfo.Type != DamageType.None)
         {
-            return new DamagingSkill(skillInfo.Type, skillInfo.Target, skillInfo.Modifier);
+            return new DamagingSkill(skillInfo);
         }
         else
         {

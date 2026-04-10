@@ -141,7 +141,7 @@ public class TeamsBuilder
             SP = data.SP,
             Type = Utils.ParseDamageType(data.Type),
             Description = data.Description,
-            Target = data.Target,
+            Target = Enum.Parse<SkillTarget>(data.Target),
             Modifier = data.Modifier,
             Boost = data.Boost
         };

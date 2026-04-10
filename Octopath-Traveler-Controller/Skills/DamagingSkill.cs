@@ -6,23 +6,28 @@ namespace Octopath_Traveler.Skills;
 
 public class DamagingSkill : ISkill
 {
-    private DamageType _type;
-    private string _target;
-    private double _modifier;
+    private SkillInfo _info;
 
-    public DamagingSkill(DamageType type, string target, double modifier)
+    public DamagingSkill(SkillInfo info)
     {
-        _type = type;
-        _target = target;
-        _modifier = modifier;
+        _info = info;
     }
     
     public void Use(GameState gameState, MainConsoleView view)
     {
-        Beast attackTarget = Utils.SelectTarget(gameState, view);
         int BPToUse = Utils.AskForBPToUseIfAvailable(gameState, view);
 
+        List<Beast> targets = gameState.BeastTeam.AliveUnits;
+        if (IsSkillSingleTarget())
+        {
+            targets = new List<Beast> { Utils.SelectTarget(gameState, view) };
+        }
+        
+        view.ShowSkillUsage(_info.Name);
         DamageApplier damageApplier = new DamageApplier(gameState, view);
-        damageApplier.UseDamagingSkill(attackTarget, _type, _modifier);
+        damageApplier.UseDamagingSkill(targets, _info.Type, _info.Modifier);
     }
+    
+    private bool IsSkillSingleTarget()
+        => _info.Target == SkillTarget.Single;
 }

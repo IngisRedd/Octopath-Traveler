@@ -20,20 +20,35 @@ public class DamageApplier
         DamageCalculator damageCalculator =
             new DamageCalculator(basicAttackModifier, _gameState.CurrentUnit, target, weapon);
         Damage damage = damageCalculator.Calculate();
-        AttackTarget(target, damage);
-        _view.ShowAttackResults(target, damage);
+        DamageTarget(target, damage);
+        ShowBasicAttackResults(target, damage);
     }
-    
-    public void UseDamagingSkill(CombatUnit target, DamageType type, double modifier)
+
+    private void ShowBasicAttackResults(CombatUnit target, Damage damage)
     {
-        DamageCalculator damageCalculator =
-            new DamageCalculator(modifier, _gameState.CurrentUnit, target, type);
-        Damage damage = damageCalculator.Calculate();
-        AttackTarget(target, damage);
-        _view.ShowAttackResults(target, damage);
+        _view.ShowBasicAttack();
+        _view.ShowDamageReceived(target, damage);
+        _view.ShowFinalHP(target);
     }
     
-    private void AttackTarget(CombatUnit target, Damage damage)
+    public void UseDamagingSkill(List<Beast> targets, DamageType type, double modifier)
+    {
+        foreach (CombatUnit target in targets)
+        {
+            DamageCalculator damageCalculator =
+                new DamageCalculator(modifier, _gameState.CurrentUnit, target, type);
+            Damage damage = damageCalculator.Calculate();
+            DamageTarget(target, damage);
+            _view.ShowDamageReceived(target, damage);
+        }
+
+        foreach (CombatUnit target in targets)
+        {
+            _view.ShowFinalHP(target);
+        }
+    }
+    
+    private void DamageTarget(CombatUnit target, Damage damage)
     {
         target.CurrentHP -= damage.Value;
     }

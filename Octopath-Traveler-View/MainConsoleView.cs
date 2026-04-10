@@ -75,6 +75,12 @@ public class MainConsoleView
     public void ShowAllUnitInformation()
     {
         PrintHorizontalRule();
+        ShowTravelerTeamInformation();
+        ShowBeastTeamInformation();
+    }
+
+    public void ShowTravelerTeamInformation()
+    {
         _view.WriteLine("Equipo del jugador");
         char labelLetter = 'A';
         foreach (Traveler traveler in _gameState.TravelerTeam.Units)
@@ -87,9 +93,12 @@ public class MainConsoleView
             );
             labelLetter++;
         }
-        
+    }
+
+    public void ShowBeastTeamInformation()
+    {
         _view.WriteLine("Equipo del enemigo");
-        labelLetter = 'A';
+        char labelLetter = 'A';
         foreach (Beast beast in _gameState.BeastTeam.Units)
         {
             _view.WriteLine(
@@ -172,19 +181,47 @@ public class MainConsoleView
         _view.WriteLine($"Seleccione cuantos BP utilizar");
     }
 
-    public void ShowAttackResults(CombatUnit attackTarget, Damage damage)
+    public void ShowBasicAttack()
     {
-        PrintHorizontalRule();
         if (_gameState.CurrentUnit is Traveler)
         {
+            PrintHorizontalRule();
             _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
-            _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type}");
         }
         else
         {
-            _view.WriteLine($"{_gameState.CurrentUnit.Name} usa Attack");
+            ShowSkillUsage("Attack");
+        }
+    }
+    
+    public void ShowDamageReceived(CombatUnit attackTarget, Damage damage)
+    {
+        if (damage.Type is DamageType.None) 
+        {
+            _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño");
+        }
+        else if (damage.Type is DamageType.Phys)
+        {
             _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño físico");
         }
+        else if (damage.Type is DamageType.Elem)
+        {
+            _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño elemental");
+        }
+        else
+        {
+            _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type}");
+        }
+    }
+   
+    public void ShowSkillUsage(string skillName)
+    {
+        PrintHorizontalRule();
+        _view.WriteLine($"{_gameState.CurrentUnit.Name} usa {skillName}");
+    }
+    
+    public void ShowFinalHP(CombatUnit attackTarget)
+    {
         _view.WriteLine($"{attackTarget.Name} termina con HP:{attackTarget.CurrentHP}");
     }
     
