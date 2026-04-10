@@ -24,6 +24,7 @@ public class DamagingSkill : ISkill
         }
         
         view.ShowSkillUsage(_info.Name);
+        gameState.CurrentTraveler.CurrentSP -= _info.SP;
         DamageApplier damageApplier = new DamageApplier(gameState, view);
         damageApplier.UseDamagingSkill(targets, _info.Type, _info.Modifier);
     }
