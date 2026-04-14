@@ -7,6 +7,7 @@ public class GameState
     public List<CombatUnit> AllUnits = new();
     public CombatUnit CurrentUnit;
     public Traveler CurrentTraveler => (Traveler)CurrentUnit;
+    public Beast CurrentBeast => (Beast)CurrentUnit;
     public int RoundCounter = 0;
     public List<CombatUnit> CurrentTurnQueue = new();
     public List<CombatUnit> NextTurnQueue = new();

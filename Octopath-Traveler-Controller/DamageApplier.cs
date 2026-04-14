@@ -31,7 +31,7 @@ public class DamageApplier
         _view.ShowFinalHP(target);
     }
     
-    public void UseDamagingSkill(List<Beast> targets, DamageType type, double modifier)
+    public void UseDamagingSkill(IEnumerable<CombatUnit> targets, DamageType type, double modifier)
     {
         foreach (CombatUnit target in targets)
         {

@@ -1,5 +1,6 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
+using Octopath_Traveler.Skills;
 
 namespace Octopath_Traveler;
 
@@ -16,11 +17,9 @@ public class BeastTurnController
 
     public void Execute()
     {
-        Traveler attackTarget = _gameState.TravelerTeam.HealthiestUnit;
-        DamageType damageType = DamageType.Phys;
-        
-        DamageApplier damageApplier = new DamageApplier(_gameState, _view);
-        damageApplier.MakeBasicAttack(attackTarget, damageType);
-
+        BeastSkillInfo beastSkill = _gameState.CurrentBeast.Skill;
+        BeastSkillFactory beastSkillFactory = new BeastSkillFactory();
+        ISkill skillToUse = beastSkillFactory.Create(beastSkill);
+        skillToUse.Use(_gameState, _view);
     }
 }

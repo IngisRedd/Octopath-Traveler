@@ -6,9 +6,9 @@ namespace Octopath_Traveler.Skills;
 
 public class DamagingSkill : ISkill
 {
-    private SkillInfo _info;
+    private TravelerSkillInfo _info;
 
-    public DamagingSkill(SkillInfo info)
+    public DamagingSkill(TravelerSkillInfo info)
     {
         _info = info;
     }
@@ -28,6 +28,6 @@ public class DamagingSkill : ISkill
         damageApplier.UseDamagingSkill(targets, _info.Type, _info.Modifier);
     }
     
-    private bool IsSkillSingleTarget()
+    private bool IsSkillSingleTarget()  // Repeated code
         => _info.Target == SkillTarget.Single;
 }

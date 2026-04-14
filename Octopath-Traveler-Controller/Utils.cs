@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
 
@@ -5,6 +6,15 @@ namespace Octopath_Traveler;
 
 public static class Utils
 {
+    public static Dictionary<string, T> LoadJsonDataByName<T>(
+        string jsonFilePath,
+        Func<T, string> keySelector)
+    {
+        string json = File.ReadAllText(jsonFilePath);
+        List<T> items = JsonSerializer.Deserialize<List<T>>(json);
+        return items.ToDictionary(keySelector);
+    }
+
     public static int ReadPlayerInput(MainConsoleView view)
     {
         string input = view.AskForPlayerInput();

@@ -3,19 +3,9 @@ using Octopath_Traveler.Skills;
 
 namespace Octopath_Traveler;
 
-public class SkillFactory
+public abstract class SkillFactory
 {
-    public ISkill Create(SkillInfo skillInfo)
-    {
-        if (skillInfo.Type != DamageType.None)
-        {
-            return new DamagingSkill(skillInfo);
-        }
-        else
-        {
-            throw new Exception("Error! Unknown skill type!.");
-        }
-        
-        
-    }
+    public abstract ISkill Create(SkillInfo skillInfo);
+    protected bool IsItADamagingSkill(SkillInfo skillInfo)
+        => skillInfo.Type != DamageType.None;
 }

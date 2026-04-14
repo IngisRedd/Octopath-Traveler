@@ -183,15 +183,8 @@ public class MainConsoleView
 
     public void ShowBasicAttack()
     {
-        if (_gameState.CurrentUnit is Traveler)
-        {
-            PrintHorizontalRule();
-            _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
-        }
-        else
-        {
-            ShowSkillUsage("Attack");
-        }
+        PrintHorizontalRule();
+        _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
     }
     
     public void ShowDamageReceived(CombatUnit attackTarget, Damage damage)

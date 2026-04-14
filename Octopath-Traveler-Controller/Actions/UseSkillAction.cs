@@ -11,13 +11,13 @@ public class UseSkillAction : CombatAction
     
     public override void Execute()
     {
-        SkillInfo selectedSkillInfo = SelectSkill();
-        SkillFactory skillFactory = new SkillFactory();
-        ISkill skillToUse = skillFactory.Create(selectedSkillInfo);
+        TravelerSkillInfo selectedSkillInfo = SelectSkill();
+        TravelerSkillFactory travelerSkillFactory = new TravelerSkillFactory();
+        ISkill skillToUse = travelerSkillFactory.Create(selectedSkillInfo);
         skillToUse.Use(_gameState, _view);
     }
 
-    private SkillInfo SelectSkill()
+    private TravelerSkillInfo SelectSkill()
     {
         _view.ShowAvailableSkills();
 
