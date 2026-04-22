@@ -1,13 +1,13 @@
 using Octopath_Traveler_Model;
-using Octopath_Traveler_View.ConsoleViews;
 
 namespace Octopath_Traveler_View;
 
-public class MainConsoleView : BaseConsoleView
+public class MainConsoleView
 {
-   private string _teamsFolder;
+    private View _view;
+    private GameState _gameState;
+    private string _teamsFolder;
     public MainConsoleView(View view, GameState gameState, string teamsFolder)
-        : base(view, gameState)
     {
         _view = view;
         _gameState = gameState;
@@ -66,6 +66,12 @@ public class MainConsoleView : BaseConsoleView
         PrintHorizontalRule();
         _view.WriteLine($"INICIA RONDA {_gameState.RoundCounter}");
     }
+
+    public void PrintHorizontalRule()
+    {
+        _view.WriteLine("----------------------------------------");
+    }
+    
     
     public void ShowTurnInfo()
     {
