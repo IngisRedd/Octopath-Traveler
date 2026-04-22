@@ -15,6 +15,7 @@ public class AttackAction : CombatAction
         int BPToUse = Utils.AskForBPToUseIfAvailable(_gameState, _view);
 
         DamageApplier damageApplier = new DamageApplier(_gameState, _view);
+        _view.ShowBasicAttack();
         damageApplier.MakeBasicAttack(attackTarget, selectedWeapon);
     }
 

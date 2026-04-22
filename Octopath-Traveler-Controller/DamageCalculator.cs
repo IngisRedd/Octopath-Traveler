@@ -46,4 +46,10 @@ public class DamageCalculator
             _value = _value * defendBonus;
         }
     }
+
+    public static Damage ApplyModifier(Damage damage, double modifier)
+    {   
+        double newDamageValue = damage.Value * modifier;
+        return new Damage(newDamageValue, damage.Type);
+    }
 }

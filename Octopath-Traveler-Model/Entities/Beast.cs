@@ -6,6 +6,9 @@ public class Beast : CombatUnit
     public BeastSkillInfo Skill { get; set; }
     public int MaxShields { get; set; }
     public int CurrentShields { get; set; }
-    public List<string> Weaknesses { get; set; }
+    public List<DamageType> Weaknesses { get; set; }
+    
+    public bool IsWeakToDamageType(DamageType damageType)
+        => Weaknesses.Contains(damageType);
 
 }

@@ -91,6 +91,9 @@ public class TeamsBuilder
     
     private Beast CreateBeast(BeastJsonData data)
     {
+        List<string> weaknessesInString = data.Weaknesses;
+        IEnumerable<DamageType> weaknesses = weaknessesInString.Select(Utils.ParseDamageType);
+
         return new Beast
         {
             Name = data.Name,
@@ -105,7 +108,7 @@ public class TeamsBuilder
             SkillName = data.Skill,
             MaxShields = data.Shields,
             CurrentShields = data.Shields,
-            Weaknesses = data.Weaknesses
+            Weaknesses = weaknesses.ToList()
         };
     }
     

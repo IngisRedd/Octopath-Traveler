@@ -18,7 +18,8 @@ public abstract class CombatUnit
 
     public Dictionary<StatusType, StatusEffect> StatusEffects { get; set; } = new()
     {
-        { StatusType.Defend, new StatusEffect() }
+        { StatusType.Defend, new StatusEffect() },
+        { StatusType.BreakingPoint, new StatusEffect() }
     };
 
 }

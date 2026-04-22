@@ -24,7 +24,7 @@ public static class Utils
     public static Beast SelectTarget(GameState gameState, MainConsoleView view)
     {
         view.ShowAvailableTargets();
-        int selectedIndex = Utils.ReadPlayerInput(view) - 1;
+        int selectedIndex = ReadPlayerInput(view) - 1;
         return gameState.BeastTeam.AliveUnits[selectedIndex];
     }
 

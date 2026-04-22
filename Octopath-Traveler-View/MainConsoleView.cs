@@ -1,13 +1,13 @@
 using Octopath_Traveler_Model;
+using Octopath_Traveler_View.ConsoleViews;
 
 namespace Octopath_Traveler_View;
 
-public class MainConsoleView
+public class MainConsoleView : BaseConsoleView
 {
-    private GameState _gameState;
-    private View _view;
-    private string _teamsFolder;
+   private string _teamsFolder;
     public MainConsoleView(View view, GameState gameState, string teamsFolder)
+        : base(view, gameState)
     {
         _view = view;
         _gameState = gameState;
@@ -60,16 +60,17 @@ public class MainConsoleView
     {
         _view.WriteLine("Archivo de equipos no válido");
     }
-
+    
     public void ShowRoundHeader()
     {
         PrintHorizontalRule();
         _view.WriteLine($"INICIA RONDA {_gameState.RoundCounter}");
     }
-
-    private void PrintHorizontalRule()
+    
+    public void ShowTurnInfo()
     {
-        _view.WriteLine("----------------------------------------");
+        ShowAllUnitInformation();
+        ShowTurnQueues();
     }
     
     public void ShowAllUnitInformation()
@@ -130,7 +131,7 @@ public class MainConsoleView
             label++;
         }
     }
-
+    
     public void ShowTravelerActions()
     {
         PrintHorizontalRule();
@@ -186,6 +187,32 @@ public class MainConsoleView
         PrintHorizontalRule();
         _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
     }
+
+    public void ShowDamageResults(DamageActionResultInfo damageInfo)
+    {
+        for (int i = 0; i < damageInfo.Targets.Count; i++)
+        {
+            if (damageInfo.Targets[i] is Beast)
+            {
+                Beast beast = (Beast)damageInfo.Targets[i];
+                if (beast.IsWeakToDamageType(damageInfo.Damages[i].Type))
+                {
+                    ShowSuperEffectiveDamageReceived(beast, damageInfo.Damages[i]);
+                    if (damageInfo.IsBreakingPointAchieved[i])
+                    {
+                        ShowBreakingPointAchieved(beast);
+                    }
+                    return;
+                }
+            }
+            ShowDamageReceived(damageInfo.Targets[i], damageInfo.Damages[i]);
+        }
+
+        foreach (CombatUnit target in damageInfo.Targets)
+        {
+            ShowFinalHP(target);
+        }
+    }
     
     public void ShowDamageReceived(CombatUnit attackTarget, Damage damage)
     {
@@ -206,7 +233,17 @@ public class MainConsoleView
             _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type}");
         }
     }
-   
+    
+    public void ShowSuperEffectiveDamageReceived(CombatUnit attackTarget, Damage damage)
+    {
+        _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type} con debilidad");
+    }
+
+    public void ShowBreakingPointAchieved(Beast attackTarget)
+    {
+        _view.WriteLine($"{attackTarget.Name} entra en Breaking Point");
+    }
+    
     public void ShowSkillUsage(string skillName)
     {
         PrintHorizontalRule();

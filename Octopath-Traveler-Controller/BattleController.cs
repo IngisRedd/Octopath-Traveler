@@ -1,5 +1,6 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
+using Octopath_Traveler_View.Interfaces;
 using Octopath_Traveler.Actions;
 using Octopath_Traveler.Exceptions;
 
@@ -43,8 +44,7 @@ public class BattleController
     private void ExecuteTurn()
     {
         GameStateUpdater.UpdateCurrentUnit(_gameState);
-        _view.ShowAllUnitInformation();
-        _view.ShowTurnQueues();
+        _view.ShowTurnInfo();
         if (_gameState.CurrentUnit is Traveler)
         {
             ExecuteTravelerTurn();
@@ -66,7 +66,7 @@ public class BattleController
             try
             {
                 _view.ShowTravelerActions();
-                string playerInput = _view.AskForPlayerInput();
+                int playerInput = Utils.ReadPlayerInput(_view);
                 ExecuteTravelerAction(playerInput);
                 isValidActionSelected = true;
             }
@@ -74,20 +74,20 @@ public class BattleController
         }
     }
 
-    private void ExecuteTravelerAction(string playerInput)
+    private void ExecuteTravelerAction(int playerInput)
     {
         switch (playerInput)
         {
-            case "1":
+            case 1:
                 ExecuteAttack();
                 break;
-            case "2":
+            case 2:
                 ExecuteUseSkill();
                 break;
-            case "3":
+            case 3:
                 ExecuteDefend();
                 break;
-            case "4":
+            case 4:
                 ExecuteFlee();
                 break;
         }
@@ -113,8 +113,8 @@ public class BattleController
 
     private void ExecuteFlee()
     {
-         _view.ShowFleeMessage();
-         throw new GameOverException("Player team surrendered");
+        FleeAction fleeAction = new FleeAction(_gameState, _view);
+        fleeAction.Execute();
     }
 
     private void ExecuteBeastTurn()

@@ -10,6 +10,5 @@ public class Damage
     {
         Type = type;
         _value = value;
-        
     }
 }
