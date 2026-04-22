@@ -40,10 +40,15 @@ public class DamageCalculator
     
     private void ApplyStatusEffectEffects()
     {
-        double defendBonus = 0.5;
+        double defendModifier = 0.5;
+        double breakingPointModifier = 1.5;
         if (_target.StatusEffects[StatusType.Defend].IsActive)
         {
-            _value = _value * defendBonus;
+            _value = _value * defendModifier;
+        }
+        if (_target.StatusEffects[StatusType.BreakingPoint].IsActive)
+        {
+            _value = _value * breakingPointModifier;
         }
     }
 

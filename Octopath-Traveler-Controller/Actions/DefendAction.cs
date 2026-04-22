@@ -11,12 +11,7 @@ public class DefendAction : CombatAction
     public override void Execute()
     {
         _gameState.CurrentUnit.StatusEffects[StatusType.Defend].Duration = 1;
-        MoveCurrentUnitToFrontOfNextTurnQueue();        
+        _gameState.NextTurnQueue.ApplyPriority(_gameState.CurrentUnit, TurnPriorityLevel.UsedDefend);
     }
 
-    private void MoveCurrentUnitToFrontOfNextTurnQueue()
-    {
-        _gameState.NextTurnQueue.Remove(_gameState.CurrentUnit);
-        _gameState.NextTurnQueue.Insert(0, _gameState.CurrentUnit);
-    }
 }

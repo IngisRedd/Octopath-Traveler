@@ -31,7 +31,7 @@ public class BattleController
         {
             IsGameStillGoing = false;
         }
-        PerformEndOfRoundUpdates();
+        GameStateUpdater.PerformEndOfRoundUpdates(_gameState);
     }
 
     private void PerformStartOfRoundUpdates()
@@ -121,14 +121,4 @@ public class BattleController
         BeastTurnController beastTurnController = new BeastTurnController(_gameState, _view);
         beastTurnController.Execute();
     }
-    
-    private void PerformEndOfRoundUpdates()
-    {
-        _gameState.TravelerTeam.IncreaseBPs();
-        GameStateUpdater.UpdateStatusEffectDuration(_gameState);
-    }
-
-
-
-
 }

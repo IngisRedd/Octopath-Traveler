@@ -68,7 +68,9 @@ public class DamageApplier
         if (IsBreakingPointAchieved(beast))
         {
             _resultInfo.IsBreakingPointAchieved.Add(true);
-            beast.StatusEffects[StatusType.BreakingPoint].Duration = 1;
+            beast.StatusEffects[StatusType.BreakingPoint].Duration = 2;
+            _gameState.CurrentTurnQueue.Remove(beast);
+
         }
         else
         {
@@ -77,5 +79,5 @@ public class DamageApplier
     }
 
     private bool IsBreakingPointAchieved(Beast beast)
-        => beast.CurrentShields == 0;
+        => beast.CurrentShields == 0 && !beast.StatusEffects[StatusType.BreakingPoint].IsActive;
 }

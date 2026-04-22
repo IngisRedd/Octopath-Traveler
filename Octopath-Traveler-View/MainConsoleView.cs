@@ -128,7 +128,7 @@ public class MainConsoleView
         ShowTurnQueue(_gameState.NextTurnQueue);
     }
 
-    private void ShowTurnQueue(List<CombatUnit> turnQueue)
+    private void ShowTurnQueue(TurnQueue turnQueue)
     {
         int label = 1;
         foreach (CombatUnit unit in turnQueue)
@@ -208,7 +208,7 @@ public class MainConsoleView
                     {
                         ShowBreakingPointAchieved(beast);
                     }
-                    return;
+                    continue;
                 }
             }
             ShowDamageReceived(damageInfo.Targets[i], damageInfo.Damages[i]);
