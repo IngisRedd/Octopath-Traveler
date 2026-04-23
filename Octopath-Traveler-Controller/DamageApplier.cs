@@ -44,33 +44,41 @@ public class DamageApplier
     
     private void DamageTarget(CombatUnit target, Damage damage)
     {
+        CheckForWeakness(target, damage);
+        CheckForDefend(target);
+        
+        target.CurrentHP -= damage.Value;
+        _resultInfo.Damages.Add(damage);
+    }
+
+    private void CheckForWeakness(CombatUnit target, Damage damage)
+    {
         if (target is Beast)
         {
             Beast beast = (Beast)target;
             if (beast.IsWeakToDamageType(damage.Type))
             {
-                ApplySupperEffectiveDamage(beast, damage);
-                return;
+                if (damage.Value > 0)
+                {
+                    beast.CurrentShields -= 1;
+                }
+                CheckForAndApplyBreakingPoint(beast);
             }
         }
-        target.CurrentHP -= damage.Value;
-        _resultInfo.Damages.Add(damage);
-        _resultInfo.IsBreakingPointAchieved.Add(false);
+        else
+        {
+            _resultInfo.IsBreakingPointAchieved.Add(false);
+        }
     }
-
-    private void ApplySupperEffectiveDamage(Beast beast, Damage damage)
+    
+    private void CheckForAndApplyBreakingPoint(Beast beast)
     {
-        double weaknessModifier = 1.5;
-        Damage newDamage = DamageCalculator.ApplyModifier(damage, weaknessModifier);
-        _resultInfo.Damages.Add(newDamage);
-        beast.CurrentHP -= newDamage.Value;
-        beast.CurrentShields -= 1;
         if (IsBreakingPointAchieved(beast))
         {
             _resultInfo.IsBreakingPointAchieved.Add(true);
             beast.StatusEffects[StatusType.BreakingPoint].Duration = 2;
             _gameState.CurrentTurnQueue.Remove(beast);
-
+            _gameState.NextTurnQueue.Remove(beast);
         }
         else
         {
@@ -78,6 +86,18 @@ public class DamageApplier
         }
     }
 
+    private void CheckForDefend(CombatUnit target)
+    {
+        if (target.StatusEffects[StatusType.Defend].IsActive)
+        {
+            _resultInfo.IsTravelerDefending.Add(true);
+        }
+        else
+        {
+            _resultInfo.IsTravelerDefending.Add(false);
+        }
+    }
+    
     private bool IsBreakingPointAchieved(Beast beast)
         => beast.CurrentShields == 0 && !beast.StatusEffects[StatusType.BreakingPoint].IsActive;
 }

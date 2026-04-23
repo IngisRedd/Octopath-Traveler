@@ -23,7 +23,6 @@ public class DamageCalculator
 
     public Damage Calculate()
     {
-        
         if (_type.IsPhysical())
         {
             _value = _attacker.PhysAtk * _modifier - _target.PhysDef;
@@ -32,29 +31,38 @@ public class DamageCalculator
         {
             _value = _attacker.ElemAtk * _modifier - _target.ElemDef;
         }
+        ApplyWeaknessAndBreakingPoint();
         ApplyStatusEffectEffects();
         _value = Math.Max(0, _value);
         
         return new Damage(_value, _type);
     }
+
+    private void ApplyWeaknessAndBreakingPoint()
+    {
+        double weaknessModifier = 0.5;
+        double breakingPointModifier = 0.5;
+        
+        int TargetIsWeak = 0;
+        if (_target is Beast)
+        {
+            Beast beast = (Beast)_target;
+            TargetIsWeak = Convert.ToInt32(beast.IsWeakToDamageType(_type));
+        }
+        
+        bool targetIsInBP = _target.StatusEffects[StatusType.BreakingPoint].IsActive;
+        int targetIsInBPToInt = Convert.ToInt32(targetIsInBP);
+        
+        double totalModifier = 1 + TargetIsWeak * weaknessModifier + targetIsInBPToInt * breakingPointModifier;
+        _value = _value * totalModifier;
+    }
     
     private void ApplyStatusEffectEffects()
     {
         double defendModifier = 0.5;
-        double breakingPointModifier = 1.5;
         if (_target.StatusEffects[StatusType.Defend].IsActive)
         {
             _value = _value * defendModifier;
         }
-        if (_target.StatusEffects[StatusType.BreakingPoint].IsActive)
-        {
-            _value = _value * breakingPointModifier;
-        }
-    }
-
-    public static Damage ApplyModifier(Damage damage, double modifier)
-    {   
-        double newDamageValue = damage.Value * modifier;
-        return new Damage(newDamageValue, damage.Type);
     }
 }
