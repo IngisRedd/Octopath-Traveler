@@ -15,10 +15,11 @@ public abstract class CombatUnit
     public int ElemAtk { get; set; }
     public int ElemDef { get; set; }
     public int Speed { get; set; }
-
     public Dictionary<StatusType, StatusEffect> StatusEffects { get; set; } = new()
     {
-        { StatusType.Defend, new StatusEffect() }
+        { StatusType.Defend, new StatusEffect() },
+        { StatusType.BreakingPoint, new StatusEffect() }
     };
-
+    public bool IsGoingToActNextTurn => StatusEffects[StatusType.BreakingPoint].Duration <= 1;
+    public bool IsRecoveringFromBreakingPointNextRound => StatusEffects[StatusType.BreakingPoint].Duration == 1;
 }

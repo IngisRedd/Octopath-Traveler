@@ -4,22 +4,59 @@ namespace Octopath_Traveler_View;
 
 public class MainConsoleView
 {
-    private GameState _gameState;
     private View _view;
+    private GameState _gameState;
     private string _teamsFolder;
-    private TeamFileSelector _teamFileSelector;
+
     public MainConsoleView(View view, GameState gameState, string teamsFolder)
     {
         _view = view;
         _gameState = gameState;
         _teamsFolder = teamsFolder;
     }
-    
+
     public string GetTeamsFilePath()
     {
-        var selector = new TeamFileSelector(_view, _teamsFolder);
-        return selector.SelectFile();
+        ShowPossibleTeamsFiles();
+        string teamChosenInput = _view.ReadLine();
+        return GetTeamsFilePath(teamChosenInput);
     }
+
+    private void ShowPossibleTeamsFiles()
+    {
+        _view.WriteLine("Elige un archivo para cargar los equipos");
+        string[] files = Directory.GetFiles(_teamsFolder);
+
+        int index = 0;
+        foreach (string file in files)
+        {
+            string fileName = Path.GetFileName(file);
+            _view.WriteLine($"{index}: {fileName}");
+            index++;
+        }
+    }
+
+    private string GetTeamsFilePath(string teamChosenInput)
+    {
+        string[] files = Directory.GetFiles(_teamsFolder);
+        string chosenFilePath = "";
+
+        int index = 0;
+        foreach (string file in files)
+        {
+            if (FileIsTheChosenOne(index, teamChosenInput))
+            {
+                chosenFilePath = file;
+            }
+
+            index++;
+        }
+
+        return chosenFilePath;
+    }
+
+    private bool FileIsTheChosenOne(int fileIndex, string teamChosenInput) =>
+        fileIndex.ToString() == teamChosenInput;
 
     public void ShowInvalidTeamMessage()
     {
@@ -32,14 +69,27 @@ public class MainConsoleView
         _view.WriteLine($"INICIA RONDA {_gameState.RoundCounter}");
     }
 
-    private void PrintHorizontalRule()
+    public void PrintHorizontalRule()
     {
         _view.WriteLine("----------------------------------------");
     }
-    
+
+
+    public void ShowTurnInfo()
+    {
+        ShowAllUnitInformation();
+        ShowTurnQueues();
+    }
+
     public void ShowAllUnitInformation()
     {
         PrintHorizontalRule();
+        ShowTravelerTeamInformation();
+        ShowBeastTeamInformation();
+    }
+
+    public void ShowTravelerTeamInformation()
+    {
         _view.WriteLine("Equipo del jugador");
         char labelLetter = 'A';
         foreach (Traveler traveler in _gameState.TravelerTeam.Units)
@@ -52,9 +102,12 @@ public class MainConsoleView
             );
             labelLetter++;
         }
-        
+    }
+
+    public void ShowBeastTeamInformation()
+    {
         _view.WriteLine("Equipo del enemigo");
-        labelLetter = 'A';
+        char labelLetter = 'A';
         foreach (Beast beast in _gameState.BeastTeam.Units)
         {
             _view.WriteLine(
@@ -65,19 +118,19 @@ public class MainConsoleView
             labelLetter++;
         }
     }
-    
+
     public void ShowTurnQueues()
     {
         PrintHorizontalRule();
         _view.WriteLine("Turnos de la ronda");
         ShowTurnQueue(_gameState.CurrentTurnQueue);
-        
+
         PrintHorizontalRule();
         _view.WriteLine("Turnos de la siguiente ronda");
         ShowTurnQueue(_gameState.NextTurnQueue);
     }
 
-    private void ShowTurnQueue(List<CombatUnit> turnQueue)
+    private void ShowTurnQueue(TurnQueue turnQueue)
     {
         int label = 1;
         foreach (CombatUnit unit in turnQueue)
@@ -110,9 +163,10 @@ public class MainConsoleView
             _view.WriteLine($"{label}: {weapon}");
             label++;
         }
+
         _view.WriteLine($"{label}: Cancelar");
     }
-    
+
     public void ShowAvailableTargets()
     {
         PrintHorizontalRule();
@@ -128,6 +182,7 @@ public class MainConsoleView
             );
             label++;
         }
+
         _view.WriteLine($"{label}: Cancelar");
     }
 
@@ -137,20 +192,89 @@ public class MainConsoleView
         _view.WriteLine($"Seleccione cuantos BP utilizar");
     }
 
-    public void ShowAttackResults(CombatUnit attackTarget, Damage damage)
+    public void ShowBasicAttack()
     {
         PrintHorizontalRule();
-        if (_gameState.CurrentUnit is Traveler)
+        _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
+    }
+
+    public void ShowDamageResults(DamageActionResultInfo damageInfo)
+    {
+        for (int i = 0; i < damageInfo.Targets.Count; i++)
         {
-            _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
-            _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type}");
+            if (damageInfo.IsTravelerDefending[i])
+            {
+                ShowDefense(damageInfo.Targets[i]);
+            }
+            
+            if (damageInfo.Targets[i] is Beast)
+            {
+                Beast beast = (Beast)damageInfo.Targets[i];
+                if (beast.IsWeakToDamageType(damageInfo.Damages[i].Type))
+                {
+                    ShowSuperEffectiveDamageReceived(beast, damageInfo.Damages[i]);
+                    if (damageInfo.IsBreakingPointAchieved[i])
+                    {
+                        ShowBreakingPointAchieved(beast);
+                    }
+
+                    continue;
+                }
+            }
+
+            ShowDamageReceived(damageInfo.Targets[i], damageInfo.Damages[i]);
+        }
+
+        foreach (CombatUnit target in damageInfo.Targets)
+        {
+            ShowFinalHP(target);
+        }
+    }
+
+    private void ShowDefense(CombatUnit target)
+    {
+        _view.WriteLine($"{target.Name} se defiende");
+    }
+    
+    private void ShowDamageReceived(CombatUnit target, Damage damage)
+    {
+        if (damage.Type is DamageType.None) 
+        {
+            _view.WriteLine($"{target.Name} recibe {damage.Value} de daño");
+        }
+        else if (damage.Type is DamageType.Phys)
+        {
+            _view.WriteLine($"{target.Name} recibe {damage.Value} de daño físico");
+        }
+        else if (damage.Type is DamageType.Elem)
+        {
+            _view.WriteLine($"{target.Name} recibe {damage.Value} de daño elemental");
         }
         else
         {
-            _view.WriteLine($"{_gameState.CurrentUnit.Name} usa Attack");
-            _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño físico");
+            _view.WriteLine($"{target.Name} recibe {damage.Value} de daño de tipo {damage.Type}");
         }
+    }
+    
+    private void ShowSuperEffectiveDamageReceived(CombatUnit attackTarget, Damage damage)
+    {
+        _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type} con debilidad");
+    }
+
+    private void ShowBreakingPointAchieved(Beast attackTarget)
+    {
+        _view.WriteLine($"{attackTarget.Name} entra en Breaking Point");
+    }
+    
+    private void ShowFinalHP(CombatUnit attackTarget)
+    {
         _view.WriteLine($"{attackTarget.Name} termina con HP:{attackTarget.CurrentHP}");
+    }
+    
+    public void ShowSkillUsage(string skillName)
+    {
+        PrintHorizontalRule();
+        _view.WriteLine($"{_gameState.CurrentUnit.Name} usa {skillName}");
     }
     
     public void ShowAvailableSkills()
@@ -159,7 +283,7 @@ public class MainConsoleView
         Traveler currentTraveler = _gameState.CurrentTraveler;
         _view.WriteLine($"Seleccione una habilidad para {currentTraveler.Name}");
         int label = 1;
-        foreach (Skill skill in currentTraveler.AvailableSkills)
+        foreach (SkillInfo skill in currentTraveler.AvailableSkills)
         {
             _view.WriteLine($"{label}: {skill.Name}");
             label++;

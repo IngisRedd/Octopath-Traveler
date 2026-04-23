@@ -1,6 +1,7 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
 using System.Text.Json;
+using Octopath_Traveler.GameSetup;
 
 namespace Octopath_Traveler;
 
@@ -20,14 +21,16 @@ public class TeamsBuilder
         TeamsValidator.Validate(_parsedTeamsInfo);
         BuildTravelerTeam();
         BuildBeastTeam();
-        BuildTravelerSkills();
+        SkillsBuilder skillsBuilder = new SkillsBuilder(_gameState, _parsedTeamsInfo);
+        skillsBuilder.BuildTravelerSkills();
+        skillsBuilder.BuildBeastSkills();
     }
 
     private void BuildTravelerTeam()
     {
         TravelerTeam travelerTeam = new TravelerTeam();
         
-        Dictionary<string, TravelerJsonData> allTravelersData = LoadJsonDataByName<TravelerJsonData>(
+        Dictionary<string, TravelerJsonData> allTravelersData = Utils.LoadJsonDataByName<TravelerJsonData>(
             "data/characters.json",
             t => t.Name
         );
@@ -42,15 +45,6 @@ public class TeamsBuilder
         }
         
         _gameState.TravelerTeam = travelerTeam;
-    }
-    
-    public Dictionary<string, T> LoadJsonDataByName<T>(
-        string jsonFilePath,
-        Func<T, string> keySelector)
-    {
-        string json = File.ReadAllText(jsonFilePath);
-        List<T> items = JsonSerializer.Deserialize<List<T>>(json);
-        return items.ToDictionary(keySelector);
     }
     
     private Traveler CreateTraveler(TravelerJsonData data)
@@ -79,7 +73,7 @@ public class TeamsBuilder
     {
         BeastTeam beastTeam = new BeastTeam();
         
-        Dictionary<string, BeastJsonData> allBeastsData = LoadJsonDataByName<BeastJsonData>(
+        Dictionary<string, BeastJsonData> allBeastsData = Utils.LoadJsonDataByName<BeastJsonData>(
             "data/enemies.json",
             t => t.Name
         );
@@ -97,6 +91,9 @@ public class TeamsBuilder
     
     private Beast CreateBeast(BeastJsonData data)
     {
+        List<string> weaknessesInString = data.Weaknesses;
+        IEnumerable<DamageType> weaknesses = weaknessesInString.Select(Utils.ParseDamageType);
+
         return new Beast
         {
             Name = data.Name,
@@ -108,42 +105,12 @@ public class TeamsBuilder
             ElemDef = data.Stats["ElemDef"],
             Speed = data.Stats["Speed"],
            
-            Skill = data.Skill,
+            SkillName = data.Skill,
             MaxShields = data.Shields,
             CurrentShields = data.Shields,
-            Weaknesses = data.Weaknesses
+            Weaknesses = weaknesses.ToList()
         };
     }
     
-    private void BuildTravelerSkills()
-    {
-        Dictionary<string, TravelerSkillJsonData> allSkillsData = LoadJsonDataByName<TravelerSkillJsonData>(
-            "data/skills.json",
-            t => t.Name
-        );
 
-        foreach (Traveler traveler in _gameState.TravelerTeam.Units)
-        {
-            foreach (string skillName in _parsedTeamsInfo.TravelerSkills[traveler.Name])
-            {
-                Skill newSkill = CreateSkill(allSkillsData[skillName]);
-            
-                traveler.Skills.Add(newSkill);
-            }            
-        }
-    }
-    
-    private Skill CreateSkill(TravelerSkillJsonData data)
-    {
-        return new Skill
-        {
-            Name = data.Name,
-            SP = data.SP,
-            Type = data.Type,
-            Description = data.Description,
-            Target = data.Target,
-            Modifier = data.Modifier,
-            Boost = data.Boost
-        };
-    }
 }

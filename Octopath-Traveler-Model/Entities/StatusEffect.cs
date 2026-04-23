@@ -4,4 +4,5 @@ public class StatusEffect
 {
     public int Duration = 0;
     public bool IsActive => Duration > 0;
+    public int IsActiveInt => Convert.ToInt32(IsActive);
 }

@@ -1,5 +1,6 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
+using Octopath_Traveler.Actions;
 using Octopath_Traveler.Exceptions;
 
 namespace Octopath_Traveler;
@@ -30,20 +31,19 @@ public class BattleController
         {
             IsGameStillGoing = false;
         }
-        PerformEndOfRoundUpdates();
+        GameStateUpdater.PerformEndOfRoundUpdates(_gameState);
     }
 
     private void PerformStartOfRoundUpdates()
     {
         _gameState.RoundCounter++;
-        _gameState.StartOfRoundQueueUpdate();
+        GameStateUpdater.StartOfRoundQueueUpdate(_gameState);
     }
     
     private void ExecuteTurn()
     {
-        _gameState.UpdateCurrentUnit();
-        _view.ShowAllUnitInformation();
-        _view.ShowTurnQueues();
+        GameStateUpdater.UpdateCurrentUnit(_gameState);
+        _view.ShowTurnInfo();
         if (_gameState.CurrentUnit is Traveler)
         {
             ExecuteTravelerTurn();
@@ -52,9 +52,9 @@ public class BattleController
         {
             ExecuteBeastTurn();
         }
-        _gameState.EndOfTurnUpdateTurnQueues();
+        GameStateUpdater.EndOfTurnUpdateTurnQueues(_gameState);
 
-        CheckIfGameIsOver();
+        EndOfGameValidator.CheckIfGameIsOver(_gameState, _view);
     }
 
     private void ExecuteTravelerTurn()
@@ -65,7 +65,7 @@ public class BattleController
             try
             {
                 _view.ShowTravelerActions();
-                string playerInput = _view.AskForPlayerInput();
+                int playerInput = Utils.ReadPlayerInput(_view);
                 ExecuteTravelerAction(playerInput);
                 isValidActionSelected = true;
             }
@@ -73,20 +73,20 @@ public class BattleController
         }
     }
 
-    private void ExecuteTravelerAction(string playerInput)
+    private void ExecuteTravelerAction(int playerInput)
     {
         switch (playerInput)
         {
-            case "1":
+            case 1:
                 ExecuteAttack();
                 break;
-            case "2":
+            case 2:
                 ExecuteUseSkill();
                 break;
-            case "3":
+            case 3:
                 ExecuteDefend();
                 break;
-            case "4":
+            case 4:
                 ExecuteFlee();
                 break;
         }
@@ -94,114 +94,31 @@ public class BattleController
 
     private void ExecuteAttack()
     {
-        string selectedWeapon = SelectWeapon();
-        Beast attackTarget = SelectTarget();
-        int BPToUse = AskForBPToUseIfAvailable();
-
-        MakeBasicAttack(attackTarget, selectedWeapon);
-    }
-
-    private string SelectWeapon()
-    {
-        _view.ShowAvailableWeapons();
-        int selectedIndex = ReadPlayerInput() - 1;
-        return _gameState.CurrentTraveler.Weapons[selectedIndex];
-    }
-    
-    private int ReadPlayerInput()
-    {
-        string input = _view.AskForPlayerInput();
-        return Convert.ToInt32(input);
-    }
-    
-    private Beast SelectTarget()
-    {
-        _view.ShowAvailableTargets();
-        int selectedIndex = ReadPlayerInput() - 1;
-        return _gameState.BeastTeam.AliveUnits[selectedIndex];
-    }
-
-    private int AskForBPToUseIfAvailable()
-    {
-        if (!AreThereAnyBPLeft())
-            return 0;
-
-        _view.AskForBPUsage();
-        return ReadPlayerInput();
-    }
-    private bool AreThereAnyBPLeft()
-        => (_gameState.CurrentTraveler.BP > 0);
-    
-    private void MakeBasicAttack(CombatUnit target, string weapon)
-    {
-        double basicAttackModifier = 1.3;
-        Damage damage = new Damage(basicAttackModifier, _gameState.CurrentUnit, target, weapon);
-        AttackTarget(target, damage);
-        _view.ShowAttackResults(target, damage);
-    }
-    
-    private void AttackTarget(CombatUnit target, Damage damage)
-    {
-        target.CurrentHP -= damage.Value;
+        AttackAction attackAction = new AttackAction(_gameState, _view);
+        attackAction.Execute();
     }
     
     private void ExecuteUseSkill()
     {
-        _view.ShowAvailableSkills();
-
-        int selectedIndex = ReadPlayerInput() - 1;
-        Skill selectedSkill = _gameState.CurrentTraveler.AvailableSkills[selectedIndex];
+        UseSkillAction useSkillAction = new UseSkillAction(_gameState, _view);
+        useSkillAction.Execute();
     }
     
     private void ExecuteDefend()
     {
-        _gameState.CurrentUnit.StatusEffects[StatusType.Defend].Duration = 1;
-        MoveCurrentUnitToFrontOfNextTurnQueue();        
-    }
-
-    private void MoveCurrentUnitToFrontOfNextTurnQueue()
-    {
-        _gameState.NextTurnQueue.Remove(_gameState.CurrentUnit);
-        _gameState.NextTurnQueue.Insert(0, _gameState.CurrentUnit);
+        DefendAction defendAction = new DefendAction(_gameState, _view);
+        defendAction.Execute();
     }
 
     private void ExecuteFlee()
     {
-         _view.ShowFleeMessage();
-         throw new GameOverException("Player team surrendered");
+        FleeAction fleeAction = new FleeAction(_gameState, _view);
+        fleeAction.Execute();
     }
 
     private void ExecuteBeastTurn()
     {
-        Traveler attackTarget = _gameState.TravelerTeam.HealthiestUnit;
-        string damageType = "Physical";
-        MakeBasicAttack(attackTarget, damageType);
+        BeastTurnController beastTurnController = new BeastTurnController(_gameState, _view);
+        beastTurnController.Execute();
     }
-    
-    private void PerformEndOfRoundUpdates()
-    {
-        _gameState.TravelerTeam.IncreaseBPs();
-        _gameState.UpdateStatusEffectDuration();
-    }
-
-    private void CheckIfGameIsOver()
-    {
-        if (AreAllBeastsDefeated())
-        {
-            _view.ShowVictoryMessage();
-            throw new GameOverException("All enemies defeated");
-        }
-        if (AreAllTravelersDefeated())
-        {
-            _view.ShowLostGameMessage();
-            throw new GameOverException("All travelers in team defeated");
-        }
-    }
-
-    private bool AreAllBeastsDefeated()
-        => _gameState.BeastTeam.AliveUnits.Count <= 0;
-    private bool AreAllTravelersDefeated()
-        => _gameState.TravelerTeam.AliveUnits.Count <= 0;
-
-
 }

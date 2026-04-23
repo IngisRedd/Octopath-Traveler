@@ -41,27 +41,11 @@ public class TeamsInfoParser
     {
         foreach (string travelerDescription in _travelerDescriptions)
         {
-            int endOfNameIndex = GetEndOfNamePosition(travelerDescription);
             string travelerName = ParseTravelerName(travelerDescription);
-            _parsedTeamsInfo.TravelerNames.Add(travelerName);
-
-            int skillsStart = travelerDescription.IndexOf('(');
-            int skillsEnd = travelerDescription.IndexOf(')');
-            int passiveSkillsStart = travelerDescription.IndexOf('[');
-            int passiveSkillsEnd = travelerDescription.IndexOf(']');
+            InitializeTravelerInTeamsInfo(travelerName);
             
-            _parsedTeamsInfo.TravelerSkills[travelerName] = new List<string>();
-            _parsedTeamsInfo.TravelerPassiveSkills[travelerName] = new List<string>();
-            if (TravelerHasSkills(skillsStart))
-            {
-                List<string> skillsList = SplitSkillsIntoList(travelerDescription, skillsStart, skillsEnd);            
-                _parsedTeamsInfo.TravelerSkills[travelerName] = skillsList;
-            }
-            if (TravelerHasSkills(passiveSkillsStart))
-            {
-                List<string> passiveSkillsList = SplitSkillsIntoList(travelerDescription, passiveSkillsStart, passiveSkillsEnd);            
-                _parsedTeamsInfo.TravelerPassiveSkills[travelerName] = passiveSkillsList;
-            }
+            ParseSkillsIfTravelerHasThem(travelerName, travelerDescription);
+            ParsePassiveSkillsIfTravelerHasThem(travelerName, travelerDescription);
         }
     }
 
@@ -71,8 +55,7 @@ public class TeamsInfoParser
         string travelerName = travelerDescription.Substring(0, endOfNameIndex);
         return travelerName;
     }
-
-
+    
     private int GetEndOfNamePosition(string travelerDescription)
     {
         int skillsStart = travelerDescription.IndexOf('(');
@@ -83,6 +66,36 @@ public class TeamsInfoParser
         IEnumerable<int> existingSkillIndexes = shiftedSkillIndexes.Where(i => i > -2);
         IEnumerable<int> specialIndexesEmptyCaseHandled = existingSkillIndexes.DefaultIfEmpty(travelerDescription.Length);
         return specialIndexesEmptyCaseHandled.Min();
+    }
+    
+    private void InitializeTravelerInTeamsInfo(string travelerName)
+    {
+        _parsedTeamsInfo.TravelerNames.Add(travelerName);
+        _parsedTeamsInfo.TravelerSkills[travelerName] = new List<string>();
+        _parsedTeamsInfo.TravelerPassiveSkills[travelerName] = new List<string>();
+    }
+
+    private void ParseSkillsIfTravelerHasThem(string travelerName, string travelerDescription)
+    {
+        int skillsStart = travelerDescription.IndexOf('(');
+        int skillsEnd = travelerDescription.IndexOf(')');
+        if (TravelerHasSkills(skillsStart))
+        {
+            List<string> skillsList = SplitSkillsIntoList(travelerDescription, skillsStart, skillsEnd);            
+            _parsedTeamsInfo.TravelerSkills[travelerName] = skillsList;
+        }
+    }
+
+    private void ParsePassiveSkillsIfTravelerHasThem(string travelerName, string travelerDescription)
+    {
+        int passiveSkillsStart = travelerDescription.IndexOf('[');
+        int passiveSkillsEnd = travelerDescription.IndexOf(']');
+        if (TravelerHasSkills(passiveSkillsStart))
+        {
+            List<string> passiveSkillsList = SplitSkillsIntoList(travelerDescription, passiveSkillsStart, passiveSkillsEnd);            
+            _parsedTeamsInfo.TravelerPassiveSkills[travelerName] = passiveSkillsList;
+        }
+        
     }
     
     private bool TravelerHasSkills(int skillStartPosition) => skillStartPosition != -1;
