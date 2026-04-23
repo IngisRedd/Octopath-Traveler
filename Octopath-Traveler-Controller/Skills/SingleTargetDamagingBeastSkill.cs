@@ -4,7 +4,7 @@ using Octopath_Traveler.Actions;
 
 namespace Octopath_Traveler.Skills;
 
-public class SingleTargetDamagingBeastSkill : ISkill
+internal class SingleTargetDamagingBeastSkill : ISkill
 {
     private BeastSkillInfo _info;
     private Stat _targetStat;
