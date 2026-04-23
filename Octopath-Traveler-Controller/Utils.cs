@@ -14,28 +14,6 @@ public static class Utils
         List<T> items = JsonSerializer.Deserialize<List<T>>(json);
         return items.ToDictionary(keySelector);
     }
-
-    public static int ReadPlayerInput(MainConsoleView view)
-    {
-        string input = view.AskForPlayerInput();
-        return Convert.ToInt32(input);
-    }
-    
-    public static Beast SelectTarget(GameState gameState, MainConsoleView view)
-    {
-        view.ShowAvailableTargets();
-        int selectedIndex = ReadPlayerInput(view) - 1;
-        return gameState.BeastTeam.AliveUnits[selectedIndex];
-    }
-
-    public static int AskForBPToUseIfAvailable(GameState gameState, MainConsoleView view)
-    {
-        if (!gameState.CurrentTraveler.AreThereAnyBPLeft)
-            return 0;
-
-        view.AskForBPUsage();
-        return Utils.ReadPlayerInput(view);
-    }
     
     public static DamageType ParseDamageType(string input)
     {

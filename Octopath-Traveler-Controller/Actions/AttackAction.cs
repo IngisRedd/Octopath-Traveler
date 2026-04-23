@@ -11,8 +11,8 @@ public class AttackAction : CombatAction
     public override void Execute()
     {
         DamageType selectedWeapon = Utils.ParseDamageType(SelectWeapon());
-        Beast attackTarget = Utils.SelectTarget(_gameState, _view);
-        int BPToUse = Utils.AskForBPToUseIfAvailable(_gameState, _view);
+        Beast attackTarget = _view.SelectTarget();
+        int BPToUse = _view.AskForBPToUseIfAvailable();
 
         DamageApplier damageApplier = new DamageApplier(_gameState, _view);
         _view.ShowBasicAttack();
@@ -22,7 +22,7 @@ public class AttackAction : CombatAction
     private string SelectWeapon()
     {
         _view.ShowAvailableWeapons();
-        int selectedIndex = Utils.ReadPlayerInput(_view) - 1;
+        int selectedIndex = _view.ReadPlayerInput() - 1;
         return _gameState.CurrentTraveler.Weapons[selectedIndex];
     }
  }

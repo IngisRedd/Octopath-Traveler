@@ -84,6 +84,7 @@ public class TurnQueue : IEnumerable<CombatUnit>
 
     private List<CombatUnit> GetOrderedQueue()
     {
+        // Este trainwreck no se puede evitar porque ThenByDescending() requiere ir directamente después de OrderBy
         IEnumerable<TurnEntry> orderedQueue = _entries
             .OrderByDescending(e => e.Priority)
             .ThenByDescending(e => IsTravelerPriorityApplicable(e))

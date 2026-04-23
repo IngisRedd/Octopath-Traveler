@@ -28,8 +28,9 @@ public class DamageApplier
     }
 
     
-    public void UseDamagingSkill(IEnumerable<CombatUnit> targets, DamageType type, double modifier)
+    public void UseDamagingSkill(DamageType type, double modifier)
     {
+        List<CombatUnit> targets = _gameState.CombatTargets;
         foreach (CombatUnit target in targets)
         {
             DamageCalculator damageCalculator =

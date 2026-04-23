@@ -69,11 +69,10 @@ public class MainConsoleView
         _view.WriteLine($"INICIA RONDA {_gameState.RoundCounter}");
     }
 
-    public void PrintHorizontalRule()
+    private void PrintHorizontalRule()
     {
         _view.WriteLine("----------------------------------------");
     }
-
 
     public void ShowTurnInfo()
     {
@@ -81,14 +80,14 @@ public class MainConsoleView
         ShowTurnQueues();
     }
 
-    public void ShowAllUnitInformation()
+    private void ShowAllUnitInformation()
     {
         PrintHorizontalRule();
         ShowTravelerTeamInformation();
         ShowBeastTeamInformation();
     }
 
-    public void ShowTravelerTeamInformation()
+    private void ShowTravelerTeamInformation()
     {
         _view.WriteLine("Equipo del jugador");
         char labelLetter = 'A';
@@ -104,7 +103,7 @@ public class MainConsoleView
         }
     }
 
-    public void ShowBeastTeamInformation()
+    private void ShowBeastTeamInformation()
     {
         _view.WriteLine("Equipo del enemigo");
         char labelLetter = 'A';
@@ -119,7 +118,7 @@ public class MainConsoleView
         }
     }
 
-    public void ShowTurnQueues()
+    private void ShowTurnQueues()
     {
         PrintHorizontalRule();
         _view.WriteLine("Turnos de la ronda");
@@ -167,6 +166,13 @@ public class MainConsoleView
         _view.WriteLine($"{label}: Cancelar");
     }
 
+    public Beast SelectTarget()
+    {
+        ShowAvailableTargets();
+        int selectedIndex = ReadPlayerInput() - 1;
+        return _gameState.BeastTeam.AliveUnits[selectedIndex];
+    }
+    
     public void ShowAvailableTargets()
     {
         PrintHorizontalRule();
@@ -186,6 +192,22 @@ public class MainConsoleView
         _view.WriteLine($"{label}: Cancelar");
     }
 
+    public int ReadPlayerInput()
+    {
+        string input = AskForPlayerInput();
+        return Convert.ToInt32(input);
+    }
+    
+    public int AskForBPToUseIfAvailable()
+    {
+        if (!_gameState.CurrentTraveler.AreThereAnyBPLeft)
+            return 0;
+
+        AskForBPUsage();
+        return ReadPlayerInput();
+    }
+
+    
     public void AskForBPUsage()
     {
         PrintHorizontalRule();
@@ -206,7 +228,6 @@ public class MainConsoleView
             {
                 ShowDefense(damageInfo.Targets[i]);
             }
-            
             if (damageInfo.Targets[i] is Beast)
             {
                 Beast beast = (Beast)damageInfo.Targets[i];
@@ -217,11 +238,9 @@ public class MainConsoleView
                     {
                         ShowBreakingPointAchieved(beast);
                     }
-
                     continue;
                 }
             }
-
             ShowDamageReceived(damageInfo.Targets[i], damageInfo.Damages[i]);
         }
 

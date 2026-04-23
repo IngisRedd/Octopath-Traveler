@@ -65,7 +65,7 @@ public class BattleController
             try
             {
                 _view.ShowTravelerActions();
-                int playerInput = Utils.ReadPlayerInput(_view);
+                int playerInput = _view.ReadPlayerInput();
                 ExecuteTravelerAction(playerInput);
                 isValidActionSelected = true;
             }
