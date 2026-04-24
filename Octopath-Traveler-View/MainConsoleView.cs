@@ -240,7 +240,7 @@ public class MainConsoleView
             ShowDamageResults();
         }
 
-        foreach (CombatUnit target in _gameState.CombatTargets)
+        foreach (CombatUnit target in GetOrderedTargetListCurrentUnitAtTheEnd())
         {
             ShowFinalHP(target);
         }
@@ -251,26 +251,39 @@ public class MainConsoleView
 
     private void ShowHealResults()
     {
-        for (int i = 0; i < _gameState.CombatTargets.Count; i++)
+        List<CombatUnit> targets = GetOrderedTargetListCurrentUnitAtTheEnd();
+        for (int i = 0; i < targets.Count; i++)
         {
-            string targetName = _gameState.CombatTargets[i].Name;
+            string targetName = targets[i].Name;
             int healValue = _gameState.CombatActionInfo.HealValues[i];
             _view.WriteLine($"{targetName} recupera {healValue} de vida");
         }
     }
+
+    private List<CombatUnit> GetOrderedTargetListCurrentUnitAtTheEnd()
+    {
+        List<CombatUnit> units = _gameState.CombatTargets.ToList();
+        if (units.Contains(_gameState.CurrentUnit))
+        {
+            units.Remove(_gameState.CurrentUnit);
+            units.Add(_gameState.CurrentUnit);
+        }
+        return units;
+    }
     
     private void ShowDamageResults()
     {
+        List<CombatUnit> targets = GetOrderedTargetListCurrentUnitAtTheEnd();
         CombatActionInfo combatInfo = _gameState.CombatActionInfo;
-        for (int i = 0; i < _gameState.CombatTargets.Count; i++)
+        for (int i = 0; i < targets.Count; i++)
         {
             if (combatInfo.IsTravelerDefending[i])
             {
-                ShowDefense(_gameState.CombatTargets[i]);
+                ShowDefense(targets[i]);
             }
-            if (_gameState.CombatTargets[i] is Beast)
+            if (targets[i] is Beast)
             {
-                Beast beast = (Beast)_gameState.CombatTargets[i];
+                Beast beast = (Beast)targets[i];
                 if (beast.IsWeakToDamageType(combatInfo.Damages[i].Type))
                 {
                     ShowSuperEffectiveDamageReceived(beast, combatInfo.Damages[i]);
@@ -281,7 +294,7 @@ public class MainConsoleView
                     continue;
                 }
             }
-            ShowDamageReceived(_gameState.CombatTargets[i], combatInfo.Damages[i]);
+            ShowDamageReceived(targets[i], combatInfo.Damages[i]);
         } 
     }
 
