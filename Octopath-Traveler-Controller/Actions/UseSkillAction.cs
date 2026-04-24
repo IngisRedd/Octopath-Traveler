@@ -22,7 +22,7 @@ public class UseSkillAction : CombatAction
         _view.ShowSkillUsage(selectedSkillInfo.Name);
         
         skillToUse.SkillEffect.Apply();
-        _view.ShowFinalHPForAllTargets(); // Esto está malisimo, hay que cambiarlo!!
+        _view.ShowFinalHPForAllTargets(); 
     }
 
     private TravelerSkillInfo SelectSkill()
