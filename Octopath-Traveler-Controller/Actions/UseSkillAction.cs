@@ -11,18 +11,18 @@ public class UseSkillAction : CombatAction
     
     public override void Execute()
     {
-        _gameState.CombatTargets.Clear();
         TravelerSkillInfo selectedSkillInfo = SelectSkill();
+        _gameState.CombatActionInfo.SkillName = selectedSkillInfo.Name;
+
         Skill skillToUse = SkillFactory.Create(selectedSkillInfo, _gameState, _view);
 
-        skillToUse.TargetSelector.Select();
+        skillToUse.SelectTarget();
 
         _gameState.CurrentTraveler.CurrentSP -= selectedSkillInfo.SP;
         int BPToUse = _view.AskForBPToUseIfAvailable();
-        _view.ShowSkillUsage(selectedSkillInfo.Name);
         
-        skillToUse.SkillEffect.Apply();
-        _view.ShowFinalHPForAllTargets(); 
+        skillToUse.ApplyEffects();
+        _view.ShowCombatActionResults();
     }
 
     private TravelerSkillInfo SelectSkill()

@@ -15,16 +15,6 @@ public class DamageApplier
         _view = view;
     }
     
-    public void MakeBasicAttack(CombatUnit target, DamageType weapon)
-    {
-        double basicAttackModifier = 1.3;
-        DamageCalculator damageCalculator =
-            new DamageCalculator(basicAttackModifier, _gameState.CurrentUnit, target, weapon);
-        Damage damage = damageCalculator.Calculate();
-        DamageTarget(target, damage);
-    }
-
-    
     public void UseDamagingSkill(CombatUnit target, DamageType type, double modifier)
     {
         DamageCalculator damageCalculator =
@@ -36,41 +26,41 @@ public class DamageApplier
     private void DamageTarget(CombatUnit target, Damage damage)
     {
         CheckForDefend(target);
+        CheckForAndApplyWeakness(target, damage);
+        
+        target.CurrentHP -= damage.Value;
+        _gameState.CombatActionInfo.Damages.Add(damage);        
+    }
+
+    private void CheckForAndApplyWeakness(CombatUnit target, Damage damage)
+    {
         if (target is Beast)
         {
             Beast beast = (Beast)target;
             if (beast.IsWeakToDamageType(damage.Type))
             {
-                _view.ShowSuperEffectiveDamageReceived(target, damage);
                 if (damage.Value > 0)
                 {
                     beast.CurrentShields -= 1;
                 }
                 CheckForAndApplyBreakingPoint(beast);
             }
-            else
-            {
-                _view.ShowDamageReceived(target, damage);
-            }
         }
-        else
-        {
-            _view.ShowDamageReceived(target, damage);
-        }
-        
-        target.CurrentHP -= damage.Value;
     }
-
-
     
     private void CheckForAndApplyBreakingPoint(Beast beast)
     {
         if (IsBreakingPointAchieved(beast))
         {
-            _view.ShowBreakingPointAchieved(beast);
             beast.StatusEffects[StatusType.BreakingPoint].Duration = 2;
             _gameState.CurrentTurnQueue.Remove(beast);
             _gameState.NextTurnQueue.Remove(beast);
+            
+            _gameState.CombatActionInfo.IsBreakingPointAchieved.Add(true);
+        }
+        else
+        {
+            _gameState.CombatActionInfo.IsBreakingPointAchieved.Add(false);
         }
     }
 
@@ -78,7 +68,11 @@ public class DamageApplier
     {
         if (target.StatusEffects[StatusType.Defend].IsActive)
         {
-            _view.ShowDefense(target);
+            _gameState.CombatActionInfo.IsTravelerDefending.Add(true);
+        }
+        else
+        {
+            _gameState.CombatActionInfo.IsTravelerDefending.Add(false);
         }
     }
     

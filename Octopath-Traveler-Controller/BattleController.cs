@@ -52,7 +52,7 @@ public class BattleController
         {
             ExecuteBeastTurn();
         }
-        GameStateUpdater.EndOfTurnUpdateTurnQueues(_gameState);
+        GameStateUpdater.EndOfTurnUpdate(_gameState);
 
         EndOfGameValidator.CheckIfGameIsOver(_gameState, _view);
     }

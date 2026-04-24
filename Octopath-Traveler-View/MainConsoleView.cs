@@ -220,42 +220,77 @@ public class MainConsoleView
         _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
     }
 
-    public void ShowDamageResults(DamageActionResultInfo damageInfo)
+    public void ShowCombatActionResults()
     {
-        for (int i = 0; i < damageInfo.Targets.Count; i++)
+        if (SkillWasUsed())
         {
-            if (damageInfo.IsTravelerDefending[i])
+            ShowSkillUsage(_gameState.CombatActionInfo.SkillName);
+        }
+        else
+        {
+            ShowBasicAttack();
+        }
+
+        if (_gameState.CombatActionInfo.HealValues.Count > 0)
+        {
+            ShowHealResults();
+        }
+        else
+        {
+            ShowDamageResults();
+        }
+
+        foreach (CombatUnit target in _gameState.CombatTargets)
+        {
+            ShowFinalHP(target);
+        }
+    }
+
+    private bool SkillWasUsed()
+        => _gameState.CombatActionInfo.SkillName != null;
+
+    private void ShowHealResults()
+    {
+        for (int i = 0; i < _gameState.CombatTargets.Count; i++)
+        {
+            string targetName = _gameState.CombatTargets[i].Name;
+            int healValue = _gameState.CombatActionInfo.HealValues[i];
+            _view.WriteLine($"{targetName} recupera {healValue} de vida");
+        }
+    }
+    
+    private void ShowDamageResults()
+    {
+        CombatActionInfo combatInfo = _gameState.CombatActionInfo;
+        for (int i = 0; i < _gameState.CombatTargets.Count; i++)
+        {
+            if (combatInfo.IsTravelerDefending[i])
             {
-                ShowDefense(damageInfo.Targets[i]);
+                ShowDefense(_gameState.CombatTargets[i]);
             }
-            if (damageInfo.Targets[i] is Beast)
+            if (_gameState.CombatTargets[i] is Beast)
             {
-                Beast beast = (Beast)damageInfo.Targets[i];
-                if (beast.IsWeakToDamageType(damageInfo.Damages[i].Type))
+                Beast beast = (Beast)_gameState.CombatTargets[i];
+                if (beast.IsWeakToDamageType(combatInfo.Damages[i].Type))
                 {
-                    ShowSuperEffectiveDamageReceived(beast, damageInfo.Damages[i]);
-                    if (damageInfo.IsBreakingPointAchieved[i])
+                    ShowSuperEffectiveDamageReceived(beast, combatInfo.Damages[i]);
+                    if (combatInfo.IsBreakingPointAchieved[i])
                     {
                         ShowBreakingPointAchieved(beast);
                     }
                     continue;
                 }
             }
-            ShowDamageReceived(damageInfo.Targets[i], damageInfo.Damages[i]);
-        }
-
-        foreach (CombatUnit target in damageInfo.Targets)
-        {
-            ShowFinalHP(target);
-        }
+            ShowDamageReceived(_gameState.CombatTargets[i], combatInfo.Damages[i]);
+        } 
     }
 
-    public void ShowDefense(CombatUnit target)
+    private void ShowDefense(CombatUnit target)
     {
         _view.WriteLine($"{target.Name} se defiende");
     }
     
-    public void ShowDamageReceived(CombatUnit target, Damage damage)
+    private void ShowDamageReceived(CombatUnit target, Damage damage)
     {
         if (damage.Type is DamageType.None) 
         {
@@ -275,22 +310,14 @@ public class MainConsoleView
         }
     }
     
-    public void ShowSuperEffectiveDamageReceived(CombatUnit attackTarget, Damage damage)
+    private void ShowSuperEffectiveDamageReceived(CombatUnit attackTarget, Damage damage)
     {
         _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type} con debilidad");
     }
 
-    public void ShowBreakingPointAchieved(Beast attackTarget)
+    private void ShowBreakingPointAchieved(Beast attackTarget)
     {
         _view.WriteLine($"{attackTarget.Name} entra en Breaking Point");
-    }
-
-    public void ShowFinalHPForAllTargets()
-    {
-        foreach (CombatUnit target in _gameState.CombatTargets)
-        {
-            ShowFinalHP(target);
-        }
     }
     
     public void ShowFinalHP(CombatUnit attackTarget)

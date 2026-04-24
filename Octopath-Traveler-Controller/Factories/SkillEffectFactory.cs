@@ -6,11 +6,49 @@ namespace Octopath_Traveler;
 
 public static class SkillEffectFactory
 {
-    public static ISkillEffect Create(SkillInfo skillInfo, GameState gameState, MainConsoleView view)
+    public static List<ISkillEffect> Create(SkillInfo skillInfo, GameState gameState, MainConsoleView view)
     {
         if (IsItADamagingSkill(skillInfo))
         {
-            return new DamageSkillEffect(gameState, view, skillInfo.Modifier, skillInfo.Type);
+            return new List<ISkillEffect>
+            {
+                new DamageSkillEffect(gameState, view, skillInfo.Modifier, skillInfo.Type)
+            };
+        }
+        if (skillInfo.Name == "Heal Wounds")
+        {
+            return new List<ISkillEffect>
+            {
+                new HealingSkillEffect(gameState, view, skillInfo.Modifier)
+            };
+        }
+        if (skillInfo.Name == "Heal More")
+        {
+            return new List<ISkillEffect>
+            {
+                new HealingSkillEffect(gameState, view, skillInfo.Modifier)
+            };
+        }
+        if (skillInfo.Name == "Rest")
+        {
+            return new List<ISkillEffect>
+            {
+                new HealingSkillEffect(gameState, view, skillInfo.Modifier)
+            };
+        }
+        if (skillInfo.Name == "First Aid")
+        {
+            return new List<ISkillEffect>
+            {
+                new HealingSkillEffect(gameState, view, skillInfo.Modifier)
+            };
+        }
+        if (skillInfo.Name == "Heavenly Healing")
+        {
+            return new List<ISkillEffect>
+            {
+                new HealingSkillEffect(gameState, view, skillInfo.Modifier)
+            };
         }
         throw new ArgumentException($" Unknown skill name: {skillInfo.Name}!.");
     }

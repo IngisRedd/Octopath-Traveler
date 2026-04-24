@@ -5,18 +5,32 @@ namespace Octopath_Traveler.Skills;
 
 public class Skill
 {
-    public ITargetSelector TargetSelector;
-    public ISkillEffect SkillEffect;
+    private ITargetSelector _targetSelector;
+    private List<ISkillEffect> _skillEffects;
 
-    public Skill(ITargetSelector targetSelector, ISkillEffect skillEffect)
+    public Skill(ITargetSelector targetSelector, List<ISkillEffect> skillEffects)
     {
-        TargetSelector = targetSelector;
-        SkillEffect = skillEffect;
+        _targetSelector = targetSelector;
+        _skillEffects = skillEffects;
     }
 
     public void Use()
     {
-        TargetSelector.Select();
-        SkillEffect.Apply();
+        SelectTarget();
+        ApplyEffects();
     }
+
+    public void SelectTarget()
+    {
+        _targetSelector.Select();
+    }
+
+    public void ApplyEffects()
+    {
+        foreach (ISkillEffect effect in _skillEffects)
+        {
+            effect.Apply();
+        }
+    }
+    
 }

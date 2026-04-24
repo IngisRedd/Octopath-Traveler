@@ -33,8 +33,14 @@ public static class GameStateUpdater
         gameState.CurrentUnit = gameState.CurrentTurnQueue[0];
     }
 
+    public static void EndOfTurnUpdate(GameState gameState)
+    {
+        EndOfTurnUpdateTurnQueues(gameState);
+        gameState.ResetCombatActionInfo();
+        gameState.CombatTargets.Clear();
+    }
     
-    public static void EndOfTurnUpdateTurnQueues(GameState gameState)
+    private static void EndOfTurnUpdateTurnQueues(GameState gameState)
     {
         gameState.CurrentTurnQueue.RemoveAt(0);
         

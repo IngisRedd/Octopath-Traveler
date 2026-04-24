@@ -9,7 +9,7 @@ public class SkillFactory
     public static Skill Create(SkillInfo skillInfo, GameState gameState, MainConsoleView view)
     {
         ITargetSelector selector = TargetSelectorFactory.Create(skillInfo, gameState, view);
-        ISkillEffect effect = SkillEffectFactory.Create(skillInfo, gameState, view);
-        return new Skill(selector , effect);
+        List<ISkillEffect> effects = SkillEffectFactory.Create(skillInfo, gameState, view);
+        return new Skill(selector , effects);
     }
 }

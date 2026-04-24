@@ -9,11 +9,15 @@ public static class TargetSelectorFactory
 {
     public static ITargetSelector Create(SkillInfo skillInfo, GameState gameState, MainConsoleView view)
     {
-        if (IsSkillMultiTarget(skillInfo))
+        if (IsSkillTargetEnemies(skillInfo))
         {
             return new AllEnemiesSelector(gameState);
         }
-        if (gameState.CurrentUnit is Traveler)
+        if (IsSkillTargetParty(skillInfo))
+        {
+            return new PartySelector(gameState);
+        }
+        if (gameState.CurrentUnit is Traveler && IsSkillTargetSingle(skillInfo))
         {
             return new TravelerSingleEnemySelector(gameState, view);
         }
@@ -136,7 +140,10 @@ public static class TargetSelectorFactory
         throw new ArgumentException($" Unknown skill name: {skillInfo.Name}!.");
     }
     
-    private static bool IsSkillMultiTarget(SkillInfo skillInfo)
+    private static bool IsSkillTargetEnemies(SkillInfo skillInfo)
         => skillInfo.Target == SkillTarget.Enemies;
-
+    private static bool IsSkillTargetParty(SkillInfo skillInfo)
+        => skillInfo.Target == SkillTarget.Party;
+    private static bool IsSkillTargetSingle(SkillInfo skillInfo)
+        => skillInfo.Target == SkillTarget.Single;
 }
