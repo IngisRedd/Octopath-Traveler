@@ -24,5 +24,4 @@ public static class EndOfGameValidator
         => gameState.BeastTeam.AliveUnits.Count <= 0;
     private  static bool AreAllTravelersDefeated(GameState gameState)
         => gameState.TravelerTeam.AliveUnits.Count <= 0;
-
 }

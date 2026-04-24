@@ -6,12 +6,10 @@ namespace Octopath_Traveler.Skills;
 public abstract class BaseSkillEffect : ISkillEffect
 {
     protected GameState _gameState;
-    protected MainConsoleView _view;
 
-    public BaseSkillEffect(GameState gameState, MainConsoleView view)
+    public BaseSkillEffect(GameState gameState)
     {
         _gameState = gameState;
-        _view = view;
     }
     
     public void Apply()

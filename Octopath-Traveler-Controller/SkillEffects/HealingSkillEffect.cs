@@ -8,8 +8,8 @@ public class HealingSkillEffect : BaseSkillEffect
     private double _modifier;
     private DamageType _damageType;
 
-    public HealingSkillEffect(GameState gameState, MainConsoleView view, double modifier)
-        : base(gameState, view)
+    public HealingSkillEffect(GameState gameState, double modifier)
+        : base(gameState)
     {
         _modifier = modifier;
     }

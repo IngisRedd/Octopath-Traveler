@@ -7,4 +7,5 @@ public class CombatActionInfo
     public List<bool> IsBreakingPointAchieved = new();
     public List<bool> IsTravelerDefending = new();
     public List<int> HealValues = new();
+    public bool AreThereResurrections = false;
 }

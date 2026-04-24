@@ -21,6 +21,10 @@ public static class TargetSelectorFactory
         {
             return new TravelerSingleEnemySelector(gameState, view);
         }
+        if (gameState.CurrentUnit is Traveler && IsSkillTargetAlly(skillInfo))
+        {
+            return new TravelerSingleAllySelector(gameState, view);
+        }
         if (skillInfo.Name == "Attack")
         {
             return new BeastSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
@@ -146,4 +150,6 @@ public static class TargetSelectorFactory
         => skillInfo.Target == SkillTarget.Party;
     private static bool IsSkillTargetSingle(SkillInfo skillInfo)
         => skillInfo.Target == SkillTarget.Single;
+    private static bool IsSkillTargetAlly(SkillInfo skillInfo)
+        => skillInfo.Target == SkillTarget.Ally;
 }

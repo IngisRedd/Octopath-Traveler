@@ -20,6 +20,8 @@ public abstract class CombatUnit
         { StatusType.Defend, new StatusEffect() },
         { StatusType.BreakingPoint, new StatusEffect() }
     };
-    public bool IsGoingToActNextTurn => StatusEffects[StatusType.BreakingPoint].Duration <= 1;
+    public bool IsGoingToActNextTurn =>
+        IsAlive
+        && StatusEffects[StatusType.BreakingPoint].Duration <= 1;
     public bool IsRecoveringFromBreakingPointNextRound => StatusEffects[StatusType.BreakingPoint].Duration == 1;
 }

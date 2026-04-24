@@ -166,14 +166,14 @@ public class MainConsoleView
         _view.WriteLine($"{label}: Cancelar");
     }
 
-    public Beast SelectTarget()
+    public Beast SelectEnemyBeastTarget()
     {
-        ShowAvailableTargets();
+        ShowAvailableEnemyBeastTargets();
         int selectedIndex = ReadPlayerInput() - 1;
         return _gameState.BeastTeam.AliveUnits[selectedIndex];
     }
     
-    public void ShowAvailableTargets()
+    public void ShowAvailableEnemyBeastTargets()
     {
         PrintHorizontalRule();
         _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");
@@ -197,6 +197,34 @@ public class MainConsoleView
         string input = AskForPlayerInput();
         return Convert.ToInt32(input);
     }
+    
+    public Traveler SelectTravelerAllyTarget()
+    {
+        ShowAvailableAllyTravelerTargets();
+        int selectedIndex = ReadPlayerInput() - 1;
+        return _gameState.TravelerTeam.AliveUnits[selectedIndex];
+    }
+    
+    public void ShowAvailableAllyTravelerTargets()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");
+        int label = 1;
+        List<Traveler> aliveTravelers = _gameState.TravelerTeam.AliveUnits;
+        foreach (Traveler traveler in aliveTravelers)
+        {
+            _view.WriteLine(
+                $"{label}: {traveler.Name} - " +
+                $"HP:{traveler.CurrentHP}/{traveler.MaxHP} " +
+                $"SP:{traveler.CurrentSP}/{traveler.MaxSP} " +
+                $"BP:{traveler.BP}"
+            );
+            label++;
+        }
+
+        _view.WriteLine($"{label}: Cancelar");
+    }
+
     
     public int AskForBPToUseIfAvailable()
     {
@@ -230,10 +258,14 @@ public class MainConsoleView
         {
             ShowBasicAttack();
         }
-
+        
         if (_gameState.CombatActionInfo.HealValues.Count > 0)
         {
             ShowHealResults();
+        }
+        else if (_gameState.CombatActionInfo.AreThereResurrections)
+        {
+            ShowResurrectionResults();
         }
         else
         {
@@ -257,6 +289,14 @@ public class MainConsoleView
             string targetName = targets[i].Name;
             int healValue = _gameState.CombatActionInfo.HealValues[i];
             _view.WriteLine($"{targetName} recupera {healValue} de vida");
+        }
+    }
+    
+    private void ShowResurrectionResults()
+    {
+        foreach (CombatUnit target in GetOrderedTargetListCurrentUnitAtTheEnd())
+        {
+            _view.WriteLine($"{target.Name} revive");
         }
     }
 

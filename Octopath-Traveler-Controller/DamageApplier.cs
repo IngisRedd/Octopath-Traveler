@@ -6,13 +6,10 @@ namespace Octopath_Traveler;
 public class DamageApplier
 {
     private GameState _gameState;
-    private MainConsoleView _view;
 
-
-    public DamageApplier(GameState gameState, MainConsoleView view)
+    public DamageApplier(GameState gameState)
     {
         _gameState = gameState;
-        _view = view;
     }
     
     public void UseDamagingSkill(CombatUnit target, DamageType type, double modifier)
