@@ -5,13 +5,14 @@ namespace Octopath_Traveler;
 
 public class Game
 {
-    private MainConsoleView _view;
+    private GameConsoleView _view;
     private GameState _state = new();
     private BattleController _battleController;
     public Game(View view, string teamsFolder)
     {
-        _view = new MainConsoleView(view, _state, teamsFolder);
-        _battleController = new BattleController(_view, _state);
+        _view = new GameConsoleView(view, _state, teamsFolder);
+        CombatActionConsoleView combatActionConsoleView = new CombatActionConsoleView(view, _state);
+        _battleController = new BattleController(_state, _view, combatActionConsoleView);
     }
 
     public void Play()

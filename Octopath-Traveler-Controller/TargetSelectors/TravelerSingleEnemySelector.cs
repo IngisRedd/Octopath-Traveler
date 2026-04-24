@@ -7,9 +7,9 @@ namespace Octopath_Traveler.TargetSelectors;
 public class TravelerSingleEnemySelector : ITargetSelector
 {
     private GameState _gameState;
-    private MainConsoleView _view;
+    private GameConsoleView _view;
     
-    public TravelerSingleEnemySelector(GameState gameState, MainConsoleView view)
+    public TravelerSingleEnemySelector(GameState gameState, GameConsoleView view)
     {
         _gameState = gameState;
         _view = view;

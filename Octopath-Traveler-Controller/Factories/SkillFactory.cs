@@ -6,7 +6,7 @@ namespace Octopath_Traveler;
 
 public class SkillFactory
 {
-    public static Skill Create(SkillInfo skillInfo, GameState gameState, MainConsoleView view)
+    public static Skill Create(SkillInfo skillInfo, GameState gameState, GameConsoleView view)
     {
         ITargetSelector selector = TargetSelectorFactory.Create(skillInfo, gameState, view);
         List<ISkillEffect> effects = SkillEffectFactory.Create(skillInfo, gameState);

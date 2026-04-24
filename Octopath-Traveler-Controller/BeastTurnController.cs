@@ -7,9 +7,9 @@ namespace Octopath_Traveler;
 public class BeastTurnController
 {
     private GameState _gameState;
-    private MainConsoleView _view;
+    private GameConsoleView _view;
 
-    public BeastTurnController(GameState gameState, MainConsoleView view)
+    public BeastTurnController(GameState gameState, GameConsoleView view)
     {
         _gameState = gameState;
         _view = view;
@@ -22,6 +22,5 @@ public class BeastTurnController
         
         Skill skillToUse = SkillFactory.Create(beastSkill, _gameState, _view);
         skillToUse.Use();
-        _view.ShowCombatActionResults();
     }
 }

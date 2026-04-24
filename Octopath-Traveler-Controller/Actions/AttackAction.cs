@@ -6,7 +6,7 @@ namespace Octopath_Traveler.Actions;
 
 public class AttackAction : CombatAction
 {
-    public AttackAction(GameState gameState, MainConsoleView view)
+    public AttackAction(GameState gameState, GameConsoleView view)
         : base(gameState, view){}
     
     public override void Execute()
@@ -19,7 +19,6 @@ public class AttackAction : CombatAction
         int BPToUse = _view.AskForBPToUseIfAvailable();
 
         basicAttack.ApplyEffects();
-        _view.ShowCombatActionResults();
     }
 
     private string SelectWeapon()

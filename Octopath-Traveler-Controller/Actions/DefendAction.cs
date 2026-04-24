@@ -5,7 +5,7 @@ namespace Octopath_Traveler.Actions;
 
 public class DefendAction : CombatAction
 {
-    public DefendAction(GameState gameState, MainConsoleView view)
+    public DefendAction(GameState gameState, GameConsoleView view)
         : base(gameState, view){}
     
     public override void Execute()
