@@ -7,7 +7,7 @@ public abstract class CombatUnit
     private int _hp { get; set; }
     public int CurrentHP {
         get => _hp;
-        set => _hp = Math.Max(0, value);
+        set => _hp = Math.Min(Math.Max(0, value), MaxHP);
     }
     public bool IsAlive => _hp > 0;
     public int PhysAtk { get; set; }
@@ -20,6 +20,8 @@ public abstract class CombatUnit
         { StatusType.Defend, new StatusEffect() },
         { StatusType.BreakingPoint, new StatusEffect() }
     };
-    public bool IsGoingToActNextTurn => StatusEffects[StatusType.BreakingPoint].Duration <= 1;
+    public bool IsGoingToActNextTurn =>
+        IsAlive
+        && StatusEffects[StatusType.BreakingPoint].Duration <= 1;
     public bool IsRecoveringFromBreakingPointNextRound => StatusEffects[StatusType.BreakingPoint].Duration == 1;
 }

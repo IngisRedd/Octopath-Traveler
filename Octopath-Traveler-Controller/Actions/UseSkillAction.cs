@@ -12,16 +12,24 @@ public class UseSkillAction : CombatAction
     public override void Execute()
     {
         TravelerSkillInfo selectedSkillInfo = SelectSkill();
-        TravelerSkillFactory travelerSkillFactory = new TravelerSkillFactory();
-        ISkill skillToUse = travelerSkillFactory.Create(selectedSkillInfo);
-        skillToUse.Use(_gameState, _view);
+        _gameState.CombatActionInfo.SkillName = selectedSkillInfo.Name;
+
+        Skill skillToUse = SkillFactory.Create(selectedSkillInfo, _gameState, _view);
+
+        skillToUse.SelectTarget();
+
+        _gameState.CurrentTraveler.CurrentSP -= selectedSkillInfo.SP;
+        int BPToUse = _view.AskForBPToUseIfAvailable();
+        
+        skillToUse.ApplyEffects();
+        _view.ShowCombatActionResults();
     }
 
     private TravelerSkillInfo SelectSkill()
     {
         _view.ShowAvailableSkills();
 
-        int selectedIndex = Utils.ReadPlayerInput(_view) - 1;
+        int selectedIndex = _view.ReadPlayerInput() - 1;
         return _gameState.CurrentTraveler.AvailableSkills[selectedIndex];
     }
     

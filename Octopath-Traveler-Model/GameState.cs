@@ -11,4 +11,11 @@ public class GameState
     public int RoundCounter = 0;
     public TurnQueue CurrentTurnQueue = new();
     public TurnQueue NextTurnQueue = new();
+    public List<CombatUnit> CombatTargets = new();
+    public CombatActionInfo CombatActionInfo = new();
+
+    public void ResetCombatActionInfo()
+    {
+        CombatActionInfo = new();
+    }
 }

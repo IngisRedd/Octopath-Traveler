@@ -6,52 +6,30 @@ namespace Octopath_Traveler;
 public class DamageApplier
 {
     private GameState _gameState;
-    private MainConsoleView _view;
-    private DamageActionResultInfo _resultInfo = new DamageActionResultInfo();
 
-
-    public DamageApplier(GameState gameState, MainConsoleView view)
+    public DamageApplier(GameState gameState)
     {
         _gameState = gameState;
-        _view = view;
     }
     
-    public void MakeBasicAttack(CombatUnit target, DamageType weapon)
+    public void UseDamagingSkill(CombatUnit target, DamageType type, double modifier)
     {
-        double basicAttackModifier = 1.3;
         DamageCalculator damageCalculator =
-            new DamageCalculator(basicAttackModifier, _gameState.CurrentUnit, target, weapon);
+            new DamageCalculator(modifier, _gameState.CurrentUnit, target, type);
         Damage damage = damageCalculator.Calculate();
         DamageTarget(target, damage);
-        _resultInfo.Targets = new() { target };
-        _view.ShowDamageResults(_resultInfo);
-    }
-
-    
-    public void UseDamagingSkill(IEnumerable<CombatUnit> targets, DamageType type, double modifier)
-    {
-        foreach (CombatUnit target in targets)
-        {
-            DamageCalculator damageCalculator =
-                new DamageCalculator(modifier, _gameState.CurrentUnit, target, type);
-            Damage damage = damageCalculator.Calculate();
-            DamageTarget(target, damage);
-        }
-        
-        _resultInfo.Targets = targets.ToList();
-        _view.ShowDamageResults(_resultInfo);
     }
     
     private void DamageTarget(CombatUnit target, Damage damage)
     {
-        CheckForWeakness(target, damage);
         CheckForDefend(target);
+        CheckForAndApplyWeakness(target, damage);
         
         target.CurrentHP -= damage.Value;
-        _resultInfo.Damages.Add(damage);
+        _gameState.CombatActionInfo.Damages.Add(damage);        
     }
 
-    private void CheckForWeakness(CombatUnit target, Damage damage)
+    private void CheckForAndApplyWeakness(CombatUnit target, Damage damage)
     {
         if (target is Beast)
         {
@@ -65,24 +43,21 @@ public class DamageApplier
                 CheckForAndApplyBreakingPoint(beast);
             }
         }
-        else
-        {
-            _resultInfo.IsBreakingPointAchieved.Add(false);
-        }
     }
     
     private void CheckForAndApplyBreakingPoint(Beast beast)
     {
         if (IsBreakingPointAchieved(beast))
         {
-            _resultInfo.IsBreakingPointAchieved.Add(true);
             beast.StatusEffects[StatusType.BreakingPoint].Duration = 2;
             _gameState.CurrentTurnQueue.Remove(beast);
             _gameState.NextTurnQueue.Remove(beast);
+            
+            _gameState.CombatActionInfo.IsBreakingPointAchieved.Add(true);
         }
         else
         {
-            _resultInfo.IsBreakingPointAchieved.Add(false);
+            _gameState.CombatActionInfo.IsBreakingPointAchieved.Add(false);
         }
     }
 
@@ -90,11 +65,11 @@ public class DamageApplier
     {
         if (target.StatusEffects[StatusType.Defend].IsActive)
         {
-            _resultInfo.IsTravelerDefending.Add(true);
+            _gameState.CombatActionInfo.IsTravelerDefending.Add(true);
         }
         else
         {
-            _resultInfo.IsTravelerDefending.Add(false);
+            _gameState.CombatActionInfo.IsTravelerDefending.Add(false);
         }
     }
     

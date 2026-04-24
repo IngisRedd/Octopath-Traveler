@@ -17,9 +17,11 @@ public class BeastTurnController
 
     public void Execute()
     {
-        BeastSkillInfo beastSkill = _gameState.CurrentBeast.Skill;
-        BeastSkillFactory beastSkillFactory = new BeastSkillFactory();
-        ISkill skillToUse = beastSkillFactory.Create(beastSkill);
-        skillToUse.Use(_gameState, _view);
+        SkillInfo beastSkill = _gameState.CurrentBeast.Skill;
+        _gameState.CombatActionInfo.SkillName = beastSkill.Name;
+        
+        Skill skillToUse = SkillFactory.Create(beastSkill, _gameState, _view);
+        skillToUse.Use();
+        _view.ShowCombatActionResults();
     }
 }

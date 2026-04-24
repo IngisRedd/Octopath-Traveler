@@ -69,11 +69,10 @@ public class MainConsoleView
         _view.WriteLine($"INICIA RONDA {_gameState.RoundCounter}");
     }
 
-    public void PrintHorizontalRule()
+    private void PrintHorizontalRule()
     {
         _view.WriteLine("----------------------------------------");
     }
-
 
     public void ShowTurnInfo()
     {
@@ -81,14 +80,14 @@ public class MainConsoleView
         ShowTurnQueues();
     }
 
-    public void ShowAllUnitInformation()
+    private void ShowAllUnitInformation()
     {
         PrintHorizontalRule();
         ShowTravelerTeamInformation();
         ShowBeastTeamInformation();
     }
 
-    public void ShowTravelerTeamInformation()
+    private void ShowTravelerTeamInformation()
     {
         _view.WriteLine("Equipo del jugador");
         char labelLetter = 'A';
@@ -104,7 +103,7 @@ public class MainConsoleView
         }
     }
 
-    public void ShowBeastTeamInformation()
+    private void ShowBeastTeamInformation()
     {
         _view.WriteLine("Equipo del enemigo");
         char labelLetter = 'A';
@@ -119,7 +118,7 @@ public class MainConsoleView
         }
     }
 
-    public void ShowTurnQueues()
+    private void ShowTurnQueues()
     {
         PrintHorizontalRule();
         _view.WriteLine("Turnos de la ronda");
@@ -167,7 +166,14 @@ public class MainConsoleView
         _view.WriteLine($"{label}: Cancelar");
     }
 
-    public void ShowAvailableTargets()
+    public Beast SelectEnemyBeastTarget()
+    {
+        ShowAvailableEnemyBeastTargets();
+        int selectedIndex = ReadPlayerInput() - 1;
+        return _gameState.BeastTeam.AliveUnits[selectedIndex];
+    }
+    
+    public void ShowAvailableEnemyBeastTargets()
     {
         PrintHorizontalRule();
         _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");
@@ -186,6 +192,50 @@ public class MainConsoleView
         _view.WriteLine($"{label}: Cancelar");
     }
 
+    public int ReadPlayerInput()
+    {
+        string input = AskForPlayerInput();
+        return Convert.ToInt32(input);
+    }
+    
+    public Traveler SelectTravelerAllyTarget()
+    {
+        ShowAvailableAllyTravelerTargets();
+        int selectedIndex = ReadPlayerInput() - 1;
+        return _gameState.TravelerTeam.AliveUnits[selectedIndex];
+    }
+    
+    public void ShowAvailableAllyTravelerTargets()
+    {
+        PrintHorizontalRule();
+        _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");
+        int label = 1;
+        List<Traveler> aliveTravelers = _gameState.TravelerTeam.AliveUnits;
+        foreach (Traveler traveler in aliveTravelers)
+        {
+            _view.WriteLine(
+                $"{label}: {traveler.Name} - " +
+                $"HP:{traveler.CurrentHP}/{traveler.MaxHP} " +
+                $"SP:{traveler.CurrentSP}/{traveler.MaxSP} " +
+                $"BP:{traveler.BP}"
+            );
+            label++;
+        }
+
+        _view.WriteLine($"{label}: Cancelar");
+    }
+
+    
+    public int AskForBPToUseIfAvailable()
+    {
+        if (!_gameState.CurrentTraveler.AreThereAnyBPLeft)
+            return 0;
+
+        AskForBPUsage();
+        return ReadPlayerInput();
+    }
+
+    
     public void AskForBPUsage()
     {
         PrintHorizontalRule();
@@ -198,37 +248,94 @@ public class MainConsoleView
         _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
     }
 
-    public void ShowDamageResults(DamageActionResultInfo damageInfo)
+    public void ShowCombatActionResults()
     {
-        for (int i = 0; i < damageInfo.Targets.Count; i++)
+        if (SkillWasUsed())
         {
-            if (damageInfo.IsTravelerDefending[i])
-            {
-                ShowDefense(damageInfo.Targets[i]);
-            }
-            
-            if (damageInfo.Targets[i] is Beast)
-            {
-                Beast beast = (Beast)damageInfo.Targets[i];
-                if (beast.IsWeakToDamageType(damageInfo.Damages[i].Type))
-                {
-                    ShowSuperEffectiveDamageReceived(beast, damageInfo.Damages[i]);
-                    if (damageInfo.IsBreakingPointAchieved[i])
-                    {
-                        ShowBreakingPointAchieved(beast);
-                    }
-
-                    continue;
-                }
-            }
-
-            ShowDamageReceived(damageInfo.Targets[i], damageInfo.Damages[i]);
+            ShowSkillUsage(_gameState.CombatActionInfo.SkillName);
+        }
+        else
+        {
+            ShowBasicAttack();
+        }
+        
+        if (_gameState.CombatActionInfo.HealValues.Count > 0)
+        {
+            ShowHealResults();
+        }
+        else if (_gameState.CombatActionInfo.AreThereResurrections)
+        {
+            ShowResurrectionResults();
+        }
+        else
+        {
+            ShowDamageResults();
         }
 
-        foreach (CombatUnit target in damageInfo.Targets)
+        foreach (CombatUnit target in GetOrderedTargetListCurrentUnitAtTheEnd())
         {
             ShowFinalHP(target);
         }
+    }
+
+    private bool SkillWasUsed()
+        => _gameState.CombatActionInfo.SkillName != null;
+
+    private void ShowHealResults()
+    {
+        List<CombatUnit> targets = GetOrderedTargetListCurrentUnitAtTheEnd();
+        for (int i = 0; i < targets.Count; i++)
+        {
+            string targetName = targets[i].Name;
+            int healValue = _gameState.CombatActionInfo.HealValues[i];
+            _view.WriteLine($"{targetName} recupera {healValue} de vida");
+        }
+    }
+    
+    private void ShowResurrectionResults()
+    {
+        foreach (CombatUnit target in GetOrderedTargetListCurrentUnitAtTheEnd())
+        {
+            _view.WriteLine($"{target.Name} revive");
+        }
+    }
+
+    private List<CombatUnit> GetOrderedTargetListCurrentUnitAtTheEnd()
+    {
+        List<CombatUnit> units = _gameState.CombatTargets.ToList();
+        if (units.Contains(_gameState.CurrentUnit))
+        {
+            units.Remove(_gameState.CurrentUnit);
+            units.Add(_gameState.CurrentUnit);
+        }
+        return units;
+    }
+    
+    private void ShowDamageResults()
+    {
+        List<CombatUnit> targets = GetOrderedTargetListCurrentUnitAtTheEnd();
+        CombatActionInfo combatInfo = _gameState.CombatActionInfo;
+        for (int i = 0; i < targets.Count; i++)
+        {
+            if (combatInfo.IsTravelerDefending[i])
+            {
+                ShowDefense(targets[i]);
+            }
+            if (targets[i] is Beast)
+            {
+                Beast beast = (Beast)targets[i];
+                if (beast.IsWeakToDamageType(combatInfo.Damages[i].Type))
+                {
+                    ShowSuperEffectiveDamageReceived(beast, combatInfo.Damages[i]);
+                    if (combatInfo.IsBreakingPointAchieved[i])
+                    {
+                        ShowBreakingPointAchieved(beast);
+                    }
+                    continue;
+                }
+            }
+            ShowDamageReceived(targets[i], combatInfo.Damages[i]);
+        } 
     }
 
     private void ShowDefense(CombatUnit target)
@@ -266,7 +373,7 @@ public class MainConsoleView
         _view.WriteLine($"{attackTarget.Name} entra en Breaking Point");
     }
     
-    private void ShowFinalHP(CombatUnit attackTarget)
+    public void ShowFinalHP(CombatUnit attackTarget)
     {
         _view.WriteLine($"{attackTarget.Name} termina con HP:{attackTarget.CurrentHP}");
     }

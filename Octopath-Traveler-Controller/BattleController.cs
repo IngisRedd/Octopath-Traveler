@@ -52,7 +52,7 @@ public class BattleController
         {
             ExecuteBeastTurn();
         }
-        GameStateUpdater.EndOfTurnUpdateTurnQueues(_gameState);
+        GameStateUpdater.EndOfTurnUpdate(_gameState);
 
         EndOfGameValidator.CheckIfGameIsOver(_gameState, _view);
     }
@@ -65,7 +65,7 @@ public class BattleController
             try
             {
                 _view.ShowTravelerActions();
-                int playerInput = Utils.ReadPlayerInput(_view);
+                int playerInput = _view.ReadPlayerInput();
                 ExecuteTravelerAction(playerInput);
                 isValidActionSelected = true;
             }
