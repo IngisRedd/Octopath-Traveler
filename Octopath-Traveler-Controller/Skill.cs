@@ -5,26 +5,18 @@ namespace Octopath_Traveler.Skills;
 
 public class Skill
 {
-    private ITargetSelector _targetSelector;
-    private ISkillEffect _skillEffect;
-    private CombatUnit _currentUnit;
-    private MainConsoleView _view;
+    public ITargetSelector TargetSelector;
+    public ISkillEffect SkillEffect;
 
-    public Skill(ITargetSelector targetSelector, ISkillEffect skillEffect, CombatUnit currentUnit, MainConsoleView view)
+    public Skill(ITargetSelector targetSelector, ISkillEffect skillEffect)
     {
-        _targetSelector = targetSelector;
-        _skillEffect = skillEffect;
-        _currentUnit = currentUnit;
-        _view = view;
+        TargetSelector = targetSelector;
+        SkillEffect = skillEffect;
     }
 
     public void Use()
     {
-        _targetSelector.Select();
-        if (_currentUnit is Traveler)
-        {
-            int BPToUse = _view.AskForBPToUseIfAvailable();
-        }
-        _skillEffect.Apply();
+        TargetSelector.Select();
+        SkillEffect.Apply();
     }
 }

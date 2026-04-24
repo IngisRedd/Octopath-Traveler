@@ -250,12 +250,12 @@ public class MainConsoleView
         }
     }
 
-    private void ShowDefense(CombatUnit target)
+    public void ShowDefense(CombatUnit target)
     {
         _view.WriteLine($"{target.Name} se defiende");
     }
     
-    private void ShowDamageReceived(CombatUnit target, Damage damage)
+    public void ShowDamageReceived(CombatUnit target, Damage damage)
     {
         if (damage.Type is DamageType.None) 
         {
@@ -275,17 +275,25 @@ public class MainConsoleView
         }
     }
     
-    private void ShowSuperEffectiveDamageReceived(CombatUnit attackTarget, Damage damage)
+    public void ShowSuperEffectiveDamageReceived(CombatUnit attackTarget, Damage damage)
     {
         _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type} con debilidad");
     }
 
-    private void ShowBreakingPointAchieved(Beast attackTarget)
+    public void ShowBreakingPointAchieved(Beast attackTarget)
     {
         _view.WriteLine($"{attackTarget.Name} entra en Breaking Point");
     }
+
+    public void ShowFinalHPForAllTargets()
+    {
+        foreach (CombatUnit target in _gameState.CombatTargets)
+        {
+            ShowFinalHP(target);
+        }
+    }
     
-    private void ShowFinalHP(CombatUnit attackTarget)
+    public void ShowFinalHP(CombatUnit attackTarget)
     {
         _view.WriteLine($"{attackTarget.Name} termina con HP:{attackTarget.CurrentHP}");
     }

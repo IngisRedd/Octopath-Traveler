@@ -7,7 +7,6 @@ public class DamageApplier
 {
     private GameState _gameState;
     private MainConsoleView _view;
-    private DamageActionResultInfo _resultInfo = new DamageActionResultInfo();
 
 
     public DamageApplier(GameState gameState, MainConsoleView view)
@@ -23,67 +22,55 @@ public class DamageApplier
             new DamageCalculator(basicAttackModifier, _gameState.CurrentUnit, target, weapon);
         Damage damage = damageCalculator.Calculate();
         DamageTarget(target, damage);
-        _resultInfo.Targets = new() { target };
-        _view.ShowDamageResults(_resultInfo);
     }
 
     
-    public void UseDamagingSkill(DamageType type, double modifier)
+    public void UseDamagingSkill(CombatUnit target, DamageType type, double modifier)
     {
-        List<CombatUnit> targets = _gameState.CombatTargets;
-        foreach (CombatUnit target in targets)
-        {
-            DamageCalculator damageCalculator =
-                new DamageCalculator(modifier, _gameState.CurrentUnit, target, type);
-            Damage damage = damageCalculator.Calculate();
-            DamageTarget(target, damage);
-        }
-        
-        _resultInfo.Targets = targets.ToList();
-        _view.ShowDamageResults(_resultInfo);
+        DamageCalculator damageCalculator =
+            new DamageCalculator(modifier, _gameState.CurrentUnit, target, type);
+        Damage damage = damageCalculator.Calculate();
+        DamageTarget(target, damage);
     }
     
     private void DamageTarget(CombatUnit target, Damage damage)
     {
-        CheckForWeakness(target, damage);
         CheckForDefend(target);
-        
-        target.CurrentHP -= damage.Value;
-        _resultInfo.Damages.Add(damage);
-    }
-
-    private void CheckForWeakness(CombatUnit target, Damage damage)
-    {
         if (target is Beast)
         {
             Beast beast = (Beast)target;
             if (beast.IsWeakToDamageType(damage.Type))
             {
+                _view.ShowSuperEffectiveDamageReceived(target, damage);
                 if (damage.Value > 0)
                 {
                     beast.CurrentShields -= 1;
                 }
                 CheckForAndApplyBreakingPoint(beast);
             }
+            else
+            {
+                _view.ShowDamageReceived(target, damage);
+            }
         }
         else
         {
-            _resultInfo.IsBreakingPointAchieved.Add(false);
+            _view.ShowDamageReceived(target, damage);
         }
+        
+        target.CurrentHP -= damage.Value;
     }
+
+
     
     private void CheckForAndApplyBreakingPoint(Beast beast)
     {
         if (IsBreakingPointAchieved(beast))
         {
-            _resultInfo.IsBreakingPointAchieved.Add(true);
+            _view.ShowBreakingPointAchieved(beast);
             beast.StatusEffects[StatusType.BreakingPoint].Duration = 2;
             _gameState.CurrentTurnQueue.Remove(beast);
             _gameState.NextTurnQueue.Remove(beast);
-        }
-        else
-        {
-            _resultInfo.IsBreakingPointAchieved.Add(false);
         }
     }
 
@@ -91,11 +78,7 @@ public class DamageApplier
     {
         if (target.StatusEffects[StatusType.Defend].IsActive)
         {
-            _resultInfo.IsTravelerDefending.Add(true);
-        }
-        else
-        {
-            _resultInfo.IsTravelerDefending.Add(false);
+            _view.ShowDefense(target);
         }
     }
     

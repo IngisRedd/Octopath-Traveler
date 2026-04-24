@@ -22,5 +22,6 @@ public class BeastTurnController
         Skill skillToUse = SkillFactory.Create(beastSkill, _gameState, _view);
         _view.ShowSkillUsage(beastSkill.Name);
         skillToUse.Use();
+        _view.ShowFinalHPForAllTargets(); ///Malisismo, hay que quitar de alguna maneraa, tal vez pasando la info a la view para que la view haga magia
     }
 }

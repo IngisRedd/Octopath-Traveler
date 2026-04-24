@@ -17,6 +17,7 @@ public class AttackAction : CombatAction
         DamageApplier damageApplier = new DamageApplier(_gameState, _view);
         _view.ShowBasicAttack();
         damageApplier.MakeBasicAttack(attackTarget, selectedWeapon);
+        _view.ShowFinalHP(attackTarget); ///Malisismo, hay que quitar de alguna maneraa, tal vez pasando la info a la view para que la view haga magia
     }
 
     private string SelectWeapon()

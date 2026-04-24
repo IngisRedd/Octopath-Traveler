@@ -10,6 +10,6 @@ public class SkillFactory
     {
         ITargetSelector selector = TargetSelectorFactory.Create(skillInfo, gameState, view);
         ISkillEffect effect = SkillEffectFactory.Create(skillInfo, gameState, view);
-        return new Skill(selector , effect, gameState.CurrentUnit, view);
+        return new Skill(selector , effect);
     }
 }

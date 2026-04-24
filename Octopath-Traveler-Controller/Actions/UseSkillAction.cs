@@ -15,10 +15,14 @@ public class UseSkillAction : CombatAction
         TravelerSkillInfo selectedSkillInfo = SelectSkill();
         Skill skillToUse = SkillFactory.Create(selectedSkillInfo, _gameState, _view);
 
-        _gameState.CurrentTraveler.CurrentSP -= selectedSkillInfo.SP;
-        _view.ShowSkillUsage(selectedSkillInfo.Name);
-        skillToUse.Use();
+        skillToUse.TargetSelector.Select();
 
+        _gameState.CurrentTraveler.CurrentSP -= selectedSkillInfo.SP;
+        int BPToUse = _view.AskForBPToUseIfAvailable();
+        _view.ShowSkillUsage(selectedSkillInfo.Name);
+        
+        skillToUse.SkillEffect.Apply();
+        _view.ShowFinalHPForAllTargets(); // Esto está malisimo, hay que cambiarlo!!
     }
 
     private TravelerSkillInfo SelectSkill()
