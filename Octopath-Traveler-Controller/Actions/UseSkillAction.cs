@@ -6,7 +6,7 @@ namespace Octopath_Traveler.Actions;
 
 public class UseSkillAction : CombatAction
 {
-    public UseSkillAction(GameState gameState, MainConsoleView view)
+    public UseSkillAction(GameState gameState, GameConsoleView view)
         : base(gameState, view){}
     
     public override void Execute()
@@ -22,7 +22,6 @@ public class UseSkillAction : CombatAction
         int BPToUse = _view.AskForBPToUseIfAvailable();
         
         skillToUse.ApplyEffects();
-        _view.ShowCombatActionResults();
     }
 
     private TravelerSkillInfo SelectSkill()

@@ -57,7 +57,7 @@ public static class SkillEffectFactory
                 new ReviveSkillEffect(gameState)
             };
         }
-        throw new ArgumentException($" Unknown skill name: {skillInfo.Name}!.");
+        throw new ArgumentException($"Unknown skill name: {skillInfo.Name}!.");
     }
     private static bool IsItADamagingSkill(SkillInfo skillInfo)
         => skillInfo.Type != DamageType.None;

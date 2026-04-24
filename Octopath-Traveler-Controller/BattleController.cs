@@ -8,18 +8,21 @@ namespace Octopath_Traveler;
 public class BattleController
 {
     public bool IsGameStillGoing = true;
-    private MainConsoleView _view;
+    private GameConsoleView _gameView;
+    private CombatActionConsoleView _combatActionView;
     private GameState _gameState;
 
-    public BattleController(MainConsoleView view, GameState gameState)
+    public BattleController(GameState gameState, GameConsoleView gameView, CombatActionConsoleView combatActionView)
     {
-        _view = view;
         _gameState = gameState;
+        _gameView = gameView;
+        _combatActionView = combatActionView;
     }
+    
     public void ExecuteBattleRound()
     {
         PerformStartOfRoundUpdates();
-        _view.ShowRoundHeader();
+        _gameView.ShowRoundHeader();
         try
         {
             while (_gameState.CurrentTurnQueue.Count > 0)
@@ -43,7 +46,7 @@ public class BattleController
     private void ExecuteTurn()
     {
         GameStateUpdater.UpdateCurrentUnit(_gameState);
-        _view.ShowTurnInfo();
+        _gameView.ShowTurnInfo();
         if (_gameState.CurrentUnit is Traveler)
         {
             ExecuteTravelerTurn();
@@ -54,7 +57,7 @@ public class BattleController
         }
         GameStateUpdater.EndOfTurnUpdate(_gameState);
 
-        EndOfGameValidator.CheckIfGameIsOver(_gameState, _view);
+        EndOfGameValidator.CheckIfGameIsOver(_gameState, _gameView);
     }
 
     private void ExecuteTravelerTurn()
@@ -64,8 +67,8 @@ public class BattleController
         {
             try
             {
-                _view.ShowTravelerActions();
-                int playerInput = _view.ReadPlayerInput();
+                _gameView.ShowTravelerActions();
+                int playerInput = _gameView.ReadPlayerInput();
                 ExecuteTravelerAction(playerInput);
                 isValidActionSelected = true;
             }
@@ -94,31 +97,35 @@ public class BattleController
 
     private void ExecuteAttack()
     {
-        AttackAction attackAction = new AttackAction(_gameState, _view);
+        AttackAction attackAction = new AttackAction(_gameState, _gameView);
         attackAction.Execute();
+        _combatActionView.ShowCombatActionResults();
+
     }
     
     private void ExecuteUseSkill()
     {
-        UseSkillAction useSkillAction = new UseSkillAction(_gameState, _view);
+        UseSkillAction useSkillAction = new UseSkillAction(_gameState, _gameView);
         useSkillAction.Execute();
+        _combatActionView.ShowCombatActionResults();
     }
     
     private void ExecuteDefend()
     {
-        DefendAction defendAction = new DefendAction(_gameState, _view);
+        DefendAction defendAction = new DefendAction(_gameState, _gameView);
         defendAction.Execute();
     }
 
     private void ExecuteFlee()
     {
-        FleeAction fleeAction = new FleeAction(_gameState, _view);
+        FleeAction fleeAction = new FleeAction(_gameState, _gameView);
         fleeAction.Execute();
     }
 
     private void ExecuteBeastTurn()
     {
-        BeastTurnController beastTurnController = new BeastTurnController(_gameState, _view);
+        BeastTurnController beastTurnController = new BeastTurnController(_gameState, _gameView);
         beastTurnController.Execute();
+        _combatActionView.ShowCombatActionResults();
     }
 }
