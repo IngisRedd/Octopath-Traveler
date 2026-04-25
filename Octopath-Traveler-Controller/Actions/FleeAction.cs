@@ -6,7 +6,7 @@ namespace Octopath_Traveler.Actions;
 
 public class FleeAction : CombatAction
 {
-    public FleeAction(GameState gameState, GameConsoleView view)
+    public FleeAction(GameState gameState, RoundConsoleView view)
         : base(gameState, view){}
     
     public override void Execute()

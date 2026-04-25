@@ -25,7 +25,7 @@ public class HealingSkillEffect : BaseSkillEffect
     private int CalculateHealingEffect()
     {
         double healingValue = _gameState.CurrentUnit.ElemDef * _modifier;
-        return Convert.ToInt32(healingValue);
+        return (int)healingValue;
     }
     
     private void RegisterHealing(int healValue)

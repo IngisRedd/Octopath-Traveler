@@ -7,7 +7,7 @@ namespace Octopath_Traveler;
 
 public static class TargetSelectorFactory
 {
-    public static ITargetSelector Create(SkillInfo skillInfo, GameState gameState, GameConsoleView view)
+    public static ITargetSelector Create(SkillInfo skillInfo, GameState gameState, RoundConsoleView view)
     {
         if (skillInfo.Name == "Attack")
         {
@@ -29,7 +29,7 @@ public static class TargetSelectorFactory
         {
             return new BeastSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
         }
-        if (skillInfo.Name == "Luminescence")
+        if (skillInfo.Name == "Luminescence" && gameState.CurrentUnit is Beast)
         {
             return new BeastSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
         }

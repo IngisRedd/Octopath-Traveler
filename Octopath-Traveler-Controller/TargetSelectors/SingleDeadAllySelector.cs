@@ -7,9 +7,9 @@ namespace Octopath_Traveler.TargetSelectors;
 public class SingleDeadAllySelector : ITargetSelector
 {
     private GameState _gameState;
-    private GameConsoleView _view;
+    private RoundConsoleView _view;
     
-    public SingleDeadAllySelector(GameState gameState, GameConsoleView view)
+    public SingleDeadAllySelector(GameState gameState, RoundConsoleView view)
     {
         _gameState = gameState;
         _view = view;
