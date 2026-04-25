@@ -14,10 +14,14 @@ public abstract class BaseSkillEffect : ISkillEffect
     
     public void Apply()
     {
+        List<CombatUnit> targets = new List<CombatUnit>(_gameState.CombatTargets);
+        _gameState.SkillEffectResults.Add(new SkillEffectResult(targets));
         foreach (CombatUnit target in _gameState.CombatTargets)
         {
+            _gameState.LastSkillEffectResult.AddDefaultEntry();
             ApplyEffectTo(target);
         }
+        _gameState.CombatTargets.Clear();
     }
     
     protected abstract void ApplyEffectTo(CombatUnit target);

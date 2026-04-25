@@ -36,8 +36,7 @@ public static class GameStateUpdater
     public static void EndOfTurnUpdate(GameState gameState)
     {
         EndOfTurnUpdateTurnQueues(gameState);
-        gameState.ResetCombatActionInfo();
-        gameState.CombatTargets.Clear();
+        gameState.ResetSkillEffectResults();
     }
     
     private static void EndOfTurnUpdateTurnQueues(GameState gameState)

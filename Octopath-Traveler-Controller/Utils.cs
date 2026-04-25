@@ -25,4 +25,10 @@ public static class Utils
 
         return DamageType.None;
     }
+    
+    public static void SetLast<T>(List<T> list, T item)
+    {
+        if (list.Count == 0) return;
+        list[^1] = item;
+    }
 }
