@@ -4,6 +4,12 @@ namespace Octopath_Traveler;
 
 public static class GameStateUpdater
 {
+    public static void PerformStartOfRoundUpdates(GameState gameState)
+    {
+        gameState.RoundCounter++;
+        StartOfRoundQueueUpdate(gameState);
+    }
+    
     public static void StartOfRoundQueueUpdate(GameState gameState)
     {
         gameState.CurrentTurnQueue = gameState.NextTurnQueue.Copy();
@@ -36,7 +42,7 @@ public static class GameStateUpdater
     public static void EndOfTurnUpdate(GameState gameState)
     {
         EndOfTurnUpdateTurnQueues(gameState);
-        gameState.ResetSkillEffectResults();
+        gameState.SkillEffectResults = new();;
     }
     
     private static void EndOfTurnUpdateTurnQueues(GameState gameState)

@@ -9,12 +9,15 @@ public class ReviveSkillEffect : BaseSkillEffect
 
     protected override void ApplyEffectTo(CombatUnit target)
     {
-        
         target.CurrentHP = 1;
         _gameState.NextTurnQueue.Add(target);
 
+        RegisterResurrection();
+    }
+    
+    private void RegisterResurrection()
+    {
         List<bool> isTravelerResurrected = _gameState.LastSkillEffectResult.IsTravelerResurrected;
         Utils.SetLast(isTravelerResurrected, true);
     }
-    
 }

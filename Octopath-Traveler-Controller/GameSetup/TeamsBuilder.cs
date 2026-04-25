@@ -41,7 +41,7 @@ public class TeamsBuilder
             newTraveler.PassiveSkills = _parsedTeamsInfo.TravelerPassiveSkills[name];
             foreach (string skill in newTraveler.PassiveSkills)
             {
-                PassiveSkillApplier.ApplyPassiveSkillBonus(skill, newTraveler);
+                PassiveSkillFactory.ApplyPassiveSkillBonus(skill, newTraveler);
             }
             
             travelerTeam.Units.Add(newTraveler);

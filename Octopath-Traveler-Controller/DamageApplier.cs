@@ -11,7 +11,7 @@ public class DamageApplier
         _gameState = gameState;
     }
     
-    public void UseDamagingSkill(CombatUnit target, DamageType type, double modifier)
+    public void Apply(CombatUnit target, DamageType type, double modifier)
     {
         DamageCalculator damageCalculator =
             new DamageCalculator(modifier, _gameState.CurrentUnit, target, type);
@@ -22,14 +22,27 @@ public class DamageApplier
     private void DamageTarget(CombatUnit target, Damage damage)
     {
         CheckForDefend(target);
-        CheckForAndApplyWeakness(target, damage);
+        CheckForWeakness(target, damage);
         
         target.CurrentHP -= damage.Value;
         List<Damage> damages = _gameState.LastSkillEffectResult.Damages;
         Utils.SetLast(damages, damage);
     }
+    
+    private void CheckForDefend(CombatUnit target)
+    {
+        List<bool> isTravelerDefending = _gameState.LastSkillEffectResult.IsTravelerDefending;
+        if (target.StatusEffects[StatusType.Defend].IsActive)
+        {
+            Utils.SetLast(isTravelerDefending, true);
+        }
+        else
+        {
+            Utils.SetLast(isTravelerDefending, false);
+        }
+    }
 
-    private void CheckForAndApplyWeakness(CombatUnit target, Damage damage)
+    private void CheckForWeakness(CombatUnit target, Damage damage)
     {
         if (target is Beast)
         {
@@ -59,19 +72,6 @@ public class DamageApplier
         else
         {
             Utils.SetLast(isBreakingPointAchieved, false);
-        }
-    }
-
-    private void CheckForDefend(CombatUnit target)
-    {
-        List<bool> isTravelerDefending = _gameState.LastSkillEffectResult.IsTravelerDefending;
-        if (target.StatusEffects[StatusType.Defend].IsActive)
-        {
-            Utils.SetLast(isTravelerDefending, true);
-        }
-        else
-        {
-            Utils.SetLast(isTravelerDefending, false);
         }
     }
     

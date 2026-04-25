@@ -21,7 +21,7 @@ public class BattleController
     
     public void ExecuteBattleRound()
     {
-        PerformStartOfRoundUpdates();
+        GameStateUpdater.PerformStartOfRoundUpdates(_gameState);
         _gameView.ShowRoundHeader();
         try
         {
@@ -35,12 +35,6 @@ public class BattleController
             IsGameStillGoing = false;
         }
         GameStateUpdater.PerformEndOfRoundUpdates(_gameState);
-    }
-
-    private void PerformStartOfRoundUpdates()
-    {
-        _gameState.RoundCounter++;
-        GameStateUpdater.StartOfRoundQueueUpdate(_gameState);
     }
     
     private void ExecuteTurn()

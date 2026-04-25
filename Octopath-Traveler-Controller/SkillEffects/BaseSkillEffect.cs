@@ -14,8 +14,7 @@ public abstract class BaseSkillEffect : ISkillEffect
     
     public void Apply()
     {
-        List<CombatUnit> targets = new List<CombatUnit>(_gameState.CombatTargets);
-        _gameState.SkillEffectResults.Add(new SkillEffectResult(targets));
+        InitializeNewSkillEffectResult();
         foreach (CombatUnit target in _gameState.CombatTargets)
         {
             _gameState.LastSkillEffectResult.AddDefaultEntry();
@@ -24,4 +23,10 @@ public abstract class BaseSkillEffect : ISkillEffect
     }
     
     protected abstract void ApplyEffectTo(CombatUnit target);
+
+    private void InitializeNewSkillEffectResult()
+    {
+        List<CombatUnit> targets = new List<CombatUnit>(_gameState.CombatTargets);
+        _gameState.SkillEffectResults.Add(new SkillEffectResult(targets));
+    }
 }

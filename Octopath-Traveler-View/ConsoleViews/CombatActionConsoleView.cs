@@ -1,4 +1,5 @@
 using Octopath_Traveler_Model;
+using Octopath_Traveler;
 
 namespace Octopath_Traveler_View;
 
@@ -14,12 +15,13 @@ public class CombatActionConsoleView : BaseConsoleView
         SkillEffectResult orderedResult = null;
         foreach (SkillEffectResult result in _gameState.SkillEffectResults)
         {
-            orderedResult = result.GetOrderedSkillEffectResultCurrentUnitAtTheEnd(_gameState.CurrentUnit);
+            orderedResult = GetOrderedSkillEffectResultCurrentUnitAtTheEnd(result);
             ShowSkillEffectResult(orderedResult);
         }
 
         ShowFinalHPIfNecessary(orderedResult);
     }
+    
 
     private void ShowCombatActionType()
     {
@@ -32,13 +34,7 @@ public class CombatActionConsoleView : BaseConsoleView
             ShowBasicAttack();
         } 
     }
-    
-    private bool WasUnitHealed(int? healValue)
-        => healValue != null;
-    
-    private bool WasUnitDamaged(Damage damage)
-        => damage != null;
-    
+
     private bool SkillWasUsed()
         => _gameState.SkillUsedName != "Basic Attack";
     
@@ -53,7 +49,24 @@ public class CombatActionConsoleView : BaseConsoleView
         PrintHorizontalRule();
         _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
     }
-
+    
+    private SkillEffectResult GetOrderedSkillEffectResultCurrentUnitAtTheEnd(SkillEffectResult result)
+    {
+        SkillEffectResult newResult = result.DeepCopy();
+        if (newResult.Targets.Contains(_gameState.CurrentUnit))
+        {
+            int index = newResult.Targets.IndexOf(_gameState.CurrentUnit);
+            
+            Utils.MoveItemInIndexToEnd(newResult.Targets, index);
+            Utils.MoveItemInIndexToEnd(newResult.Damages, index);
+            Utils.MoveItemInIndexToEnd(newResult.IsBreakingPointAchieved, index);
+            Utils.MoveItemInIndexToEnd(newResult.IsTravelerDefending, index);
+            Utils.MoveItemInIndexToEnd(newResult.HealValues, index);
+            Utils.MoveItemInIndexToEnd(newResult.IsTravelerResurrected, index);
+        }
+        return newResult;   
+    }
+    
     public void ShowSkillEffectResult(SkillEffectResult result)
     {
         for (int i = 0; i < result.Targets.Count; i++)
@@ -72,6 +85,12 @@ public class CombatActionConsoleView : BaseConsoleView
             }
         }
     }
+    
+    private bool WasUnitHealed(int? healValue)
+        => healValue != null;
+    
+    private bool WasUnitDamaged(Damage damage)
+        => damage != null;
     
     private void ShowResurrection(string targetName)
     {
@@ -121,7 +140,17 @@ public class CombatActionConsoleView : BaseConsoleView
             ShowDamageReceived(result.Targets[i], result.Damages[i]);
         }
     }
+    
+    private void ShowSuperEffectiveDamageReceived(CombatUnit attackTarget, Damage damage)
+    {
+        _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type} con debilidad");
+    }
 
+    private void ShowBreakingPointAchieved(Beast attackTarget)
+    {
+        _view.WriteLine($"{attackTarget.Name} entra en Breaking Point");
+    }
+    
     private void ShowDamageReceived(CombatUnit target, Damage damage)
     {
         if (damage.Type is DamageType.None) 
@@ -140,16 +169,6 @@ public class CombatActionConsoleView : BaseConsoleView
         {
             _view.WriteLine($"{target.Name} recibe {damage.Value} de daño de tipo {damage.Type}");
         }
-    }
-    
-    private void ShowSuperEffectiveDamageReceived(CombatUnit attackTarget, Damage damage)
-    {
-        _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type} con debilidad");
-    }
-
-    private void ShowBreakingPointAchieved(Beast attackTarget)
-    {
-        _view.WriteLine($"{attackTarget.Name} entra en Breaking Point");
     }
     
     private void ShowFinalHPIfNecessary(SkillEffectResult result)
