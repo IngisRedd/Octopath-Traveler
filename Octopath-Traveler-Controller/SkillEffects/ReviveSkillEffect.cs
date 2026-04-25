@@ -11,7 +11,9 @@ public class ReviveSkillEffect : BaseSkillEffect
     {
         target.CurrentHP = 1;
         _gameState.NextTurnQueue.Add(target);
-        _gameState.CombatActionInfo.AreThereResurrections = true;
+
+        List<bool> isTravelerResurrected = _gameState.LastSkillEffectResult.IsTravelerResurrected;
+        Utils.SetLast(isTravelerResurrected, true);
     }
     
 }

@@ -1,5 +1,4 @@
 using Octopath_Traveler_Model;
-using Octopath_Traveler_View;
 
 namespace Octopath_Traveler;
 
@@ -26,7 +25,8 @@ public class DamageApplier
         CheckForAndApplyWeakness(target, damage);
         
         target.CurrentHP -= damage.Value;
-        _gameState.CombatActionInfo.Damages.Add(damage);        
+        List<Damage> damages = _gameState.LastSkillEffectResult.Damages;
+        Utils.SetLast(damages, damage);
     }
 
     private void CheckForAndApplyWeakness(CombatUnit target, Damage damage)
@@ -47,29 +47,31 @@ public class DamageApplier
     
     private void CheckForAndApplyBreakingPoint(Beast beast)
     {
+        List<bool> isBreakingPointAchieved = _gameState.LastSkillEffectResult.IsBreakingPointAchieved;
         if (IsBreakingPointAchieved(beast))
         {
             beast.StatusEffects[StatusType.BreakingPoint].Duration = 2;
             _gameState.CurrentTurnQueue.Remove(beast);
             _gameState.NextTurnQueue.Remove(beast);
             
-            _gameState.CombatActionInfo.IsBreakingPointAchieved.Add(true);
+            Utils.SetLast(isBreakingPointAchieved, true);
         }
         else
         {
-            _gameState.CombatActionInfo.IsBreakingPointAchieved.Add(false);
+            Utils.SetLast(isBreakingPointAchieved, false);
         }
     }
 
     private void CheckForDefend(CombatUnit target)
     {
+        List<bool> isTravelerDefending = _gameState.LastSkillEffectResult.IsTravelerDefending;
         if (target.StatusEffects[StatusType.Defend].IsActive)
         {
-            _gameState.CombatActionInfo.IsTravelerDefending.Add(true);
+            Utils.SetLast(isTravelerDefending, true);
         }
         else
         {
-            _gameState.CombatActionInfo.IsTravelerDefending.Add(false);
+            Utils.SetLast(isTravelerDefending, false);
         }
     }
     

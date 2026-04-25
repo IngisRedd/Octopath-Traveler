@@ -12,7 +12,6 @@ public class UseSkillAction : CombatAction
     public override void Execute()
     {
         TravelerSkillInfo selectedSkillInfo = SelectSkill();
-        _gameState.CombatActionInfo.SkillName = selectedSkillInfo.Name;
 
         Skill skillToUse = SkillFactory.Create(selectedSkillInfo, _gameState, _view);
 

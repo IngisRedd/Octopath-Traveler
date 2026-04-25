@@ -16,10 +16,11 @@ public class HealingSkillEffect : BaseSkillEffect
 
     protected override void ApplyEffectTo(CombatUnit target)
     {
-        int healingValue = CalculateHealingEffect();
-        target.CurrentHP += healingValue;
+        int healValue = CalculateHealingEffect();
+        target.CurrentHP += healValue;
         
-        _gameState.CombatActionInfo.HealValues.Add(healingValue);
+        List<int?> healValues = _gameState.LastSkillEffectResult.HealValues;
+        Utils.SetLast(healValues, healValue);
     }
 
     private int CalculateHealingEffect()

@@ -11,39 +11,40 @@ public class CombatActionConsoleView : BaseConsoleView
     {
         if (SkillWasUsed())
         {
-            ShowSkillUsage(_gameState.CombatActionInfo.SkillName);
+            ShowSkillUsage();
         }
         else
         {
             ShowBasicAttack();
         }
-        
-        if (_gameState.CombatActionInfo.HealValues.Count > 0)
+        foreach (SkillEffectResult result in _gameState.SkillEffectResults)
         {
-            ShowHealResults();
-        }
-        else if (_gameState.CombatActionInfo.AreThereResurrections)
-        {
-            ShowResurrectionResults();
-        }
-        else
-        {
-            ShowDamageResults();
-        }
+            SkillEffectResult orderedResult = result.GetOrderedSkillEffectResultCurrentUnitAtTheEnd(_gameState.CurrentUnit);
+            ShowSkillEffectResult(orderedResult);
 
-        foreach (CombatUnit target in GetOrderedTargetListCurrentUnitAtTheEnd())
-        {
-            ShowFinalHP(target);
+            for (int i = 0; i < orderedResult.Targets.Count; i++)
+            {
+                if (WasUnitHealed(orderedResult.HealValues[i]) || WasUnitDamaged(orderedResult.Damages[i]))
+                {
+                    ShowFinalHP(orderedResult.Targets[i]);
+                }
+            }
         }
     }
-
-    private bool SkillWasUsed()
-        => _gameState.CombatActionInfo.SkillName != null;
     
-    private void ShowSkillUsage(string skillName)
+    private bool WasUnitHealed(int? healValue)
+        => healValue != null;
+    
+    private bool WasUnitDamaged(Damage damage)
+        => damage != null;
+    
+    private bool SkillWasUsed()
+        => _gameState.SkillUsedName != "Basic Attack";
+    
+    private void ShowSkillUsage()
     {
         PrintHorizontalRule();
-        _view.WriteLine($"{_gameState.CurrentUnit.Name} usa {skillName}");
+        _view.WriteLine($"{_gameState.CurrentUnit.Name} usa {_gameState.SkillUsedName}");
     }
     
     private void ShowBasicAttack()
@@ -52,68 +53,74 @@ public class CombatActionConsoleView : BaseConsoleView
         _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
     }
 
-    private void ShowHealResults()
+    public void ShowSkillEffectResult(SkillEffectResult result)
     {
-        List<CombatUnit> targets = GetOrderedTargetListCurrentUnitAtTheEnd();
-        for (int i = 0; i < targets.Count; i++)
+        for (int i = 0; i < result.Targets.Count; i++)
         {
-            string targetName = targets[i].Name;
-            int healValue = _gameState.CombatActionInfo.HealValues[i];
-            _view.WriteLine($"{targetName} recupera {healValue} de vida");
+            if (result.IsTravelerResurrected[i])
+            {
+                ShowResurrection(result.Targets[i].Name);
+            }
+            if (WasUnitHealed(result.HealValues[i]))
+            {
+                ShowHealing(result.Targets[i].Name, result.HealValues[i]);
+            }
+            if (WasUnitDamaged(result.Damages[i]))
+            {
+                ShowDamageResults(result, i);
+            }
         }
     }
     
-    private void ShowResurrectionResults()
+    private void ShowResurrection(string targetName)
     {
-        foreach (CombatUnit target in GetOrderedTargetListCurrentUnitAtTheEnd())
-        {
-            _view.WriteLine($"{target.Name} revive");
-        }
-    }
-
-    private List<CombatUnit> GetOrderedTargetListCurrentUnitAtTheEnd()
-    {
-        List<CombatUnit> units = _gameState.CombatTargets.ToList();
-        if (units.Contains(_gameState.CurrentUnit))
-        {
-            units.Remove(_gameState.CurrentUnit);
-            units.Add(_gameState.CurrentUnit);
-        }
-        return units;
+        _view.WriteLine($"{targetName} revive");
     }
     
-    private void ShowDamageResults()
+    private void ShowHealing(string targetName, int? healValue)
     {
-        List<CombatUnit> targets = GetOrderedTargetListCurrentUnitAtTheEnd();
-        CombatActionInfo combatInfo = _gameState.CombatActionInfo;
-        for (int i = 0; i < targets.Count; i++)
-        {
-            if (combatInfo.IsTravelerDefending[i])
-            {
-                ShowDefense(targets[i]);
-            }
-            if (targets[i] is Beast)
-            {
-                Beast beast = (Beast)targets[i];
-                if (beast.IsWeakToDamageType(combatInfo.Damages[i].Type))
-                {
-                    ShowSuperEffectiveDamageReceived(beast, combatInfo.Damages[i]);
-                    if (combatInfo.IsBreakingPointAchieved[i])
-                    {
-                        ShowBreakingPointAchieved(beast);
-                    }
-                    continue;
-                }
-            }
-            ShowDamageReceived(targets[i], combatInfo.Damages[i]);
-        } 
+        _view.WriteLine($"{targetName} recupera {healValue} de vida");
     }
+    
+    private void ShowDamageResults(SkillEffectResult result, int i)
+    {
+        if (result.IsTravelerDefending[i])
+        {
+            ShowDefense(result.Targets[i]);
+        }
+        if (result.Targets[i] is Beast)
+        {
+            ShowBeastDamageAccordingToWeakness(result, i);
+        }
+        else
+        {
+            ShowDamageReceived(result.Targets[i], result.Damages[i]);
+        }
 
+    }
+    
     private void ShowDefense(CombatUnit target)
     {
         _view.WriteLine($"{target.Name} se defiende");
     }
-    
+
+    private void ShowBeastDamageAccordingToWeakness(SkillEffectResult result, int i)
+    {
+        Beast beast = (Beast)result.Targets[i];
+        if (beast.IsWeakToDamageType(result.Damages[i].Type))
+        {
+            ShowSuperEffectiveDamageReceived(beast, result.Damages[i]);
+            if (result.IsBreakingPointAchieved[i])
+            {
+                ShowBreakingPointAchieved(beast);
+            }
+        }
+        else
+        {
+            ShowDamageReceived(result.Targets[i], result.Damages[i]);
+        }
+    }
+
     private void ShowDamageReceived(CombatUnit target, Damage damage)
     {
         if (damage.Type is DamageType.None) 

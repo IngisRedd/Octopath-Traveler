@@ -12,10 +12,12 @@ public class GameState
     public TurnQueue CurrentTurnQueue = new();
     public TurnQueue NextTurnQueue = new();
     public List<CombatUnit> CombatTargets = new();
-    public CombatActionInfo CombatActionInfo = new();
+    public List<SkillEffectResult> SkillEffectResults = new();
+    public string SkillUsedName;
+    public SkillEffectResult LastSkillEffectResult => SkillEffectResults.LastOrDefault();
 
-    public void ResetCombatActionInfo()
+    public void ResetSkillEffectResults()
     {
-        CombatActionInfo = new();
+        SkillEffectResults = new();
     }
 }
