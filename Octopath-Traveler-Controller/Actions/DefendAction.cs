@@ -5,12 +5,13 @@ namespace Octopath_Traveler.Actions;
 
 public class DefendAction : CombatAction
 {
-    public DefendAction(GameState gameState, GameConsoleView view)
+    public DefendAction(GameState gameState, RoundConsoleView view)
         : base(gameState, view){}
     
     public override void Execute()
     {
-        _gameState.CurrentUnit.StatusEffects[StatusType.Defend].Duration = 1;
+        CombatUnit currentUnit = _gameState.CurrentUnit;
+        currentUnit.StatusEffects[StatusType.Defend].Duration = 1;
         _gameState.NextTurnQueue.ApplyPriority(_gameState.CurrentUnit, TurnPriorityLevel.UsedDefend);
     }
 

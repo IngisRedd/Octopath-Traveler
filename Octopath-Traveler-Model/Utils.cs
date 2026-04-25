@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Octopath_Traveler_Model;
-using Octopath_Traveler_View;
 
 namespace Octopath_Traveler;
 
@@ -30,5 +29,14 @@ public static class Utils
     {
         if (list.Count == 0) return;
         list[^1] = item;
+    }
+    
+    public static void MoveItemInIndexToEnd<T>(List<T> list, int index)
+    {
+        if (index < 0 || index >= list.Count) return;
+
+        var item = list[index];
+        list.RemoveAt(index);
+        list.Add(item);
     }
 }

@@ -3,11 +3,11 @@ using Octopath_Traveler.Skills;
 
 namespace Octopath_Traveler.TargetSelectors;
 
-public class PartySelector : ITargetSelector
+public class AlivePartySelector : ITargetSelector
 {
     private GameState _gameState;
     
-    public PartySelector(GameState gameState)
+    public AlivePartySelector(GameState gameState)
     {
         _gameState = gameState;
     }

@@ -19,13 +19,18 @@ public class HealingSkillEffect : BaseSkillEffect
         int healValue = CalculateHealingEffect();
         target.CurrentHP += healValue;
         
-        List<int?> healValues = _gameState.LastSkillEffectResult.HealValues;
-        Utils.SetLast(healValues, healValue);
+        RegisterHealing(healValue);
     }
 
     private int CalculateHealingEffect()
     {
         double healingValue = _gameState.CurrentUnit.ElemDef * _modifier;
-        return Convert.ToInt32(healingValue);
+        return (int)healingValue;
+    }
+    
+    private void RegisterHealing(int healValue)
+    {
+        List<int?> healValues = _gameState.LastSkillEffectResult.HealValues;
+        Utils.SetLast(healValues, healValue);
     }
 }

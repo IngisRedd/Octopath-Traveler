@@ -2,64 +2,11 @@ using Octopath_Traveler_Model;
 
 namespace Octopath_Traveler_View;
 
-public class GameConsoleView : BaseConsoleView
+public class RoundConsoleView : BaseConsoleView
 {
-    private string _teamsFolder;
-
-    public GameConsoleView(View view, GameState gameState, string teamsFolder)
-    : base(view, gameState)
-    {
-        _teamsFolder = teamsFolder;
-    }
-
-    public string GetTeamsFilePath()
-    {
-        ShowPossibleTeamsFiles();
-        string teamChosenInput = _view.ReadLine();
-        return GetTeamsFilePath(teamChosenInput);
-    }
-
-    private void ShowPossibleTeamsFiles()
-    {
-        _view.WriteLine("Elige un archivo para cargar los equipos");
-        string[] files = Directory.GetFiles(_teamsFolder);
-
-        int index = 0;
-        foreach (string file in files)
-        {
-            string fileName = Path.GetFileName(file);
-            _view.WriteLine($"{index}: {fileName}");
-            index++;
-        }
-    }
-
-    private string GetTeamsFilePath(string teamChosenInput)
-    {
-        string[] files = Directory.GetFiles(_teamsFolder);
-        string chosenFilePath = "";
-
-        int index = 0;
-        foreach (string file in files)
-        {
-            if (FileIsTheChosenOne(index, teamChosenInput))
-            {
-                chosenFilePath = file;
-            }
-
-            index++;
-        }
-
-        return chosenFilePath;
-    }
-
-    private bool FileIsTheChosenOne(int fileIndex, string teamChosenInput) =>
-        fileIndex.ToString() == teamChosenInput;
-
-    public void ShowInvalidTeamMessage()
-    {
-        _view.WriteLine("Archivo de equipos no válido");
-    }
-
+    public RoundConsoleView(View view, GameState gameState)
+        : base(view, gameState){}
+            
     public void ShowRoundHeader()
     {
         PrintHorizontalRule();
@@ -190,20 +137,19 @@ public class GameConsoleView : BaseConsoleView
         return Convert.ToInt32(input);
     }
     
-    public Traveler SelectTravelerAllyTarget()
+    public Traveler SelectTravelerAllyTarget(List<Traveler> allies)
     {
-        ShowAvailableAllyTravelerTargets();
+        ShowAvailableAllyTravelerTargets(allies);
         int selectedIndex = ReadPlayerInput() - 1;
-        return _gameState.TravelerTeam.AliveUnits[selectedIndex];
+        return allies[selectedIndex];
     }
     
-    public void ShowAvailableAllyTravelerTargets()
+    public void ShowAvailableAllyTravelerTargets(List<Traveler> travelers)
     {
         PrintHorizontalRule();
         _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");
         int label = 1;
-        List<Traveler> aliveTravelers = _gameState.TravelerTeam.AliveUnits;
-        foreach (Traveler traveler in aliveTravelers)
+        foreach (Traveler traveler in travelers)
         {
             _view.WriteLine(
                 $"{label}: {traveler.Name} - " +
@@ -247,7 +193,7 @@ public class GameConsoleView : BaseConsoleView
         }
         _view.WriteLine($"{label}: Cancelar");
     }
-
+    
     public void ShowFleeMessage()
     {
         PrintHorizontalRule();

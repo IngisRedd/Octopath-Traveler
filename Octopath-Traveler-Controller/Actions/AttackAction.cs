@@ -6,13 +6,13 @@ namespace Octopath_Traveler.Actions;
 
 public class AttackAction : CombatAction
 {
-    public AttackAction(GameState gameState, GameConsoleView view)
+    public AttackAction(GameState gameState, RoundConsoleView view)
         : base(gameState, view){}
     
     public override void Execute()
     {
         DamageType selectedWeapon = Utils.ParseDamageType(SelectWeapon());
-        SkillInfo skillInfo = CreateSkillInfo(selectedWeapon);
+        SkillInfo skillInfo = CreateBasicAttackSkillInfo(selectedWeapon);
         Skill basicAttack = SkillFactory.Create(skillInfo, _gameState, _view);
         
         basicAttack.SelectTarget();
@@ -28,7 +28,7 @@ public class AttackAction : CombatAction
         return _gameState.CurrentTraveler.Weapons[selectedIndex];
     }
 
-    private SkillInfo CreateSkillInfo(DamageType selectedWeapon)
+    private SkillInfo CreateBasicAttackSkillInfo(DamageType selectedWeapon)
     {
         double basicAttackModifier = 1.3;
         return new SkillInfo

@@ -8,13 +8,6 @@ public static class SkillEffectFactory
 {
     public static List<ISkillEffect> Create(SkillInfo skillInfo, GameState gameState)
     {
-        if (IsItADamagingSkill(skillInfo))
-        {
-            return new List<ISkillEffect>
-            {
-                new DamageSkillEffect(gameState, skillInfo.Modifier, skillInfo.Type)
-            };
-        }
         if (skillInfo.Name == "Heal Wounds")
         {
             return new List<ISkillEffect>
@@ -55,6 +48,37 @@ public static class SkillEffectFactory
             return new List<ISkillEffect>
             {
                 new ReviveSkillEffect(gameState)
+            };
+        }
+        if (skillInfo.Name == "Vivify")
+        {
+            return new List<ISkillEffect>
+            {
+                new ReviveSkillEffect(gameState),
+                new HealingSkillEffect(gameState, skillInfo.Modifier)
+            };
+        }
+        if (skillInfo.Name == "Healing Touch")
+        {
+            return new List<ISkillEffect>
+            {
+                new ReviveSkillEffect(gameState),
+                new HealingSkillEffect(gameState, skillInfo.Modifier)
+            };
+        }
+        if (skillInfo.Name == "Revive and Rejuvenate")
+        {
+            return new List<ISkillEffect>
+            {
+                new ReviveSkillEffect(gameState),
+                new HealingSkillEffect(gameState, skillInfo.Modifier)
+            };
+        }
+        if (IsItADamagingSkill(skillInfo))
+        {
+            return new List<ISkillEffect>
+            {
+                new DamageSkillEffect(gameState, skillInfo.Modifier, skillInfo.Type)
             };
         }
         throw new ArgumentException($"Unknown skill name: {skillInfo.Name}!.");

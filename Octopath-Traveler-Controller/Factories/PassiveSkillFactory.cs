@@ -2,8 +2,10 @@ using Octopath_Traveler_Model;
 
 namespace Octopath_Traveler.GameSetup;
 
-public static class PassiveSkillApplier
+public static class PassiveSkillFactory
 {
+    // Este método está pensado como una fábrica rudimentaria y por eso es tan largo.
+    // La idea es que evolucione harto para la E3.
     public static void ApplyPassiveSkillBonus(string passiveSkill, Traveler traveler)
     {
         int elementalAugmentationBonus = 50;

@@ -6,7 +6,7 @@ namespace Octopath_Traveler.Actions;
 
 public class UseSkillAction : CombatAction
 {
-    public UseSkillAction(GameState gameState, GameConsoleView view)
+    public UseSkillAction(GameState gameState, RoundConsoleView view)
         : base(gameState, view){}
     
     public override void Execute()

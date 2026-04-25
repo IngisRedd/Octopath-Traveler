@@ -18,6 +18,6 @@ public class DamageSkillEffect : BaseSkillEffect
     protected override void ApplyEffectTo(CombatUnit target)
     {
         DamageApplier damageApplier = new DamageApplier(_gameState);
-        damageApplier.UseDamagingSkill(target, _damageType, _modifier);
+        damageApplier.Apply(target, _damageType, _modifier);
     }
 }

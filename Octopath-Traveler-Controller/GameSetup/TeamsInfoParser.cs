@@ -95,7 +95,6 @@ public class TeamsInfoParser
             List<string> passiveSkillsList = SplitSkillsIntoList(travelerDescription, passiveSkillsStart, passiveSkillsEnd);            
             _parsedTeamsInfo.TravelerPassiveSkills[travelerName] = passiveSkillsList;
         }
-        
     }
     
     private bool TravelerHasSkills(int skillStartPosition) => skillStartPosition != -1;

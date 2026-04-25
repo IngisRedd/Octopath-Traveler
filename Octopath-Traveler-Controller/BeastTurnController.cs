@@ -7,9 +7,9 @@ namespace Octopath_Traveler;
 public class BeastTurnController
 {
     private GameState _gameState;
-    private GameConsoleView _view;
+    private RoundConsoleView _view;
 
-    public BeastTurnController(GameState gameState, GameConsoleView view)
+    public BeastTurnController(GameState gameState, RoundConsoleView view)
     {
         _gameState = gameState;
         _view = view;

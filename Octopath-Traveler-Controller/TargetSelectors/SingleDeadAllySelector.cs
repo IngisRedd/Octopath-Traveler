@@ -4,12 +4,12 @@ using Octopath_Traveler.Skills;
 
 namespace Octopath_Traveler.TargetSelectors;
 
-public class TravelerSingleEnemySelector : ITargetSelector
+public class SingleDeadAllySelector : ITargetSelector
 {
     private GameState _gameState;
     private RoundConsoleView _view;
     
-    public TravelerSingleEnemySelector(GameState gameState, RoundConsoleView view)
+    public SingleDeadAllySelector(GameState gameState, RoundConsoleView view)
     {
         _gameState = gameState;
         _view = view;
@@ -17,7 +17,7 @@ public class TravelerSingleEnemySelector : ITargetSelector
 
     public void Select()
     {
-        Beast target = _view.SelectEnemyBeastTarget();
+        Traveler target = _view.SelectTravelerAllyTarget(_gameState.TravelerTeam.DeadUnits);
         _gameState.CombatTargets.Add(target);
     }
 

@@ -24,25 +24,8 @@ public class SkillEffectResult
         HealValues.Add(null);
         IsTravelerResurrected.Add(false);
     }
-
-    public SkillEffectResult GetOrderedSkillEffectResultCurrentUnitAtTheEnd(CombatUnit currentUnit)
-    {
-        SkillEffectResult newResult = DeepCopy();
-        if (Targets.Contains(currentUnit))
-        {
-            int index = Targets.IndexOf(currentUnit);
-            
-            MoveItemInIndexToEnd(newResult.Targets, index);
-            MoveItemInIndexToEnd(newResult.Damages, index);
-            MoveItemInIndexToEnd(newResult.IsBreakingPointAchieved, index);
-            MoveItemInIndexToEnd(newResult.IsTravelerDefending, index);
-            MoveItemInIndexToEnd(newResult.HealValues, index);
-            MoveItemInIndexToEnd(newResult.IsTravelerResurrected, index);
-        }
-        return newResult;   
-    }
     
-    private SkillEffectResult DeepCopy()
+    public SkillEffectResult DeepCopy()
     {
         return new SkillEffectResult(this.Targets)
         {
@@ -52,14 +35,5 @@ public class SkillEffectResult
             HealValues = new List<int?>(this.HealValues),
             IsTravelerResurrected = new List<bool>(this.IsTravelerResurrected)
         };
-    }
-
-    private void MoveItemInIndexToEnd<T>(List<T> list, int index)
-    {
-        if (index < 0 || index >= list.Count) return;
-
-        var item = list[index];
-        list.RemoveAt(index);
-        list.Add(item);
     }
 }
