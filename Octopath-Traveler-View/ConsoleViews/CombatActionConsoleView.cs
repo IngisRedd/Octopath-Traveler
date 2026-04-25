@@ -9,6 +9,20 @@ public class CombatActionConsoleView : BaseConsoleView
 
     public void ShowCombatActionResults()
     {
+        ShowCombatActionType();
+
+        SkillEffectResult orderedResult = null;
+        foreach (SkillEffectResult result in _gameState.SkillEffectResults)
+        {
+            orderedResult = result.GetOrderedSkillEffectResultCurrentUnitAtTheEnd(_gameState.CurrentUnit);
+            ShowSkillEffectResult(orderedResult);
+        }
+
+        ShowFinalHPIfNecessary(orderedResult);
+    }
+
+    private void ShowCombatActionType()
+    {
         if (SkillWasUsed())
         {
             ShowSkillUsage();
@@ -16,20 +30,7 @@ public class CombatActionConsoleView : BaseConsoleView
         else
         {
             ShowBasicAttack();
-        }
-        foreach (SkillEffectResult result in _gameState.SkillEffectResults)
-        {
-            SkillEffectResult orderedResult = result.GetOrderedSkillEffectResultCurrentUnitAtTheEnd(_gameState.CurrentUnit);
-            ShowSkillEffectResult(orderedResult);
-
-            for (int i = 0; i < orderedResult.Targets.Count; i++)
-            {
-                if (WasUnitHealed(orderedResult.HealValues[i]) || WasUnitDamaged(orderedResult.Damages[i]))
-                {
-                    ShowFinalHP(orderedResult.Targets[i]);
-                }
-            }
-        }
+        } 
     }
     
     private bool WasUnitHealed(int? healValue)
@@ -151,8 +152,16 @@ public class CombatActionConsoleView : BaseConsoleView
         _view.WriteLine($"{attackTarget.Name} entra en Breaking Point");
     }
     
-    private void ShowFinalHP(CombatUnit attackTarget)
+    private void ShowFinalHPIfNecessary(SkillEffectResult result)
     {
-        _view.WriteLine($"{attackTarget.Name} termina con HP:{attackTarget.CurrentHP}");
+        for (int i = 0; i < result.Targets.Count; i++)
+        {
+            if (WasUnitHealed(result.HealValues[i])
+                || WasUnitDamaged(result.Damages[i])
+                || result.IsTravelerResurrected[i])
+            {
+                _view.WriteLine($"{result.Targets[i].Name} termina con HP:{result.Targets[i].CurrentHP}");
+            }
+        }
     }
 }

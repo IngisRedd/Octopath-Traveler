@@ -9,6 +9,7 @@ public class ReviveSkillEffect : BaseSkillEffect
 
     protected override void ApplyEffectTo(CombatUnit target)
     {
+        
         target.CurrentHP = 1;
         _gameState.NextTurnQueue.Add(target);
 

@@ -21,7 +21,6 @@ public abstract class BaseSkillEffect : ISkillEffect
             _gameState.LastSkillEffectResult.AddDefaultEntry();
             ApplyEffectTo(target);
         }
-        _gameState.CombatTargets.Clear();
     }
     
     protected abstract void ApplyEffectTo(CombatUnit target);

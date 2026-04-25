@@ -190,20 +190,19 @@ public class GameConsoleView : BaseConsoleView
         return Convert.ToInt32(input);
     }
     
-    public Traveler SelectTravelerAllyTarget()
+    public Traveler SelectTravelerAllyTarget(List<Traveler> allies)
     {
-        ShowAvailableAllyTravelerTargets();
+        ShowAvailableAllyTravelerTargets(allies);
         int selectedIndex = ReadPlayerInput() - 1;
-        return _gameState.TravelerTeam.AliveUnits[selectedIndex];
+        return allies[selectedIndex];
     }
     
-    public void ShowAvailableAllyTravelerTargets()
+    public void ShowAvailableAllyTravelerTargets(List<Traveler> travelers)
     {
         PrintHorizontalRule();
         _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");
         int label = 1;
-        List<Traveler> aliveTravelers = _gameState.TravelerTeam.AliveUnits;
-        foreach (Traveler traveler in aliveTravelers)
+        foreach (Traveler traveler in travelers)
         {
             _view.WriteLine(
                 $"{label}: {traveler.Name} - " +

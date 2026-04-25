@@ -12,7 +12,7 @@ public class SkillFactory
         
         ITargetSelector selector = TargetSelectorFactory.Create(skillInfo, gameState, view);
         List<ISkillEffect> effects = SkillEffectFactory.Create(skillInfo, gameState);
-        return new Skill(selector , effects);
+        return new Skill(gameState, selector , effects);
     }
 
     private static void RegisterSkillUsed(string skillUsedName, GameState gameState)

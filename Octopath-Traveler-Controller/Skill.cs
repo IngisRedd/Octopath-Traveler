@@ -5,11 +5,13 @@ namespace Octopath_Traveler.Skills;
 
 public class Skill
 {
+    private GameState _gameState;
     private ITargetSelector _targetSelector;
     private List<ISkillEffect> _skillEffects;
 
-    public Skill(ITargetSelector targetSelector, List<ISkillEffect> skillEffects)
+    public Skill(GameState gameState, ITargetSelector targetSelector, List<ISkillEffect> skillEffects)
     {
+        _gameState = gameState;
         _targetSelector = targetSelector;
         _skillEffects = skillEffects;
     }
@@ -22,6 +24,7 @@ public class Skill
 
     public void SelectTarget()
     {
+        _gameState.CombatTargets.Clear();
         _targetSelector.Select();
     }
 

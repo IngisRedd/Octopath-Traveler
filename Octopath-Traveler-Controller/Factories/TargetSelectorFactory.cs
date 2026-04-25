@@ -9,22 +9,6 @@ public static class TargetSelectorFactory
 {
     public static ITargetSelector Create(SkillInfo skillInfo, GameState gameState, GameConsoleView view)
     {
-        if (IsSkillTargetEnemies(skillInfo))
-        {
-            return new AllEnemiesSelector(gameState);
-        }
-        if (IsSkillTargetParty(skillInfo))
-        {
-            return new PartySelector(gameState);
-        }
-        if (gameState.CurrentUnit is Traveler && IsSkillTargetSingle(skillInfo))
-        {
-            return new TravelerSingleEnemySelector(gameState, view);
-        }
-        if (gameState.CurrentUnit is Traveler && IsSkillTargetAlly(skillInfo))
-        {
-            return new TravelerSingleAllySelector(gameState, view);
-        }
         if (skillInfo.Name == "Attack")
         {
             return new BeastSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
@@ -140,6 +124,38 @@ public static class TargetSelectorFactory
         if (skillInfo.Name == "Web Storm")
         {
             return new BeastSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
+        }
+        if (skillInfo.Name == "Revive")
+        {
+            return new DeadPartySelector(gameState);
+        }
+        if (skillInfo.Name == "Vivify")
+        {
+            return new SingleDeadAllySelector(gameState, view);
+        }
+        if (skillInfo.Name == "Healing Touch")
+        {
+            return new AllPartySelector(gameState);
+        }
+        if (skillInfo.Name == "Revive and Rejuvenate")
+        {
+            return new AllPartySelector(gameState);
+        }
+        if (IsSkillTargetEnemies(skillInfo))
+        {
+            return new AllEnemiesSelector(gameState);
+        }
+        if (IsSkillTargetParty(skillInfo))
+        {
+            return new AlivePartySelector(gameState);
+        }
+        if (gameState.CurrentUnit is Traveler && IsSkillTargetSingle(skillInfo))
+        {
+            return new TravelerSingleEnemySelector(gameState, view);
+        }
+        if (gameState.CurrentUnit is Traveler && IsSkillTargetAlly(skillInfo))
+        {
+            return new SingleAllySelector(gameState, view);
         }
         throw new ArgumentException($" Unknown skill name: {skillInfo.Name}!.");
     }
