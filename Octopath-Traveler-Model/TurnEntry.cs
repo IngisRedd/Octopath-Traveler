@@ -12,7 +12,16 @@ public class TurnEntry
 
     public void ApplyPriority(TurnPriorityLevel newPriority)
     {
-        if (newPriority > Priority)
+        if (IsPriorityGoingFromNormalToMinimum(newPriority))
+        {
             Priority = newPriority;
+        } 
+        else if (newPriority > Priority)
+        {
+            Priority = newPriority;
+        }
     }
+
+    private bool IsPriorityGoingFromNormalToMinimum(TurnPriorityLevel newPriority)
+        => Priority == TurnPriorityLevel.Normal && newPriority == TurnPriorityLevel.Minimun;
 }

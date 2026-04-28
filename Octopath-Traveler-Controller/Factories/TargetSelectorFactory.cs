@@ -141,6 +141,14 @@ public static class TargetSelectorFactory
         {
             return new AllPartySelector(gameState);
         }
+        if (skillInfo.Name == "Leghold Trap")
+        {
+            return new TravelerSingleEnemySelector(gameState, view);
+        }
+        if (skillInfo.Name == "Spearhead")
+        {
+            return new TravelerSingleEnemySelector(gameState, view);
+        }
         if (IsSkillTargetEnemies(skillInfo))
         {
             return new AllEnemiesSelector(gameState);

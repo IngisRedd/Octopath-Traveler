@@ -19,7 +19,7 @@ public class CombatActionConsoleView : BaseConsoleView
             ShowSkillEffectResult(orderedResult);
         }
 
-        ShowFinalHPIfNecessary(orderedResult);
+        ShowTargetsFinalHP();
     }
     
 
@@ -79,6 +79,10 @@ public class CombatActionConsoleView : BaseConsoleView
             {
                 ShowHealing(result.Targets[i].Name, result.HealValues[i]);
             }
+            if (WasUnitSlowed(result.TurnsSlowedTarget[i]))
+            {
+                ShowSlowedTarget(result.Targets[i].Name, result.TurnsSlowedTarget[i]);
+            }
             if (WasUnitDamaged(result.Damages[i]))
             {
                 ShowDamageResults(result, i);
@@ -100,6 +104,14 @@ public class CombatActionConsoleView : BaseConsoleView
     private void ShowHealing(string targetName, int? healValue)
     {
         _view.WriteLine($"{targetName} recupera {healValue} de vida");
+    }
+    
+    private bool WasUnitSlowed(int? slowValue)
+        => slowValue != null; 
+    
+    private void ShowSlowedTarget(string targetName, int? slowedTurns)
+    {   
+        _view.WriteLine($"{targetName} tendrá menor prioridad de turno durante {slowedTurns} rondas");
     }
     
     private void ShowDamageResults(SkillEffectResult result, int i)
@@ -171,16 +183,34 @@ public class CombatActionConsoleView : BaseConsoleView
         }
     }
     
-    private void ShowFinalHPIfNecessary(SkillEffectResult result)
+    private void ShowTargetsFinalHP()
     {
-        for (int i = 0; i < result.Targets.Count; i++)
+        HashSet<CombatUnit> unitsAlreadyShown = new HashSet<CombatUnit>();
+        foreach (SkillEffectResult result in _gameState.SkillEffectResults)
         {
-            if (WasUnitHealed(result.HealValues[i])
-                || WasUnitDamaged(result.Damages[i])
-                || result.IsTravelerResurrected[i])
+            SkillEffectResult orderedResult = GetOrderedSkillEffectResultCurrentUnitAtTheEnd(result);
+            for (int i = 0; i < orderedResult.Targets.Count; i++)
             {
-                _view.WriteLine($"{result.Targets[i].Name} termina con HP:{result.Targets[i].CurrentHP}");
+                ShowFinalHPIfNecessary(orderedResult, i, unitsAlreadyShown);
             }
         }
     }
+
+    private void ShowFinalHPIfNecessary(SkillEffectResult result, int i,
+        HashSet<CombatUnit> unitsAlreadyShown)
+    {
+        if (HealedOrDamagedOrResurrectedUnitHasentBeenShown(result, i, unitsAlreadyShown))
+        {
+            unitsAlreadyShown.Add(result.Targets[i]);
+            _view.WriteLine($"{result.Targets[i].Name} termina con HP:{result.Targets[i].CurrentHP}");
+        }
+
+    }
+    
+    private bool HealedOrDamagedOrResurrectedUnitHasentBeenShown(SkillEffectResult result, int i,
+        HashSet<CombatUnit> unitsAlreadyShown)
+        => (WasUnitHealed(result.HealValues[i])
+            || WasUnitDamaged(result.Damages[i])
+            || result.IsTravelerResurrected[i])
+           && !unitsAlreadyShown.Contains(result.Targets[i]);
 }

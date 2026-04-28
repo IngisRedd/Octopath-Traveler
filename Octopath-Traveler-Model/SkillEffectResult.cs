@@ -9,6 +9,7 @@ public class SkillEffectResult
     public List<bool> IsBreakingPointAchieved = new();
     public List<bool> IsTravelerDefending = new();
     public List<int?> HealValues = new();
+    public List<int?> TurnsSlowedTarget = new();
     public List<bool> IsTravelerResurrected = new();
 
     public SkillEffectResult(List<CombatUnit> targets)
@@ -22,6 +23,7 @@ public class SkillEffectResult
         IsBreakingPointAchieved.Add(false);
         IsTravelerDefending.Add(false);
         HealValues.Add(null);
+        TurnsSlowedTarget.Add(null);
         IsTravelerResurrected.Add(false);
     }
     
@@ -33,7 +35,8 @@ public class SkillEffectResult
             IsBreakingPointAchieved = new List<bool>(this.IsBreakingPointAchieved),
             IsTravelerDefending = new List<bool>(this.IsTravelerDefending),
             HealValues = new List<int?>(this.HealValues),
-            IsTravelerResurrected = new List<bool>(this.IsTravelerResurrected)
+            TurnsSlowedTarget = new List<int?>(this.TurnsSlowedTarget),
+            IsTravelerResurrected = new List<bool>(this.IsTravelerResurrected),
         };
     }
 }

@@ -74,6 +74,21 @@ public static class SkillEffectFactory
                 new HealingSkillEffect(gameState, skillInfo.Modifier)
             };
         }
+        if (skillInfo.Name == "Leghold Trap")
+        {
+            return new List<ISkillEffect>
+            {
+                new SlowDownSkillEffect(gameState)
+            };
+        }
+        if (skillInfo.Name == "Spearhead")
+        {
+            return new List<ISkillEffect>
+            {
+                new DamageSkillEffect(gameState, skillInfo.Modifier, skillInfo.Type),
+                new GetTurnPrioritySkillEffect(gameState)
+            };
+        }
         if (IsItADamagingSkill(skillInfo))
         {
             return new List<ISkillEffect>

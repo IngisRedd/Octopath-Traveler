@@ -18,10 +18,12 @@ public abstract class CombatUnit
     public Dictionary<StatusType, StatusEffect> StatusEffects { get; set; } = new()
     {
         { StatusType.Defend, new StatusEffect() },
-        { StatusType.BreakingPoint, new StatusEffect() }
+        { StatusType.BreakingPoint, new StatusEffect() },
+        { StatusType.Slow, new StatusEffect() }
     };
     public bool IsGoingToActNextTurn =>
         IsAlive
         && StatusEffects[StatusType.BreakingPoint].Duration <= 1;
     public bool IsRecoveringFromBreakingPointNextRound => StatusEffects[StatusType.BreakingPoint].Duration == 1;
+    public bool IsStillSlowedNextTurn => StatusEffects[StatusType.Slow].Duration > 1;
 }

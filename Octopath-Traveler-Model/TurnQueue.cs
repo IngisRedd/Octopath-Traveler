@@ -78,8 +78,11 @@ public class TurnQueue : IEnumerable<CombatUnit>
 
     public void ApplyPriority(CombatUnit unit, TurnPriorityLevel priority)
     {
-        TurnEntry entry = _entries.First(e => e.Unit == unit);
-        entry.ApplyPriority(priority);
+        TurnEntry entry = _entries.FirstOrDefault(e => e.Unit == unit);
+        if (entry != null)
+        {
+            entry.ApplyPriority(priority);
+        }
     }
 
     private List<CombatUnit> GetOrderedQueue()

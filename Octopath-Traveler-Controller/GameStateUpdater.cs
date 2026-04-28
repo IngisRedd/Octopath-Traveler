@@ -24,12 +24,22 @@ public static class GameStateUpdater
         gameState.NextTurnQueue.AddRange(gameState.TravelerTeam.Units);
         gameState.NextTurnQueue.AddRange(gameState.BeastTeam.Units);
         gameState.NextTurnQueue.RemoveAll(unit => !unit.IsGoingToActNextTurn);
-        
+
+        ApplyPriorities(gameState);
+    }
+
+    private static void ApplyPriorities(GameState gameState)
+    {
         foreach (CombatUnit unit in gameState.NextTurnQueue)
         {
             if (unit.IsRecoveringFromBreakingPointNextRound)
             {
                 gameState.NextTurnQueue.ApplyPriority(unit, TurnPriorityLevel.OutOfBreakingPoint);
+            }
+
+            if (unit.IsStillSlowedNextTurn)
+            {
+                gameState.NextTurnQueue.ApplyPriority(unit, TurnPriorityLevel.Minimun);
             }
         }
     }
@@ -42,7 +52,7 @@ public static class GameStateUpdater
     public static void EndOfTurnUpdate(GameState gameState)
     {
         EndOfTurnUpdateTurnQueues(gameState);
-        gameState.SkillEffectResults = new();;
+        gameState.SkillEffectResults = new();
     }
     
     private static void EndOfTurnUpdateTurnQueues(GameState gameState)
