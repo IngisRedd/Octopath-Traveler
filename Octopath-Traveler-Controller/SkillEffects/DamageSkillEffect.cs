@@ -5,10 +5,10 @@ namespace Octopath_Traveler.Skills;
 
 public class DamageSkillEffect : BaseSkillEffect
 {
-    private double _modifier;
+    private decimal _modifier;
     private DamageType _damageType;
 
-    public DamageSkillEffect(GameState gameState, double modifier, DamageType damageType)
+    public DamageSkillEffect(GameState gameState, decimal modifier, DamageType damageType)
         : base(gameState)
     {
         _modifier = modifier;

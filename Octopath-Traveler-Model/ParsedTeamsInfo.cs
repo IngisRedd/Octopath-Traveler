@@ -8,4 +8,11 @@ public class ParsedTeamsInfo
     public List<string> TravelerNames = new();
     public Dictionary<string, List<string>> TravelerSkills = new();
     public Dictionary<string, List<string>> TravelerPassiveSkills = new();
+
+    public void AddTraveler(string travelerName)
+    {
+        TravelerNames.Add(travelerName);
+        TravelerSkills[travelerName] = new List<string>();
+        TravelerPassiveSkills[travelerName] = new List<string>();
+    }
 }

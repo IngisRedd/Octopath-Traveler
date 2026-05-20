@@ -5,10 +5,10 @@ namespace Octopath_Traveler.Skills;
 
 public class HealingSkillEffect : BaseSkillEffect
 {
-    private double _modifier;
+    private decimal _modifier;
     private DamageType _damageType;
 
-    public HealingSkillEffect(GameState gameState, double modifier)
+    public HealingSkillEffect(GameState gameState, decimal modifier)
         : base(gameState)
     {
         _modifier = modifier;
@@ -24,8 +24,8 @@ public class HealingSkillEffect : BaseSkillEffect
 
     private int CalculateHealingEffect()
     {
-        double healingValue = _gameState.CurrentUnit.ElemDef * _modifier;
-        return (int)healingValue;
+        decimal healingValue = _gameState.CurrentUnit.ElemDef * _modifier;
+        return (int)Math.Floor(healingValue);
     }
     
     private void RegisterHealing(int healValue)

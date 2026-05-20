@@ -11,7 +11,7 @@ public class DamageApplier
         _gameState = gameState;
     }
     
-    public void Apply(CombatUnit target, DamageType type, double modifier)
+    public void Apply(CombatUnit target, DamageType type, decimal modifier)
     {
         DamageCalculator damageCalculator =
             new DamageCalculator(modifier, _gameState.CurrentUnit, target, type);

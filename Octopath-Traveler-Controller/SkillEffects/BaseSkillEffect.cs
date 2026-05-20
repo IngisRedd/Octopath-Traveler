@@ -27,6 +27,6 @@ public abstract class BaseSkillEffect : ISkillEffect
     private void InitializeNewSkillEffectResult()
     {
         List<CombatUnit> targets = new List<CombatUnit>(_gameState.CombatTargets);
-        _gameState.SkillEffectResults.Add(new SkillEffectResult(targets));
+        _gameState.AppliedSkillEffectResults.Add(new SkillEffectResult(targets));
     }
 }

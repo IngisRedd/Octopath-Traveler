@@ -8,6 +8,15 @@ public static class SkillEffectFactory
 {
     public static List<ISkillEffect> Create(SkillInfo skillInfo, GameState gameState)
     {
+        if (skillInfo.Name == "Shooting Stars")
+        {
+            return new List<ISkillEffect>
+            {
+                new DamageSkillEffect(gameState, skillInfo.Modifier, DamageType.Wind),
+                new DamageSkillEffect(gameState, skillInfo.Modifier, DamageType.Light),
+                new DamageSkillEffect(gameState, skillInfo.Modifier, DamageType.Dark)
+            };
+        }
         if (skillInfo.Name == "Heal Wounds")
         {
             return new List<ISkillEffect>

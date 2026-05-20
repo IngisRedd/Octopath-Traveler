@@ -2,7 +2,7 @@ using System.Collections;
 
 namespace Octopath_Traveler_Model;
 
-public class TurnQueue : IEnumerable<CombatUnit>
+public class TurnQueue
 {
     private List<TurnEntry> _entries = new();
     public int Count => _entries.Count;
@@ -15,11 +15,6 @@ public class TurnQueue : IEnumerable<CombatUnit>
     public IEnumerator<CombatUnit> GetEnumerator()
     {
         return GetOrderedQueue().GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
     }
     
     public void AddRange(IEnumerable<CombatUnit> units)

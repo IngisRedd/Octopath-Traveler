@@ -8,15 +8,13 @@ namespace Octopath_Traveler;
 public class BattleController
 {
     public bool IsGameStillGoing = true;
-    private SetupConsoleView _setupView;
     private RoundConsoleView _roundConsoleView;
     private CombatActionConsoleView _combatActionView;
     private GameState _gameState;
 
-    public BattleController(GameState gameState, SetupConsoleView setupView, RoundConsoleView roundConsoleView, CombatActionConsoleView combatActionView)
+    public BattleController(GameState gameState, RoundConsoleView roundConsoleView, CombatActionConsoleView combatActionView)
     {
         _gameState = gameState;
-        _setupView = setupView;
         _roundConsoleView = roundConsoleView;
         _combatActionView = combatActionView;
     }
@@ -24,10 +22,10 @@ public class BattleController
     public void ExecuteBattleRound()
     {
         GameStateUpdater.PerformStartOfRoundUpdates(_gameState);
-        _roundConsoleView.ShowRoundHeader();
+        _roundConsoleView.ShowRoundStart();
         try
         {
-            while (_gameState.CurrentTurnQueue.Count > 0)
+            while (_gameState.IsTurnStillGoing)
             {
                 ExecuteTurn();
             }

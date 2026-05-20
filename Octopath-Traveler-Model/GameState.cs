@@ -10,11 +10,12 @@ public class GameState
     public Beast CurrentBeast => (Beast)CurrentUnit;
     public int RoundCounter = 0;
     public TurnQueue CurrentTurnQueue = new();
+    public bool IsTurnStillGoing => CurrentTurnQueue.Count > 0;
     public TurnQueue NextTurnQueue = new();
     
     public List<CombatUnit> CombatTargets = new();
     public string SkillUsedName;
-    public List<SkillEffectResult> SkillEffectResults = new();
-    public SkillEffectResult LastSkillEffectResult => SkillEffectResults.LastOrDefault();
+    public AppliedSkillEffectResults AppliedSkillEffectResults = new();
+    public SkillEffectResult LastSkillEffectResult => AppliedSkillEffectResults.LastSkillEffectResult;
 
 }

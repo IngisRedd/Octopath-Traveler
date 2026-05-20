@@ -12,17 +12,12 @@ public class CombatActionConsoleView : BaseConsoleView
     {
         ShowCombatActionType();
 
-        SkillEffectResult orderedResult = null;
-        foreach (SkillEffectResult result in _gameState.SkillEffectResults)
-        {
-            orderedResult = GetOrderedSkillEffectResultCurrentUnitAtTheEnd(result);
-            ShowSkillEffectResult(orderedResult);
-        }
+        TargetEffectsMap map = BuildTargetEffectsMap();
+        PrintAllTargetEffects(map);
 
         ShowTargetsFinalHP();
     }
     
-
     private void ShowCombatActionType()
     {
         if (SkillWasUsed())
@@ -50,6 +45,24 @@ public class CombatActionConsoleView : BaseConsoleView
         _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
     }
     
+    private TargetEffectsMap BuildTargetEffectsMap()
+    {
+        TargetEffectsMap map = new TargetEffectsMap();
+
+        foreach (SkillEffectResult result in _gameState.AppliedSkillEffectResults)
+        {
+            SkillEffectResult orderedResult = GetOrderedSkillEffectResultCurrentUnitAtTheEnd(result);
+
+            for (int i = 0; i < orderedResult.Targets.Count; i++)
+            {
+                CombatUnit target = orderedResult.Targets[i];
+                map.AddEffect(target, orderedResult, i);
+            }
+        }
+
+        return map;
+    }
+    
     private SkillEffectResult GetOrderedSkillEffectResultCurrentUnitAtTheEnd(SkillEffectResult result)
     {
         SkillEffectResult newResult = result.DeepCopy();
@@ -66,27 +79,41 @@ public class CombatActionConsoleView : BaseConsoleView
         }
         return newResult;   
     }
-    
-    public void ShowSkillEffectResult(SkillEffectResult result)
+
+    private void PrintAllTargetEffects(TargetEffectsMap map)
     {
-        for (int i = 0; i < result.Targets.Count; i++)
+        foreach (CombatUnit target in map.DistinctTargetsInOrder)
         {
-            if (result.IsTravelerResurrected[i])
-            {
-                ShowResurrection(result.Targets[i].Name);
-            }
-            if (WasUnitHealed(result.HealValues[i]))
-            {
-                ShowHealing(result.Targets[i].Name, result.HealValues[i]);
-            }
-            if (WasUnitSlowed(result.TurnsSlowedTarget[i]))
-            {
-                ShowSlowedTarget(result.Targets[i].Name, result.TurnsSlowedTarget[i]);
-            }
-            if (WasUnitDamaged(result.Damages[i]))
-            {
-                ShowDamageResults(result, i);
-            }
+            List<TargetedEffect> targetEffects = map.EffectsByTarget[target];
+            PrintSingleTargetEffects(targetEffects);
+        }
+    }
+
+    private void PrintSingleTargetEffects(List<TargetedEffect> targetEffects)
+    {
+        foreach (TargetedEffect effect in targetEffects)
+        {
+            ShowSingleTargetEffectResult(effect.Result, effect.Index);
+        }
+    }
+    
+    public void ShowSingleTargetEffectResult(SkillEffectResult result, int index)
+    {
+        if (result.IsTravelerResurrected[index])
+        {
+            ShowResurrection(result.Targets[index].Name);
+        }
+        if (WasUnitHealed(result.HealValues[index]))
+        {
+            ShowHealing(result.Targets[index].Name, result.HealValues[index]);
+        }
+        if (WasUnitSlowed(result.TurnsSlowedTarget[index]))
+        {
+            ShowSlowedTarget(result.Targets[index].Name, result.TurnsSlowedTarget[index]);
+        }
+        if (WasUnitDamaged(result.Damages[index]))
+        {
+            ShowDamageResults(result, index);
         }
     }
     
@@ -186,7 +213,7 @@ public class CombatActionConsoleView : BaseConsoleView
     private void ShowTargetsFinalHP()
     {
         HashSet<CombatUnit> unitsAlreadyShown = new HashSet<CombatUnit>();
-        foreach (SkillEffectResult result in _gameState.SkillEffectResults)
+        foreach (SkillEffectResult result in _gameState.AppliedSkillEffectResults)
         {
             SkillEffectResult orderedResult = GetOrderedSkillEffectResultCurrentUnitAtTheEnd(result);
             for (int i = 0; i < orderedResult.Targets.Count; i++)

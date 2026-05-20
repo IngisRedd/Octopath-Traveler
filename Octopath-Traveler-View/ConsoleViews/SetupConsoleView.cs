@@ -1,4 +1,5 @@
 using Octopath_Traveler_Model;
+using Octopath_Traveler;
 
 namespace Octopath_Traveler_View;
 
@@ -11,12 +12,37 @@ public class SetupConsoleView : BaseConsoleView
     {
         _teamsFolder = teamsFolder;
     }
-
-    public string GetTeamsFilePath()
+    
+    public TeamsSetupInfo GetTeamsSetupInfo()
     {
         ShowPossibleTeamsFiles();
         string teamChosenInput = _view.ReadLine();
-        return GetTeamsFilePath(teamChosenInput);
+        string pathToFile = GetTeamsFilePath(teamChosenInput);
+        return ParseAndSplitUnits(pathToFile);
+    }
+    
+    private TeamsSetupInfo ParseAndSplitUnits(string pathToFile)
+    {
+        TeamsSetupInfo teamsSetupInfo = new();
+        bool isUnitBeast = false;
+        foreach (string line in File.ReadLines(pathToFile).Skip(1))
+        {
+            if (line == "Enemy Team")
+            {
+                isUnitBeast = true;
+                continue;
+            }
+
+            if (isUnitBeast)
+            {
+                teamsSetupInfo.BeastNames.Add(line);
+            }
+            else
+            {
+                teamsSetupInfo.TravelerDescriptions.Add(line);
+            }
+        }
+        return teamsSetupInfo;
     }
 
     private void ShowPossibleTeamsFiles()
@@ -45,7 +71,6 @@ public class SetupConsoleView : BaseConsoleView
             {
                 chosenFilePath = file;
             }
-
             index++;
         }
 

@@ -7,7 +7,7 @@ public class RoundConsoleView : BaseConsoleView
     public RoundConsoleView(View view, GameState gameState)
         : base(view, gameState){}
             
-    public void ShowRoundHeader()
+    public void ShowRoundStart()
     {
         PrintHorizontalRule();
         _view.WriteLine($"INICIA RONDA {_gameState.RoundCounter}");
@@ -112,7 +112,7 @@ public class RoundConsoleView : BaseConsoleView
         return _gameState.BeastTeam.AliveUnits[selectedIndex];
     }
     
-    public void ShowAvailableEnemyBeastTargets()
+    private void ShowAvailableEnemyBeastTargets()
     {
         PrintHorizontalRule();
         _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");

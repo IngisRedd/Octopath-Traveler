@@ -52,7 +52,7 @@ public static class GameStateUpdater
     public static void EndOfTurnUpdate(GameState gameState)
     {
         EndOfTurnUpdateTurnQueues(gameState);
-        gameState.SkillEffectResults = new();
+        gameState.AppliedSkillEffectResults = new();
     }
     
     private static void EndOfTurnUpdateTurnQueues(GameState gameState)

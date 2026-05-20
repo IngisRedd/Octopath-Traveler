@@ -5,15 +5,15 @@ namespace Octopath_Traveler;
 
 public class Game
 {
-    private SetupConsoleView _view;
+    private SetupConsoleView _setupConsoleView;
     private GameState _state = new();
     private BattleController _battleController;
     public Game(View view, string teamsFolder)
     {
-        _view = new SetupConsoleView(view, _state, teamsFolder);
+        _setupConsoleView = new SetupConsoleView(view, _state, teamsFolder);
         CombatActionConsoleView combatActionConsoleView = new CombatActionConsoleView(view, _state);
         RoundConsoleView roundConsoleView = new RoundConsoleView(view, _state);
-        _battleController = new BattleController(_state, _view, roundConsoleView, combatActionConsoleView);
+        _battleController = new BattleController(_state, roundConsoleView, combatActionConsoleView);
     }
 
     public void Play()
@@ -30,16 +30,17 @@ public class Game
     {
         try
         {
-            TeamsInfoParser teamsInfoParser = new TeamsInfoParser();
-            ParsedTeamsInfo parsedTeamsInfo = teamsInfoParser.ParseFileData(_view.GetTeamsFilePath());
-            TeamsBuilder teamsBuilder = new TeamsBuilder(_state, parsedTeamsInfo);
+            TeamsInfoParser teamsInfoParser = new TeamsInfoParser(_setupConsoleView.GetTeamsSetupInfo());
+            ParsedTeamsInfo parsedTeamsInfo = teamsInfoParser.Parse();
+                TeamsBuilder teamsBuilder = new TeamsBuilder(_state, parsedTeamsInfo);
             teamsBuilder.Build();
             GameStateUpdater.ResetNextTurnQueue(_state);
         }
         catch (InvalidOperationException exception)
         {
-            _view.ShowInvalidTeamMessage();
+            _setupConsoleView.ShowInvalidTeamMessage();
             _battleController.IsGameStillGoing = false;
         }
     }
+    
 }

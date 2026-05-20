@@ -8,33 +8,16 @@ public class TeamsInfoParser
     private ParsedTeamsInfo _parsedTeamsInfo = new();
     private List<string> _travelerDescriptions = new();
 
-    public ParsedTeamsInfo ParseFileData(string pathToFile)
+    public TeamsInfoParser(TeamsSetupInfo teamsSetupInfo)
     {
-        SplitTravelerAndBeastNames(pathToFile);
+        _parsedTeamsInfo.BeastNames = teamsSetupInfo.BeastNames;
+        _travelerDescriptions = teamsSetupInfo.TravelerDescriptions;
+    }
+    
+    public ParsedTeamsInfo Parse()
+    {
         SplitTravelerNamesAndSkills();
         return _parsedTeamsInfo;
-    }
-
-    private void SplitTravelerAndBeastNames(string pathToFile)
-    {
-        bool isUnitBeast = false;
-        foreach (string line in File.ReadLines(pathToFile).Skip(1))
-        {
-            if (line == "Enemy Team")
-            {
-                isUnitBeast = true;
-                continue;
-            }
-
-            if (isUnitBeast)
-            {
-                _parsedTeamsInfo.BeastNames.Add(line);
-            }
-            else
-            {
-                _travelerDescriptions.Add(line);
-            }
-        }
     }
     
     private void SplitTravelerNamesAndSkills()
@@ -42,8 +25,8 @@ public class TeamsInfoParser
         foreach (string travelerDescription in _travelerDescriptions)
         {
             string travelerName = ParseTravelerName(travelerDescription);
-            InitializeTravelerInTeamsInfo(travelerName);
-            
+            _parsedTeamsInfo.AddTraveler(travelerName);
+
             ParseSkillsIfTravelerHasThem(travelerName, travelerDescription);
             ParsePassiveSkillsIfTravelerHasThem(travelerName, travelerDescription);
         }
@@ -68,13 +51,6 @@ public class TeamsInfoParser
         return specialIndexesEmptyCaseHandled.Min();
     }
     
-    private void InitializeTravelerInTeamsInfo(string travelerName)
-    {
-        _parsedTeamsInfo.TravelerNames.Add(travelerName);
-        _parsedTeamsInfo.TravelerSkills[travelerName] = new List<string>();
-        _parsedTeamsInfo.TravelerPassiveSkills[travelerName] = new List<string>();
-    }
-
     private void ParseSkillsIfTravelerHasThem(string travelerName, string travelerDescription)
     {
         int skillsStart = travelerDescription.IndexOf('(');
@@ -107,6 +83,5 @@ public class TeamsInfoParser
         
         return trimmedSkills.ToList();
     }
-
-
+    
 }

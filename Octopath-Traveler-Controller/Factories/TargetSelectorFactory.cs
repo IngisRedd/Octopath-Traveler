@@ -73,7 +73,7 @@ public static class TargetSelectorFactory
         {
             return new BeastSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
         }
-        if (skillInfo.Name == "Double Bite")
+        if (skillInfo.Name == "decimal Bite")
         {
             return new BeastSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
         }

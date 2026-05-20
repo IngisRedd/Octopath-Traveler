@@ -30,7 +30,7 @@ public class AttackAction : CombatAction
 
     private SkillInfo CreateBasicAttackSkillInfo(DamageType selectedWeapon)
     {
-        double basicAttackModifier = 1.3;
+        decimal basicAttackModifier = 1.3m;
         return new SkillInfo
         {
             Name = "Basic Attack",
