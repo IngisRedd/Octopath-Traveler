@@ -31,7 +31,7 @@ public class DamageApplier
     private void CheckForDefend(CombatUnit target)
     {
         List<bool> isTravelerDefending = _gameState.LastSkillEffectResult.IsTravelerDefending;
-        if (target.StatusEffects[StatusType.Defend].IsActive)
+        if (IsTravelerDefendingAgainstAttack(target))
         {
             Utils.SetLast(isTravelerDefending, true);
         }
@@ -40,6 +40,9 @@ public class DamageApplier
             Utils.SetLast(isTravelerDefending, false);
         }
     }
+
+    private bool IsTravelerDefendingAgainstAttack(CombatUnit traveler)
+        => traveler.StatusEffects[StatusType.Defend].IsActive && !_damage.SkipsDefend;
 
     private void CheckForWeakness(CombatUnit target, Damage damage)
     {

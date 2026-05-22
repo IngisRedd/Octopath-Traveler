@@ -14,7 +14,9 @@ public class HPHalverDamageCalculator : IDamageCalculator
 
     public Damage Calculate()
     {
-        _value = _target.CurrentHP / 2;
-        return new Damage(_value, DamageType.None);
+        _value = Math.Ceiling(_target.CurrentHP / 2.0m);
+        Damage newDamage = new Damage(_value, DamageType.None);
+        newDamage.SkipsDefend = true;
+        return newDamage;
     }
 }

@@ -6,6 +6,7 @@ public class Damage
     public int Value { get => (int)Math.Floor(_value); }
     public decimal ValueInDecimal { get => _value; }
     public DamageType Type { get; }
+    public bool SkipsDefend = false;
 
     public Damage(decimal value, DamageType type)
     {
