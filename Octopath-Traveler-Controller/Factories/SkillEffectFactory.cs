@@ -98,6 +98,28 @@ public static class SkillEffectFactory
                 new GetTurnPrioritySkillEffect(gameState)
             };
         }
+        if (skillInfo.Name == "Last Stand")
+        {
+            return new List<ISkillEffect>
+            {
+                new LastStandSkillEffect(gameState, skillInfo.Modifier, skillInfo.Type),
+            };
+        }
+        if (skillInfo.Name == "Mercy Strike")
+        {
+            return new List<ISkillEffect>
+            {
+                new MercyStrikeSkillEffect(gameState, skillInfo.Modifier, skillInfo.Type),
+            };
+        }
+        if (skillInfo.Name == "Vortal Claw")
+        {
+            return new List<ISkillEffect>
+            {
+                new HalveHPSkillEffect(gameState),
+            };
+        }
+
         if (IsItADamagingSkill(skillInfo))
         {
             return new List<ISkillEffect>

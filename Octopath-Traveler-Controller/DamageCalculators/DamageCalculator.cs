@@ -2,7 +2,7 @@ using Octopath_Traveler_Model;
 
 namespace Octopath_Traveler;
 
-public class DamageCalculator
+public class DamageCalculator : IDamageCalculator
 {
 
     private decimal _modifier;

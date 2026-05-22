@@ -5,18 +5,17 @@ namespace Octopath_Traveler;
 public class DamageApplier
 {
     private GameState _gameState;
+    private Damage _damage;
 
-    public DamageApplier(GameState gameState)
+    public DamageApplier(GameState gameState, Damage damage)
     {
         _gameState = gameState;
+        _damage = damage;
     }
     
-    public void Apply(CombatUnit target, DamageType type, decimal modifier)
+    public void Apply(CombatUnit target)
     {
-        DamageCalculator damageCalculator =
-            new DamageCalculator(modifier, _gameState.CurrentUnit, target, type);
-        Damage damage = damageCalculator.Calculate();
-        DamageTarget(target, damage);
+        DamageTarget(target, _damage);
     }
     
     private void DamageTarget(CombatUnit target, Damage damage)

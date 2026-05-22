@@ -3,12 +3,12 @@ using Octopath_Traveler_View;
 
 namespace Octopath_Traveler.Skills;
 
-public class DamageSkillEffect : BaseSkillEffect
+public class MercyStrikeSkillEffect : BaseSkillEffect
 {
     private decimal _modifier;
     private DamageType _damageType;
 
-    public DamageSkillEffect(GameState gameState, decimal modifier, DamageType damageType)
+    public MercyStrikeSkillEffect(GameState gameState, decimal modifier, DamageType damageType)
         : base(gameState)
     {
         _modifier = modifier;
@@ -20,6 +20,7 @@ public class DamageSkillEffect : BaseSkillEffect
         DamageCalculator damageCalculator =
             new DamageCalculator(_modifier, _gameState.CurrentUnit, target, _damageType);
         Damage damage = damageCalculator.Calculate();
+        damage = MercyStrikeEffect.Apply(damage, target);
    
         DamageApplier damageApplier = new DamageApplier(_gameState, damage);
         damageApplier.Apply(target);
