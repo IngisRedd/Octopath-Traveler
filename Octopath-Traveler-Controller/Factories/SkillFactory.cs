@@ -11,7 +11,7 @@ public class SkillFactory
         RegisterSkillUsed(skillInfo.Name, gameState);
         
         ITargetSelector selector = TargetSelectorFactory.Create(skillInfo, gameState, view);
-        List<ISkillEffect> effects = SkillEffectFactory.Create(skillInfo, gameState);
+        List<ISkillEffect> effects = SkillEffectFactory.Create(skillInfo, gameState, view);
         return new Skill(gameState, selector , effects);
     }
 

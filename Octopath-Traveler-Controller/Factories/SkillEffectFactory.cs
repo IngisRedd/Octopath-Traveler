@@ -6,7 +6,7 @@ namespace Octopath_Traveler;
 
 public static class SkillEffectFactory
 {
-    public static List<ISkillEffect> Create(SkillInfo skillInfo, GameState gameState)
+    public static List<ISkillEffect> Create(SkillInfo skillInfo, GameState gameState, RoundConsoleView view)
     {
         if (skillInfo.Name == "Shooting Stars")
         {
@@ -119,7 +119,18 @@ public static class SkillEffectFactory
                 new HalveHPSkillEffect(gameState),
             };
         }
-
+        if (skillInfo.Name == "Nightmare Chimera")
+        {
+            List<DamageType> weapons = new List<DamageType>
+            {
+                DamageType.Sword, DamageType.Spear, DamageType.Dagger, DamageType.Axe, DamageType.Bow, DamageType.Stave
+            };
+            DamageType weaponType = view.SelectWeapon(weapons);
+            return new List<ISkillEffect>
+            {
+                new DamageSkillEffect(gameState, skillInfo.Modifier, weaponType)
+            };
+        }
         if (IsItADamagingSkill(skillInfo))
         {
             return new List<ISkillEffect>

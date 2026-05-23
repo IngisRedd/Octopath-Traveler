@@ -68,9 +68,20 @@ public class TeamsBuilder
             MaxSP = data.Stats["SP"],
             CurrentSP = data.Stats["SP"],
             
-            Weapons = data.Weapons,
+            Weapons = ParseWeapons(data.Weapons),
             BP = initialBP
         };
+    }
+
+    private List<DamageType> ParseWeapons(List<string> weapons)
+    {
+        List<DamageType> parsedWeapons = new List<DamageType>();
+        foreach (string weapon in weapons)
+        {
+            DamageType parsedWeapon = Utils.ParseDamageType(weapon);
+            parsedWeapons.Add(parsedWeapon);
+        }
+        return parsedWeapons;
     }
     
     private void BuildBeastTeam()

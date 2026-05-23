@@ -4,7 +4,7 @@ public class Traveler : CombatUnit
 {
     public int MaxSP { get; set; }
     public int CurrentSP { get; set; }
-    public List<string> Weapons { get; set; }
+    public List<DamageType> Weapons { get; set; }
     public List<TravelerSkillInfo> Skills { get; set; } = new();
     public List<TravelerSkillInfo> AvailableSkills => Skills.Where(skill => skill.SP <= CurrentSP).ToList();
     public List<string> PassiveSkills { get; set; }

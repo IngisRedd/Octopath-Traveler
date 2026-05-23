@@ -91,17 +91,29 @@ public class RoundConsoleView : BaseConsoleView
         return _view.ReadLine();
     }
 
-    public void ShowAvailableWeapons()
+    public DamageType SelectWeapon(List<DamageType> weapons)
+    {
+        IEnumerable<string> deParsedWeapons = weapons.Select(weapon => weapon.ToString());
+        ShowWeapons(deParsedWeapons);
+        int selectedIndex = ReadPlayerInput() - 1;
+        return weapons[selectedIndex];
+    }
+
+    private void ShowWeapons(IEnumerable<string> weapons)
     {
         PrintHorizontalRule();
         _view.WriteLine("Seleccione un arma");
+        ShowListedItems(weapons);
+    }
+
+    private void ShowListedItems(IEnumerable<string> items)
+    {
         int label = 1;
-        foreach (string weapon in _gameState.CurrentTraveler.Weapons)
+        foreach (string item in items)
         {
-            _view.WriteLine($"{label}: {weapon}");
+            _view.WriteLine($"{label}: {item}");
             label++;
         }
-
         _view.WriteLine($"{label}: Cancelar");
     }
 

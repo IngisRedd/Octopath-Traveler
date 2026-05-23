@@ -11,7 +11,7 @@ public class AttackAction : CombatAction
     
     public override void Execute()
     {
-        DamageType selectedWeapon = Utils.ParseDamageType(SelectWeapon());
+        DamageType selectedWeapon = _view.SelectWeapon(_gameState.CurrentTraveler.Weapons);
         SkillInfo skillInfo = CreateBasicAttackSkillInfo(selectedWeapon);
         Skill basicAttack = SkillFactory.Create(skillInfo, _gameState, _view);
         
@@ -19,13 +19,6 @@ public class AttackAction : CombatAction
         int BPToUse = _view.AskForBPToUseIfAvailable();
 
         basicAttack.ApplyEffects();
-    }
-
-    private string SelectWeapon()
-    {
-        _view.ShowAvailableWeapons();
-        int selectedIndex = _view.ReadPlayerInput() - 1;
-        return _gameState.CurrentTraveler.Weapons[selectedIndex];
     }
 
     private SkillInfo CreateBasicAttackSkillInfo(DamageType selectedWeapon)
