@@ -61,65 +61,23 @@ public class BattleController
         {
             try
             {
-                _roundConsoleView.ShowTravelerActions();
-                int playerInput = _roundConsoleView.ReadPlayerInput();
-                ExecuteTravelerAction(playerInput);
+                CombatActionType actionType = _roundConsoleView.SelectTravelerCombatAction();
+                ExecuteTravelerAction(actionType);
                 isValidActionSelected = true;
             }
             catch (ArgumentOutOfRangeException exception){}
         }
     }
 
-    private void ExecuteTravelerAction(int playerInput)
+    private void ExecuteTravelerAction(CombatActionType actionType)
     {
-        switch (playerInput)
-        {
-            case 1:
-                ExecuteAttack();
-                break;
-            case 2:
-                ExecuteUseSkill();
-                break;
-            case 3:
-                ExecuteDefend();
-                break;
-            case 4:
-                ExecuteFlee();
-                break;
-        }
-    }
-
-    private void ExecuteAttack()
-    {
-        AttackAction attackAction = new AttackAction(_gameState, _roundConsoleView);
-        attackAction.Execute();
-        _combatActionView.ShowCombatActionResults();
-
+        CombatAction combatAction = CombatActionFactory.Create(actionType, _gameState, _roundConsoleView, _combatActionView);
+        combatAction.Execute();
     }
     
-    private void ExecuteUseSkill()
-    {
-        UseSkillAction useSkillAction = new UseSkillAction(_gameState, _roundConsoleView);
-        useSkillAction.Execute();
-        _combatActionView.ShowCombatActionResults();
-    }
-    
-    private void ExecuteDefend()
-    {
-        DefendAction defendAction = new DefendAction(_gameState, _roundConsoleView);
-        defendAction.Execute();
-    }
-
-    private void ExecuteFlee()
-    {
-        FleeAction fleeAction = new FleeAction(_gameState, _roundConsoleView);
-        fleeAction.Execute();
-    }
-
     private void ExecuteBeastTurn()
     {
-        BeastTurnController beastTurnController = new BeastTurnController(_gameState, _roundConsoleView);
+        BeastTurnController beastTurnController = new BeastTurnController(_gameState, _roundConsoleView, _combatActionView);
         beastTurnController.Execute();
-        _combatActionView.ShowCombatActionResults();
     }
 }

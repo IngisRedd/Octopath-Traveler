@@ -6,8 +6,13 @@ namespace Octopath_Traveler.Actions;
 
 public class UseSkillAction : CombatAction
 {
-    public UseSkillAction(GameState gameState, RoundConsoleView view)
-        : base(gameState, view){}
+    CombatActionConsoleView _combatActionConsoleView;
+
+    public UseSkillAction(GameState gameState, RoundConsoleView view, CombatActionConsoleView combatActionConsoleView)
+        : base(gameState, view)
+    {
+        _combatActionConsoleView = combatActionConsoleView;
+    }
     
     public override void Execute()
     {
@@ -21,14 +26,12 @@ public class UseSkillAction : CombatAction
         int BPToUse = _view.AskForBPToUseIfAvailable();
         
         skillToUse.ApplyEffects();
+        _combatActionConsoleView.ShowCombatActionResults();
     }
 
     private TravelerSkillInfo SelectSkill()
     {
-        _view.ShowAvailableSkills();
-
-        int selectedIndex = _view.ReadPlayerInput() - 1;
-        return _gameState.CurrentTraveler.AvailableSkills[selectedIndex];
+        return _view.SelectFromAvailableSkills();
     }
     
 }

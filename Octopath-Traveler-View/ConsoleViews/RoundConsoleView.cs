@@ -78,24 +78,26 @@ public class RoundConsoleView : BaseConsoleView
         }
     }
 
-    public void ShowTravelerActions()
+    public CombatActionType SelectTravelerCombatAction()
+    {
+        ShowTravelerActions();
+        int playerInput = ReadPlayerIntInput();
+        return (CombatActionType)playerInput;
+    }
+    
+    private void ShowTravelerActions()
     {
         PrintHorizontalRule();
         _view.WriteLine($"Turno de {_gameState.CurrentUnit.Name}");
         string travelerActionOptions = "1: Ataque básico\n2: Usar habilidad\n3: Defender\n4: Huir";
         _view.WriteLine(travelerActionOptions);
     }
-
-    public string AskForPlayerInput()
-    {
-        return _view.ReadLine();
-    }
-
+    
     public DamageType SelectWeapon(List<DamageType> weapons)
     {
         IEnumerable<string> deParsedWeapons = weapons.Select(weapon => weapon.ToString());
         ShowWeapons(deParsedWeapons);
-        int selectedIndex = ReadPlayerInput() - 1;
+        int selectedIndex = ReadPlayerIntInput() - 1;
         return weapons[selectedIndex];
     }
 
@@ -120,7 +122,7 @@ public class RoundConsoleView : BaseConsoleView
     public Beast SelectEnemyBeastTarget()
     {
         ShowAvailableEnemyBeastTargets();
-        int selectedIndex = ReadPlayerInput() - 1;
+        int selectedIndex = ReadPlayerIntInput() - 1;
         return _gameState.BeastTeam.AliveUnits[selectedIndex];
     }
     
@@ -143,20 +145,25 @@ public class RoundConsoleView : BaseConsoleView
         _view.WriteLine($"{label}: Cancelar");
     }
 
-    public int ReadPlayerInput()
+    private int ReadPlayerIntInput()
     {
         string input = AskForPlayerInput();
         return Convert.ToInt32(input);
     }
-    
+
+    private string AskForPlayerInput()
+    {
+        return _view.ReadLine();
+    }
+
     public Traveler SelectTravelerAllyTarget(List<Traveler> allies)
     {
         ShowAvailableAllyTravelerTargets(allies);
-        int selectedIndex = ReadPlayerInput() - 1;
+        int selectedIndex = ReadPlayerIntInput() - 1;
         return allies[selectedIndex];
     }
     
-    public void ShowAvailableAllyTravelerTargets(List<Traveler> travelers)
+    private void ShowAvailableAllyTravelerTargets(List<Traveler> travelers)
     {
         PrintHorizontalRule();
         _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");
@@ -174,7 +181,6 @@ public class RoundConsoleView : BaseConsoleView
 
         _view.WriteLine($"{label}: Cancelar");
     }
-
     
     public int AskForBPToUseIfAvailable()
     {
@@ -182,17 +188,23 @@ public class RoundConsoleView : BaseConsoleView
             return 0;
 
         AskForBPUsage();
-        return ReadPlayerInput();
+        return ReadPlayerIntInput();
     }
-
     
-    public void AskForBPUsage()
+    private void AskForBPUsage()
     {
         PrintHorizontalRule();
         _view.WriteLine($"Seleccione cuantos BP utilizar");
     }
-    
-    public void ShowAvailableSkills()
+
+    public TravelerSkillInfo SelectFromAvailableSkills()
+    {
+        ShowAvailableSkills();
+        int selectedIndex = ReadPlayerIntInput() - 1;
+        return _gameState.CurrentTraveler.AvailableSkills[selectedIndex];
+    }
+
+    private void ShowAvailableSkills()
     {
         PrintHorizontalRule();
         Traveler currentTraveler = _gameState.CurrentTraveler;
