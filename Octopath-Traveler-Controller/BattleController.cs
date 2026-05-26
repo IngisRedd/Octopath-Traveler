@@ -2,6 +2,7 @@ using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
 using Octopath_Traveler.Actions;
 using Octopath_Traveler.Exceptions;
+using Octopath_Traveler.TurnControllers;
 
 namespace Octopath_Traveler;
 
@@ -41,43 +42,11 @@ public class BattleController
     {
         GameStateUpdater.UpdateCurrentUnit(_gameState);
         _roundConsoleView.ShowTurnInfo();
-        if (_gameState.CurrentUnit is Traveler)
-        {
-            ExecuteTravelerTurn();
-        }
-        else
-        {
-            ExecuteBeastTurn();
-        }
+        
+        ITurnController turnController = TurnControllerFactory.Create(_gameState, _roundConsoleView, _combatActionView);
+        turnController.Execute();
+        
         GameStateUpdater.EndOfTurnUpdate(_gameState);
-
         EndOfGameValidator.CheckIfGameIsOver(_gameState, _roundConsoleView);
-    }
-
-    private void ExecuteTravelerTurn()
-    {
-        bool isValidActionSelected = false;
-        while (!isValidActionSelected)
-        {
-            try
-            {
-                CombatActionType actionType = _roundConsoleView.SelectTravelerCombatAction();
-                ExecuteTravelerAction(actionType);
-                isValidActionSelected = true;
-            }
-            catch (ArgumentOutOfRangeException exception){}
-        }
-    }
-
-    private void ExecuteTravelerAction(CombatActionType actionType)
-    {
-        CombatAction combatAction = CombatActionFactory.Create(actionType, _gameState, _roundConsoleView, _combatActionView);
-        combatAction.Execute();
-    }
-    
-    private void ExecuteBeastTurn()
-    {
-        BeastTurnController beastTurnController = new BeastTurnController(_gameState, _roundConsoleView, _combatActionView);
-        beastTurnController.Execute();
     }
 }

@@ -18,7 +18,7 @@ public class Game
 
     public void Play()
     {
-        GameSetup();
+        TryGameSetup();
         
         while (_battleController.IsGameStillGoing)
         {
@@ -26,15 +26,11 @@ public class Game
         }
     }
 
-    private void GameSetup()
+    private void TryGameSetup()
     {
         try
         {
-            TeamsInfoParser teamsInfoParser = new TeamsInfoParser(_setupConsoleView.GetTeamsSetupInfo());
-            ParsedTeamsInfo parsedTeamsInfo = teamsInfoParser.Parse();
-                TeamsBuilder teamsBuilder = new TeamsBuilder(_state, parsedTeamsInfo);
-            teamsBuilder.Build();
-            GameStateUpdater.ResetNextTurnQueue(_state);
+            GameSetup();
         }
         catch (InvalidOperationException exception)
         {
@@ -42,5 +38,13 @@ public class Game
             _battleController.IsGameStillGoing = false;
         }
     }
-    
+
+    private void GameSetup()
+    {
+        TeamsInfoParser teamsInfoParser = new TeamsInfoParser(_setupConsoleView.GetTeamsSetupInfo());
+        ParsedTeamsInfo parsedTeamsInfo = teamsInfoParser.Parse();
+        TeamsBuilder teamsBuilder = new TeamsBuilder(_state, parsedTeamsInfo);
+        teamsBuilder.Build();
+        GameStateUpdater.ResetNextTurnQueue(_state);
+    }
 }

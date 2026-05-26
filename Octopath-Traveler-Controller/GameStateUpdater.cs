@@ -101,11 +101,16 @@ public static class GameStateUpdater
         {
             foreach (StatusEffect statusEffect in unit.StatusEffects.Values)
             {
-                if (statusEffect.IsActive)
-                {
-                    statusEffect.Duration--;
-                }
+                DecreaseStatusEffectTurnCounter(statusEffect);
             }
+        }
+    }
+
+    private static void DecreaseStatusEffectTurnCounter(StatusEffect statusEffect)
+    {
+        if (statusEffect.IsActive)
+        {
+            statusEffect.Duration--;
         }
     }
 

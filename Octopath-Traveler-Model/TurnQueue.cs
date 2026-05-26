@@ -5,6 +5,7 @@ namespace Octopath_Traveler_Model;
 public class TurnQueue
 {
     private List<TurnEntry> _entries = new();
+    private List<CombatUnit> _orderedUnits => TurnQueueSorter.GetOrderedQueue(_entries);
     public int Count => _entries.Count;
     
     public void Add(CombatUnit unit)
@@ -14,7 +15,7 @@ public class TurnQueue
     
     public IEnumerator<CombatUnit> GetEnumerator()
     {
-        return GetOrderedQueue().GetEnumerator();
+        return _orderedUnits.GetEnumerator();
     }
     
     public void AddRange(IEnumerable<CombatUnit> units)
@@ -29,7 +30,7 @@ public class TurnQueue
     {
         get
         {
-            return GetOrderedQueue()[index];
+            return _orderedUnits[index];
         }
     }
     
@@ -55,48 +56,28 @@ public class TurnQueue
     
     public void RemoveAt(int index)
     {
-        var ordered = GetOrderedQueue();
+        var ordered = _orderedUnits;
         var unitToRemove = ordered[index];
 
-        _entries.RemoveAll(e => e.Unit == unitToRemove);
+        _entries.RemoveAll(entry => entry.Unit == unitToRemove);
     }
     
     public bool Remove(CombatUnit unit)
     {
-        return _entries.RemoveAll(e => e.Unit == unit) > 0;
+        return _entries.RemoveAll(entry => entry.Unit == unit) > 0;
     }
     
     public void RemoveAll(Func<CombatUnit, bool> predicate)
     {
-        _entries.RemoveAll(e => predicate(e.Unit));
+        _entries.RemoveAll(entry => predicate(entry.Unit));
     }
 
     public void ApplyPriority(CombatUnit unit, TurnPriorityLevel priority)
     {
-        TurnEntry entry = _entries.FirstOrDefault(e => e.Unit == unit);
+        TurnEntry entry = _entries.FirstOrDefault(entry => entry.Unit == unit);
         if (entry != null)
         {
             entry.ApplyPriority(priority);
         }
-    }
-
-    private List<CombatUnit> GetOrderedQueue()
-    {
-        // Este trainwreck no se puede evitar porque ThenByDescending() requiere ir directamente después de OrderBy
-        IEnumerable<TurnEntry> orderedQueue = _entries
-            .OrderByDescending(e => e.Priority)
-            .ThenByDescending(e => IsTravelerPriorityApplicable(e))
-            .ThenByDescending(e => e.Unit.Speed);
-        IEnumerable<CombatUnit> units = orderedQueue.Select(e => e.Unit);
-
-        return units.ToList();
-    }
-    
-    private bool IsTravelerPriorityApplicable(TurnEntry entry)
-    {
-        if (entry.Priority == TurnPriorityLevel.Normal)
-            return false;
-
-        return entry.Unit is Traveler;
     }
 }

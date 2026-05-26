@@ -1,12 +1,23 @@
 using Octopath_Traveler_Model;
+using Octopath_Traveler_View.ResultViews;
 using Octopath_Traveler;
 
 namespace Octopath_Traveler_View;
 
 public class CombatActionConsoleView : BaseConsoleView
 {
+    private List<IResultView> _resultViews;
     public CombatActionConsoleView(View view, GameState gameState)
-        : base(view, gameState){}
+        : base(view, gameState)
+    {
+        _resultViews = new List<IResultView>
+        {
+            new ResurrectionResultView(),
+            new HealingResultView(),
+            new SlowedResultView(),
+            new DamageResultView()
+        };
+    }
 
     public void ShowCombatActionResults()
     {
@@ -20,7 +31,7 @@ public class CombatActionConsoleView : BaseConsoleView
     
     private void ShowCombatActionType()
     {
-        if (SkillWasUsed())
+        if (WasSkillUsed())
         {
             ShowSkillUsage();
         }
@@ -30,18 +41,18 @@ public class CombatActionConsoleView : BaseConsoleView
         } 
     }
 
-    private bool SkillWasUsed()
+    private bool WasSkillUsed()
         => _gameState.SkillUsedName != "Basic Attack";
     
     private void ShowSkillUsage()
     {
-        PrintHorizontalRule();
+        HorizontalRulePrinter.Print(_view);
         _view.WriteLine($"{_gameState.CurrentUnit.Name} usa {_gameState.SkillUsedName}");
     }
     
     private void ShowBasicAttack()
     {
-        PrintHorizontalRule();
+        HorizontalRulePrinter.Print(_view);
         _view.WriteLine($"{_gameState.CurrentUnit.Name} ataca");
     }
     
@@ -99,21 +110,12 @@ public class CombatActionConsoleView : BaseConsoleView
     
     public void ShowSingleTargetEffectResult(SkillEffectResult result, int index)
     {
-        if (result.IsTravelerResurrected[index])
+        foreach (IResultView resultView in _resultViews)
         {
-            ShowResurrection(result.Targets[index].Name);
-        }
-        if (WasUnitHealed(result.HealValues[index]))
-        {
-            ShowHealing(result.Targets[index].Name, result.HealValues[index]);
-        }
-        if (WasUnitSlowed(result.TurnsSlowedTarget[index]))
-        {
-            ShowSlowedTarget(result.Targets[index].Name, result.TurnsSlowedTarget[index]);
-        }
-        if (WasUnitDamaged(result.Damages[index]))
-        {
-            ShowDamageResults(result, index);
+            if (resultView.HasContent(result, index))
+            {
+                resultView.Render(_view, result, index);
+            }
         }
     }
     
@@ -122,93 +124,6 @@ public class CombatActionConsoleView : BaseConsoleView
     
     private bool WasUnitDamaged(Damage damage)
         => damage != null;
-    
-    private void ShowResurrection(string targetName)
-    {
-        _view.WriteLine($"{targetName} revive");
-    }
-    
-    private void ShowHealing(string targetName, int? healValue)
-    {
-        _view.WriteLine($"{targetName} recupera {healValue} de vida");
-    }
-    
-    private bool WasUnitSlowed(int? slowValue)
-        => slowValue != null; 
-    
-    private void ShowSlowedTarget(string targetName, int? slowedTurns)
-    {   
-        _view.WriteLine($"{targetName} tendrá menor prioridad de turno durante {slowedTurns} rondas");
-    }
-    
-    private void ShowDamageResults(SkillEffectResult result, int i)
-    {
-        if (result.IsTravelerDefending[i])
-        {
-            ShowDefense(result.Targets[i]);
-        }
-        if (result.Targets[i] is Beast)
-        {
-            ShowBeastDamageAccordingToWeakness(result, i);
-        }
-        else
-        {
-            ShowDamageReceived(result.Targets[i], result.Damages[i]);
-        }
-
-    }
-    
-    private void ShowDefense(CombatUnit target)
-    {
-        _view.WriteLine($"{target.Name} se defiende");
-    }
-
-    private void ShowBeastDamageAccordingToWeakness(SkillEffectResult result, int i)
-    {
-        Beast beast = (Beast)result.Targets[i];
-        if (beast.IsWeakToDamageType(result.Damages[i].Type))
-        {
-            ShowSuperEffectiveDamageReceived(beast, result.Damages[i]);
-            if (result.IsBreakingPointAchieved[i])
-            {
-                ShowBreakingPointAchieved(beast);
-            }
-        }
-        else
-        {
-            ShowDamageReceived(result.Targets[i], result.Damages[i]);
-        }
-    }
-    
-    private void ShowSuperEffectiveDamageReceived(CombatUnit attackTarget, Damage damage)
-    {
-        _view.WriteLine($"{attackTarget.Name} recibe {damage.Value} de daño de tipo {damage.Type} con debilidad");
-    }
-
-    private void ShowBreakingPointAchieved(Beast attackTarget)
-    {
-        _view.WriteLine($"{attackTarget.Name} entra en Breaking Point");
-    }
-    
-    private void ShowDamageReceived(CombatUnit target, Damage damage)
-    {
-        if (damage.Type is DamageType.None) 
-        {
-            _view.WriteLine($"{target.Name} recibe {damage.Value} de daño");
-        }
-        else if (damage.Type is DamageType.Phys)
-        {
-            _view.WriteLine($"{target.Name} recibe {damage.Value} de daño físico");
-        }
-        else if (damage.Type is DamageType.Elem)
-        {
-            _view.WriteLine($"{target.Name} recibe {damage.Value} de daño elemental");
-        }
-        else
-        {
-            _view.WriteLine($"{target.Name} recibe {damage.Value} de daño de tipo {damage.Type}");
-        }
-    }
     
     private void ShowTargetsFinalHP()
     {

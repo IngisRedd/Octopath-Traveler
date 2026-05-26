@@ -1,10 +1,11 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
 using Octopath_Traveler.Skills;
+using Octopath_Traveler.TurnControllers;
 
 namespace Octopath_Traveler;
 
-public class BeastTurnController
+public class BeastTurnController : ITurnController
 {
     private GameState _gameState;
     private RoundConsoleView _view;

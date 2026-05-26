@@ -32,23 +32,23 @@ public class TeamsBuilder
         
         Dictionary<string, TravelerJsonData> allTravelersData = Utils.LoadJsonDataByName<TravelerJsonData>(
             "data/characters.json",
-            t => t.Name
+            travelerData => travelerData.Name
         );
         
+        PopulateTravelerTeam(travelerTeam, allTravelersData);
+        _gameState.TravelerTeam = travelerTeam;
+    }
+
+    private void PopulateTravelerTeam(TravelerTeam travelerTeam, Dictionary<string, TravelerJsonData> allTravelersData)
+    {
         foreach (string name in _parsedTeamsInfo.TravelerNames)
         {
             Traveler newTraveler = CreateTraveler(allTravelersData[name]);
-            newTraveler.PassiveSkills = _parsedTeamsInfo.TravelerPassiveSkills[name];
-            foreach (string skill in newTraveler.PassiveSkills)
-            {
-                PassiveSkillFactory.ApplyPassiveSkillBonus(skill, newTraveler);
-            }
+            AddPassiveSkills(newTraveler, name);
             
             travelerTeam.Units.Add(newTraveler);
             _gameState.AllUnits.Add(newTraveler);
         }
-        
-        _gameState.TravelerTeam = travelerTeam;
     }
     
     private Traveler CreateTraveler(TravelerJsonData data)
@@ -83,6 +83,15 @@ public class TeamsBuilder
         }
         return parsedWeapons;
     }
+
+    private void AddPassiveSkills(Traveler newTraveler, string name)
+    {
+        newTraveler.PassiveSkills = _parsedTeamsInfo.TravelerPassiveSkills[name];
+        foreach (string skill in newTraveler.PassiveSkills)
+        {
+            PassiveSkillFactory.ApplyPassiveSkillBonus(skill, newTraveler);
+        }
+    }
     
     private void BuildBeastTeam()
     {
@@ -90,7 +99,7 @@ public class TeamsBuilder
         
         Dictionary<string, BeastJsonData> allBeastsData = Utils.LoadJsonDataByName<BeastJsonData>(
             "data/enemies.json",
-            t => t.Name
+            beastData => beastData.Name
         );
         
         foreach (string beastName in _parsedTeamsInfo.BeastNames)

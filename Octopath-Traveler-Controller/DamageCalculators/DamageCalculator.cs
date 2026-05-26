@@ -21,6 +21,15 @@ public class DamageCalculator : IDamageCalculator
 
     public Damage Calculate()
     {
+        SetInitialDamageValue();
+        ApplyWeaknessAndBreakingPoint();
+        ApplyStatusEffectEffects();
+        _value = Math.Max(0, _value);
+        return new Damage(_value, _type);
+    }
+
+    public void SetInitialDamageValue()
+    {
         if (_type.IsPhysical())
         {
             _value = _attacker.PhysAtk * _modifier - _target.PhysDef;
@@ -29,31 +38,38 @@ public class DamageCalculator : IDamageCalculator
         {
             _value = _attacker.ElemAtk * _modifier - _target.ElemDef;
         }
-        ApplyWeaknessAndBreakingPoint();
-        ApplyStatusEffectEffects();
-        _value = Math.Max(0, _value);
-        return new Damage(_value, _type);
     }
 
     private void ApplyWeaknessAndBreakingPoint()
     {
-        decimal weaknessModifier = 0.5m;
-        decimal breakingPointModifier = 0.5m;
+        decimal weaknessModifier = GetWeaknessModifier();
+        decimal breakingPointModifier = GetBreakingPointModifier();
         
+        decimal totalModifier = 1 + weaknessModifier + breakingPointModifier;
+        _value = _value * totalModifier;
+    }
+
+    private decimal GetWeaknessModifier()
+    {
+        decimal weaknessModifier = 0.5m;
         int TargetIsWeak = 0;
         if (_target is Beast)
         {
             Beast beast = (Beast)_target;
             TargetIsWeak = Convert.ToInt32(beast.IsWeakToDamageType(_type));
         }
-        
+
+        return TargetIsWeak * weaknessModifier;
+    }
+
+    private decimal GetBreakingPointModifier()
+    {
+        decimal breakingPointModifier = 0.5m;
         bool targetIsInBP = _target.StatusEffects[StatusType.BreakingPoint].IsActive;
         int targetIsInBPToInt = Convert.ToInt32(targetIsInBP);
-        
-        decimal totalModifier = 1 + TargetIsWeak * weaknessModifier + targetIsInBPToInt * breakingPointModifier;
-        _value = _value * totalModifier;
+
+        return targetIsInBPToInt * breakingPointModifier;
     }
-    
     private void ApplyStatusEffectEffects()
     {
         decimal defendModifier = 0.5m;

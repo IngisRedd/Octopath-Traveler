@@ -67,7 +67,7 @@ public class SetupConsoleView : BaseConsoleView
         int index = 0;
         foreach (string file in files)
         {
-            if (FileIsTheChosenOne(index, teamChosenInput))
+            if (IsFileTheChosenOne(index, teamChosenInput))
             {
                 chosenFilePath = file;
             }
@@ -77,7 +77,7 @@ public class SetupConsoleView : BaseConsoleView
         return chosenFilePath;
     }
 
-    private bool FileIsTheChosenOne(int fileIndex, string teamChosenInput) =>
+    private bool IsFileTheChosenOne(int fileIndex, string teamChosenInput) =>
         fileIndex.ToString() == teamChosenInput;
 
     public void ShowInvalidTeamMessage()

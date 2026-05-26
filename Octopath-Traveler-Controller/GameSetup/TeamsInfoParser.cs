@@ -45,8 +45,8 @@ public class TeamsInfoParser
         int passiveSkillsStart = travelerDescription.IndexOf('[');
 
         List<int> skillIndexes = new List<int> { skillsStart, passiveSkillsStart };
-        IEnumerable<int> shiftedSkillIndexes = skillIndexes.Select(x => x - 1);
-        IEnumerable<int> existingSkillIndexes = shiftedSkillIndexes.Where(i => i > -2);
+        IEnumerable<int> shiftedSkillIndexes = skillIndexes.Select(index => index - 1);
+        IEnumerable<int> existingSkillIndexes = shiftedSkillIndexes.Where(index => index > -2);
         IEnumerable<int> specialIndexesEmptyCaseHandled = existingSkillIndexes.DefaultIfEmpty(travelerDescription.Length);
         return specialIndexesEmptyCaseHandled.Min();
     }
@@ -55,7 +55,7 @@ public class TeamsInfoParser
     {
         int skillsStart = travelerDescription.IndexOf('(');
         int skillsEnd = travelerDescription.IndexOf(')');
-        if (TravelerHasSkills(skillsStart))
+        if (DoesTravelerHaveAnySkills(skillsStart))
         {
             List<string> skillsList = SplitSkillsIntoList(travelerDescription, skillsStart, skillsEnd);            
             _parsedTeamsInfo.TravelerSkills[travelerName] = skillsList;
@@ -66,14 +66,14 @@ public class TeamsInfoParser
     {
         int passiveSkillsStart = travelerDescription.IndexOf('[');
         int passiveSkillsEnd = travelerDescription.IndexOf(']');
-        if (TravelerHasSkills(passiveSkillsStart))
+        if (DoesTravelerHaveAnySkills(passiveSkillsStart))
         {
             List<string> passiveSkillsList = SplitSkillsIntoList(travelerDescription, passiveSkillsStart, passiveSkillsEnd);            
             _parsedTeamsInfo.TravelerPassiveSkills[travelerName] = passiveSkillsList;
         }
     }
     
-    private bool TravelerHasSkills(int skillStartPosition) => skillStartPosition != -1;
+    private bool DoesTravelerHaveAnySkills(int skillStartPosition) => skillStartPosition != -1;
     
     private List<string> SplitSkillsIntoList(string travelerDescription, int skillsStart, int skillsEnd)
     {

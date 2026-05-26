@@ -12,10 +12,4 @@ public abstract class BaseConsoleView
         _view = view;
         _gameState = gameState;
     }
-    
-    protected void PrintHorizontalRule()
-    {
-        _view.WriteLine("----------------------------------------");
-    }
-
 }

@@ -17,7 +17,7 @@ public class SkillsBuilder
     {
         Dictionary<string, TravelerSkillJsonData> allSkillsData = Utils.LoadJsonDataByName<TravelerSkillJsonData>(
             "data/skills.json",
-            t => t.Name
+            skillData => skillData.Name
         );
 
         foreach (Traveler traveler in _gameState.TravelerTeam.Units)
@@ -49,7 +49,7 @@ public class SkillsBuilder
     {
         Dictionary<string, BeastSkillJsonData> allSkillsData = Utils.LoadJsonDataByName<BeastSkillJsonData>(
             "data/beast_skills.json",
-            t => t.Name
+            skillData => skillData.Name
         );
 
         foreach (Beast beast in _gameState.BeastTeam.Units)
