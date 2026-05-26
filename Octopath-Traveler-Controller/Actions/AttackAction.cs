@@ -6,11 +6,11 @@ namespace Octopath_Traveler.Actions;
 
 public class AttackAction : CombatAction
 {
-    CombatActionConsoleView _combatActionConsoleView;
-    public AttackAction(GameState gameState, RoundConsoleView view, CombatActionConsoleView combatActionConsoleView)
+    ICombatActionView _combatActionView;
+    public AttackAction(GameState gameState, IRoundView view, ICombatActionView combatActionView)
         : base(gameState, view)
     {
-        _combatActionConsoleView = combatActionConsoleView;
+        _combatActionView = combatActionView;
     }
     
     public override void Execute()
@@ -23,7 +23,7 @@ public class AttackAction : CombatAction
         int BPToUse = _view.AskForBPToUseIfAvailable();
 
         basicAttack.ApplyEffects();
-        _combatActionConsoleView.ShowCombatActionResults();
+        _combatActionView.ShowCombatActionResults();
     }
 
     private SkillInfo CreateBasicAttackSkillInfo(DamageType selectedWeapon)

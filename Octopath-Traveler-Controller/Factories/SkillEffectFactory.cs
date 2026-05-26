@@ -6,7 +6,7 @@ namespace Octopath_Traveler;
 
 public static class SkillEffectFactory
 {
-    public static List<ISkillEffect> Create(SkillInfo skillInfo, GameState gameState, RoundConsoleView view)
+    public static List<ISkillEffect> Create(SkillInfo skillInfo, GameState gameState, IRoundView view)
     {
         if (skillInfo.Name == "Shooting Stars")
         {

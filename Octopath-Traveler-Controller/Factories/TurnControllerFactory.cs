@@ -9,15 +9,15 @@ namespace Octopath_Traveler;
 
 public static class TurnControllerFactory
 {
-    public static ITurnController Create(GameState gameState, RoundConsoleView roundConsoleView, CombatActionConsoleView combatActionConsoleView)
+    public static ITurnController Create(GameState gameState, IRoundView consoleView, ICombatActionView combatActionView)
     {
         if (gameState.CurrentUnit is Traveler)
         {
-            return new TravelerTurnController(gameState, roundConsoleView, combatActionConsoleView);
+            return new TravelerTurnController(gameState, consoleView, combatActionView);
         }
         if (gameState.CurrentUnit is Beast)
         {
-            return new BeastTurnController(gameState, roundConsoleView, combatActionConsoleView);
+            return new BeastTurnController(gameState, consoleView, combatActionView);
         }
         throw new ArgumentException($"Unknown turn controller type: {gameState.CurrentUnit.GetType().Name}!");
     }

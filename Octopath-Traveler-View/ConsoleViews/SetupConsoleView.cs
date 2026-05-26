@@ -3,7 +3,7 @@ using Octopath_Traveler;
 
 namespace Octopath_Traveler_View;
 
-public class SetupConsoleView : BaseConsoleView
+public class SetupConsoleView : BaseConsoleView, ISetupView
 {
     private string _teamsFolder;
 

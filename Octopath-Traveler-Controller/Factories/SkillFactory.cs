@@ -6,7 +6,7 @@ namespace Octopath_Traveler;
 
 public class SkillFactory
 {
-    public static Skill Create(SkillInfo skillInfo, GameState gameState, RoundConsoleView view)
+    public static Skill Create(SkillInfo skillInfo, GameState gameState, IRoundView view)
     {
         RegisterSkillUsed(skillInfo.Name, gameState);
         

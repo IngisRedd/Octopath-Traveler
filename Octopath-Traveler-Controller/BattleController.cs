@@ -9,21 +9,21 @@ namespace Octopath_Traveler;
 public class BattleController
 {
     public bool IsGameStillGoing = true;
-    private RoundConsoleView _roundConsoleView;
-    private CombatActionConsoleView _combatActionView;
+    private IRoundView _roundView;
+    private ICombatActionView _combatActionView;
     private GameState _gameState;
 
-    public BattleController(GameState gameState, RoundConsoleView roundConsoleView, CombatActionConsoleView combatActionView)
+    public BattleController(GameState gameState, IViewFactory viewFactory)
     {
         _gameState = gameState;
-        _roundConsoleView = roundConsoleView;
-        _combatActionView = combatActionView;
+        _roundView = viewFactory.CreateRoundView(gameState);
+        _combatActionView = viewFactory.CreateCombatActionView(gameState);
     }
     
     public void ExecuteBattleRound()
     {
         GameStateUpdater.PerformStartOfRoundUpdates(_gameState);
-        _roundConsoleView.ShowRoundStart();
+        _roundView.StartOfRoundUpdate();
         try
         {
             while (_gameState.IsTurnStillGoing)
@@ -41,12 +41,12 @@ public class BattleController
     private void ExecuteTurn()
     {
         GameStateUpdater.UpdateCurrentUnit(_gameState);
-        _roundConsoleView.ShowTurnInfo();
+        _roundView.StartOfTurnUpdate();
         
-        ITurnController turnController = TurnControllerFactory.Create(_gameState, _roundConsoleView, _combatActionView);
+        ITurnController turnController = TurnControllerFactory.Create(_gameState, _roundView, _combatActionView);
         turnController.Execute();
         
         GameStateUpdater.EndOfTurnUpdate(_gameState);
-        EndOfGameValidator.CheckIfGameIsOver(_gameState, _roundConsoleView);
+        EndOfGameValidator.CheckIfGameIsOver(_gameState, _roundView);
     }
 }

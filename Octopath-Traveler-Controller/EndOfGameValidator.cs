@@ -6,7 +6,7 @@ namespace Octopath_Traveler;
 
 public static class EndOfGameValidator
 {
-    public static void CheckIfGameIsOver(GameState gameState, RoundConsoleView view)
+    public static void CheckIfGameIsOver(GameState gameState, IRoundView view)
     {
         if (AreAllBeastsDefeated(gameState))
         {

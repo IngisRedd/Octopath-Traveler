@@ -7,23 +7,23 @@ namespace Octopath_Traveler;
 
 public static class CombatActionFactory
 {
-    public static CombatAction Create(CombatActionType actionType, GameState gameState, RoundConsoleView roundConsoleView, CombatActionConsoleView combatActionConsoleView)
+    public static CombatAction Create(CombatActionType actionType, GameState gameState, IRoundView roundView, ICombatActionView combatActionView)
     {
         if (actionType == CombatActionType.Attack)
         {
-            return new AttackAction(gameState, roundConsoleView, combatActionConsoleView);
+            return new AttackAction(gameState, roundView, combatActionView);
         }
         if (actionType == CombatActionType.UseSkill)
         {
-            return new UseSkillAction(gameState, roundConsoleView, combatActionConsoleView);
+            return new UseSkillAction(gameState, roundView, combatActionView);
         }
         if (actionType == CombatActionType.Defend)
         {
-            return new DefendAction(gameState, roundConsoleView);
+            return new DefendAction(gameState, roundView);
         }
         if (actionType == CombatActionType.Flee)
         {
-            return new FleeAction(gameState, roundConsoleView);
+            return new FleeAction(gameState, roundView);
         }
         throw new ArgumentException($"Unknown combat action!");
     }

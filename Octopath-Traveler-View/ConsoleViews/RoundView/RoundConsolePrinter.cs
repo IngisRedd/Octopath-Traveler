@@ -129,6 +129,12 @@ public class RoundConsolePrinter : BaseConsoleView
 
         _view.WriteLine($"{label}: Cancelar");
     }
+    
+    public void AskForBPUsage()
+    {
+        HorizontalRulePrinter.Print(_view);
+        _view.WriteLine($"Seleccione cuantos BP utilizar");
+    }
 
     public void ShowAvailableSkills()
     {

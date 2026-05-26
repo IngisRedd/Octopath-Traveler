@@ -7,7 +7,7 @@ namespace Octopath_Traveler;
 
 public static class TargetSelectorFactory
 {
-    public static ITargetSelector Create(SkillInfo skillInfo, GameState gameState, RoundConsoleView view)
+    public static ITargetSelector Create(SkillInfo skillInfo, GameState gameState, IRoundView view)
     {
         if (skillInfo.Name == "Attack")
         {

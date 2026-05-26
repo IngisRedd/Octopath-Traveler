@@ -8,15 +8,15 @@ namespace Octopath_Traveler;
 public class TravelerTurnController : ITurnController
 {
     private GameState _gameState;
-    private RoundConsoleView _roundConsoleView;
-    private CombatActionConsoleView _combatActionConsoleView;
+    private IRoundView _roundView;
+    private ICombatActionView _combatActionView;
     
-    public TravelerTurnController(GameState gameState, RoundConsoleView roundConsoleView,
-        CombatActionConsoleView combatActionConsoleView)
+    public TravelerTurnController(GameState gameState, IRoundView roundView,
+        ICombatActionView combatActionView)
     {
         _gameState = gameState;
-        _roundConsoleView = roundConsoleView;
-        _combatActionConsoleView = combatActionConsoleView;
+        _roundView = roundView;
+        _combatActionView = combatActionView;
     }
     
     public void Execute()
@@ -26,7 +26,7 @@ public class TravelerTurnController : ITurnController
         {
             try
             {
-                CombatActionType actionType = _roundConsoleView.SelectTravelerCombatAction();
+                CombatActionType actionType = _roundView.SelectTravelerCombatAction();
                 ExecuteTravelerAction(actionType);
                 isValidActionSelected = true;
             }
@@ -36,7 +36,7 @@ public class TravelerTurnController : ITurnController
 
     private void ExecuteTravelerAction(CombatActionType actionType)
     {
-        CombatAction combatAction = CombatActionFactory.Create(actionType, _gameState, _roundConsoleView, _combatActionConsoleView);
+        CombatAction combatAction = CombatActionFactory.Create(actionType, _gameState, _roundView, _combatActionView);
         combatAction.Execute();
     }
 

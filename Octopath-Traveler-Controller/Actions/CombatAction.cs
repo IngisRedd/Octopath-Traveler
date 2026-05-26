@@ -6,9 +6,9 @@ namespace Octopath_Traveler.Actions;
 public abstract class CombatAction
 {
     protected GameState _gameState;
-    protected RoundConsoleView _view;
+    protected IRoundView _view;
     
-    protected CombatAction(GameState gameState, RoundConsoleView view)
+    protected CombatAction(GameState gameState, IRoundView view)
     {
         _gameState = gameState;
         _view = view;

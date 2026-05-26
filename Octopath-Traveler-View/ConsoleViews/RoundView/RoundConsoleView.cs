@@ -2,7 +2,7 @@ using Octopath_Traveler_Model;
 
 namespace Octopath_Traveler_View;
 
-public class RoundConsoleView : BaseConsoleView
+public class RoundConsoleView : BaseConsoleView, IRoundView
 {
     private RoundConsolePrinter _printer;
 
@@ -12,13 +12,13 @@ public class RoundConsoleView : BaseConsoleView
         _printer = new RoundConsolePrinter(view, gameState);
     }
             
-    public void ShowRoundStart()
+    public void StartOfRoundUpdate()
     {
         HorizontalRulePrinter.Print(_view);
         _view.WriteLine($"INICIA RONDA {_gameState.RoundCounter}");
     }
     
-    public void ShowTurnInfo()
+    public void StartOfTurnUpdate()
     {
         _printer.ShowAllUnitInformation();
         _printer.ShowTurnQueues();
@@ -29,6 +29,12 @@ public class RoundConsoleView : BaseConsoleView
         _printer.ShowTravelerActions();
         int playerInput = ReadPlayerIntInput();
         return (CombatActionType)playerInput;
+    }
+    
+    private int ReadPlayerIntInput()
+    {
+        string input = _view.ReadLine();
+        return Convert.ToInt32(input);
     }
     
     public DamageType SelectWeapon(List<DamageType> weapons)
@@ -45,12 +51,6 @@ public class RoundConsoleView : BaseConsoleView
         int selectedIndex = ReadPlayerIntInput() - 1;
         return _gameState.BeastTeam.AliveUnits[selectedIndex];
     }
-    
-    private int ReadPlayerIntInput()
-    {
-        string input = _view.ReadLine();
-        return Convert.ToInt32(input);
-    }
 
     public Traveler SelectTravelerAllyTarget(List<Traveler> allies)
     {
@@ -64,16 +64,10 @@ public class RoundConsoleView : BaseConsoleView
         if (!_gameState.CurrentTraveler.AreThereAnyBPLeft)
             return 0;
 
-        AskForBPUsage();
+        _printer.AskForBPUsage();
         return ReadPlayerIntInput();
     }
     
-    private void AskForBPUsage()
-    {
-        HorizontalRulePrinter.Print(_view);
-        _view.WriteLine($"Seleccione cuantos BP utilizar");
-    }
-
     public TravelerSkillInfo SelectFromAvailableSkills()
     {
         _printer.ShowAvailableSkills();
