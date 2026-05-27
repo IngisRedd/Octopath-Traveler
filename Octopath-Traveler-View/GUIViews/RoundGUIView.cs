@@ -1,6 +1,7 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View.GUIViews;
 using Octopath_Traveler_View.GUIViews.GUIStructures;
+using Octopath_Traveler.Exceptions;
 using OctopathTravelerGUI;
 using OctopathTravelerGUI.Models.Enums;
 using OctopathTravelerGUI.Models.Interfaces;
@@ -35,15 +36,24 @@ public class RoundGUIView : IRoundView
     public CombatActionType SelectTravelerCombatAction()
     {
         _guiGameState.Option = Option.Action;
-        _guiGameState.Options = ["Ataque básico", "Usar Habilidad", "Defender", "Huir"];
+        _guiGameState.Options = ["Ataque básico", "Usar Habilidad", "Defender", "Huir", "Cancelar"];
         _window.Update(_guiGameState);
         
         IClickedElement clickedElement;
         do {
             clickedElement = _window.GetClickedElement();
         } while (clickedElement.Type != ClickElementType.Button);
+        ValidateSelectionCanceling(clickedElement.Text);
         
         return RoundGUIParser.ParseCombatAction(clickedElement.Text);
+    }
+
+    private void ValidateSelectionCanceling(string selection)
+    {
+        if (selection == "Cancelar")
+        {
+            throw new SelectionCanceledException("Selection canceled");
+        }
     }
     
     public DamageType SelectWeapon(List<DamageType> weapons)
@@ -56,6 +66,7 @@ public class RoundGUIView : IRoundView
         do {
             clickedElement = _window.GetClickedElement();
         } while (clickedElement.Type != ClickElementType.Button);
+        ValidateSelectionCanceling(clickedElement.Text);
         
         return RoundGUIParser.ParseWeapon(clickedElement.Text);
     }
@@ -84,6 +95,7 @@ public class RoundGUIView : IRoundView
         do {
             clickedElement = _window.GetClickedElement();
         } while (!availableTargetNames.Contains(clickedElement.Text));
+        ValidateSelectionCanceling(clickedElement.Text);
         
         return availableTargets.FirstOrDefault(t => t.Name == clickedElement.Text);
     }
@@ -94,7 +106,8 @@ public class RoundGUIView : IRoundView
             return 0;
 
         _guiGameState.Option = Option.BoostPoints;
-        IEnumerable<int> bpRange = Enumerable.Range(0, _realGameState.CurrentTraveler.BP + 1);
+        int bpAvailableToUse = Math.Min(_realGameState.CurrentTraveler.BP, 3);
+        IEnumerable<int> bpRange = Enumerable.Range(0, bpAvailableToUse + 1);
         IEnumerable<string> bpRangeInString = bpRange.Select(i => i.ToString());
         _guiGameState.Options = bpRangeInString;
         _window.Update(_guiGameState);
@@ -103,7 +116,8 @@ public class RoundGUIView : IRoundView
         do {
             clickedElement = _window.GetClickedElement();
         } while (clickedElement.Type != ClickElementType.Button);
-        
+        ValidateSelectionCanceling(clickedElement.Text);
+
         return int.Parse(clickedElement.Text);
     }
     
@@ -119,7 +133,8 @@ public class RoundGUIView : IRoundView
         do {
             clickedElement = _window.GetClickedElement();
         } while (clickedElement.Type != ClickElementType.Button);
-        
+        ValidateSelectionCanceling(clickedElement.Text);
+
         return availableSkills.FirstOrDefault(t => t.Name == clickedElement.Text);
     }
     

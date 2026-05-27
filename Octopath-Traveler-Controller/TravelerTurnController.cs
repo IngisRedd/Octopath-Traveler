@@ -1,6 +1,7 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
 using Octopath_Traveler.Actions;
+using Octopath_Traveler.Exceptions;
 using Octopath_Traveler.TurnControllers;
 
 namespace Octopath_Traveler;
@@ -30,7 +31,7 @@ public class TravelerTurnController : ITurnController
                 ExecuteTravelerAction(actionType);
                 isValidActionSelected = true;
             }
-            catch (ArgumentOutOfRangeException exception){}
+            catch (SelectionCanceledException exception){}
         }
     }
 

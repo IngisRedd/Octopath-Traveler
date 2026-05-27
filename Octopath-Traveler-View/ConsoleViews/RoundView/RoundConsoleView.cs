@@ -1,4 +1,5 @@
 using Octopath_Traveler_Model;
+using Octopath_Traveler.Exceptions;
 
 namespace Octopath_Traveler_View;
 
@@ -42,13 +43,27 @@ public class RoundConsoleView : BaseConsoleView, IRoundView
         IEnumerable<string> deParsedWeapons = weapons.Select(weapon => weapon.ToString());
         _printer.ShowWeapons(deParsedWeapons);
         int selectedIndex = ReadPlayerIntInput() - 1;
+
+        ValidateSelectionCanceling(selectedIndex, weapons.Count);
         return weapons[selectedIndex];
     }
+    
+    private void ValidateSelectionCanceling(int selectedIndex, int optionsCount)
+    {
+        if (selectedIndex == optionsCount)
+        {
+            throw new SelectionCanceledException("Selection canceled");
+        }
+    }
+
     
     public Beast SelectEnemyBeastTarget()
     {
         _printer.ShowAvailableEnemyBeastTargets();
         int selectedIndex = ReadPlayerIntInput() - 1;
+
+        List<Beast> aliveBeasts = _gameState.BeastTeam.AliveUnits;
+        ValidateSelectionCanceling(selectedIndex, aliveBeasts.Count);
         return _gameState.BeastTeam.AliveUnits[selectedIndex];
     }
 
@@ -56,6 +71,8 @@ public class RoundConsoleView : BaseConsoleView, IRoundView
     {
         _printer.ShowAvailableAllyTravelerTargets(allies);
         int selectedIndex = ReadPlayerIntInput() - 1;
+
+        ValidateSelectionCanceling(selectedIndex, allies.Count);
         return allies[selectedIndex];
     }
     
@@ -72,6 +89,9 @@ public class RoundConsoleView : BaseConsoleView, IRoundView
     {
         _printer.ShowAvailableSkills();
         int selectedIndex = ReadPlayerIntInput() - 1;
+        
+        List<TravelerSkillInfo> availableSkills = _gameState.CurrentTraveler.AvailableSkills;
+        ValidateSelectionCanceling(selectedIndex, availableSkills.Count);
         return _gameState.CurrentTraveler.AvailableSkills[selectedIndex];
     }
     
