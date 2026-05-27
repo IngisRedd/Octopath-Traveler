@@ -2,6 +2,7 @@ using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
 using Octopath_Traveler_View.GUIViews.GUIStructures;
 using Octopath_Traveler_View.ResultViews;
+using Octopath_Traveler.Exceptions;
 using OctopathTravelerGUI;
 
 namespace Octopath_Traveler;
@@ -42,7 +43,7 @@ public class Game
         {
             GameSetup();
         }
-        catch (InvalidOperationException exception)
+        catch (InvalidTeamsException exception)
         {
             _setupView.ShowInvalidTeamMessage();
             _battleController.IsGameStillGoing = false;
