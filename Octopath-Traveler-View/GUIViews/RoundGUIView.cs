@@ -36,30 +36,23 @@ public class RoundGUIView : IRoundView
     public CombatActionType SelectTravelerCombatAction()
     {
         _guiGameState.Option = Option.Action;
-        _guiGameState.Options = ["Ataque básico", "Usar Habilidad", "Defender", "Huir", "Cancelar"];
+        _guiGameState.Options = ["Ataque básico", "Usar Habilidad", "Defender", "Huir"];
         _window.Update(_guiGameState);
         
         IClickedElement clickedElement;
         do {
             clickedElement = _window.GetClickedElement();
         } while (clickedElement.Type != ClickElementType.Button);
-        ValidateSelectionCanceling(clickedElement.Text);
         
         return RoundGUIParser.ParseCombatAction(clickedElement.Text);
-    }
-
-    private void ValidateSelectionCanceling(string selection)
-    {
-        if (selection == "Cancelar")
-        {
-            throw new SelectionCanceledException("Selection canceled");
-        }
     }
     
     public DamageType SelectWeapon(List<DamageType> weapons)
     {
         _guiGameState.Option = Option.Weapon;
-        _guiGameState.Options = weapons.ConvertAll(weaponType => weaponType.ToString());
+        List<string> weaponsInString = weapons.ConvertAll(weaponType => weaponType.ToString());
+        weaponsInString.Add("Cancelar");
+        _guiGameState.Options = weaponsInString;
         _window.Update(_guiGameState);
         
         IClickedElement clickedElement;
@@ -71,6 +64,14 @@ public class RoundGUIView : IRoundView
         return RoundGUIParser.ParseWeapon(clickedElement.Text);
     }
     
+    private void ValidateSelectionCanceling(string selection)
+    {
+        if (selection == "Cancelar")
+        {
+            throw new SelectionCanceledException("Selection canceled");
+        }
+    }
+
     public Beast SelectEnemyBeastTarget()
     {
         List<Beast> availableTargets = _realGameState.BeastTeam.AliveUnits;
@@ -88,7 +89,9 @@ public class RoundGUIView : IRoundView
     {
         _guiGameState.Option = Option.Target;
         List<string> availableTargetNames = availableTargets.ConvertAll(target => target.Name);
+        availableTargetNames.Add("Cancelar");
         _guiGameState.Options = availableTargetNames;
+
         _window.Update(_guiGameState);
         
         IClickedElement clickedElement;
@@ -108,7 +111,8 @@ public class RoundGUIView : IRoundView
         _guiGameState.Option = Option.BoostPoints;
         int bpAvailableToUse = Math.Min(_realGameState.CurrentTraveler.BP, 3);
         IEnumerable<int> bpRange = Enumerable.Range(0, bpAvailableToUse + 1);
-        IEnumerable<string> bpRangeInString = bpRange.Select(i => i.ToString());
+        List<string> bpRangeInString = bpRange.Select(i => i.ToString()).ToList();
+        bpRangeInString.Add("Cancelar");
         _guiGameState.Options = bpRangeInString;
         _window.Update(_guiGameState);
         
@@ -126,6 +130,7 @@ public class RoundGUIView : IRoundView
         _guiGameState.Option = Option.Skill;
         List<TravelerSkillInfo> availableSkills = _realGameState.CurrentTraveler.AvailableSkills;
         List<string> skillNames = availableSkills.ConvertAll(travelerSkill => travelerSkill.Name);
+        skillNames.Add("Cancelar");
         _guiGameState.Options = skillNames;
         _window.Update(_guiGameState);
         
