@@ -1,6 +1,8 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler_View;
+using Octopath_Traveler_View.GUIViews.GUIStructures;
 using Octopath_Traveler_View.ResultViews;
+using OctopathTravelerGUI;
 
 namespace Octopath_Traveler;
 
@@ -12,7 +14,15 @@ public class Game
     public Game(View view, string teamsFolder)
     {
         ConsoleViewFactory viewFactory = new ConsoleViewFactory(view, teamsFolder);
-        _setupView = viewFactory.CreateSetupView(_state);
+        _setupView = viewFactory.CreateSetupView();
+        _battleController = new BattleController(_state, viewFactory);
+    }
+
+    public Game(OTGUI window)
+    {
+        GUIGameState guiGameState = new GUIGameState(_state);
+        GUIViewFactory viewFactory = new GUIViewFactory(window, guiGameState);
+        _setupView = viewFactory.CreateSetupView();
         _battleController = new BattleController(_state, viewFactory);
     }
 

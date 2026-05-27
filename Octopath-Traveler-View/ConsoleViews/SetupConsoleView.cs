@@ -3,13 +3,14 @@ using Octopath_Traveler;
 
 namespace Octopath_Traveler_View;
 
-public class SetupConsoleView : BaseConsoleView, ISetupView
+public class SetupConsoleView : ISetupView
 {
+    private View _view;
     private string _teamsFolder;
 
-    public SetupConsoleView(View view, GameState gameState, string teamsFolder)
-    : base(view, gameState)
+    public SetupConsoleView(View view, string teamsFolder)
     {
+        _view = view;
         _teamsFolder = teamsFolder;
     }
     

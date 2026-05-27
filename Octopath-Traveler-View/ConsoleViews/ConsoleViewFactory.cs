@@ -13,8 +13,8 @@ public class ConsoleViewFactory : IViewFactory
         _teamsFolder = teamsFolder;
     }
     
-    public ISetupView CreateSetupView(GameState gameState)
-        => new SetupConsoleView(_view, gameState, _teamsFolder);
+    public ISetupView CreateSetupView()
+        => new SetupConsoleView(_view, _teamsFolder);
     
     public ICombatActionView CreateCombatActionView(GameState gameState)
         => new CombatActionConsoleView(_view, gameState);
