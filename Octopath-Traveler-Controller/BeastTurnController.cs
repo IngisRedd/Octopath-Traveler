@@ -20,10 +20,14 @@ public class BeastTurnController : ITurnController
 
     public void Execute()
     {
-        SkillInfo beastSkill = _gameState.CurrentBeast.Skill;
-        
-        Skill skillToUse = SkillFactory.Create(beastSkill, _gameState, _roundView);
-        skillToUse.Use();
+        SkillInfo beastSkillInfo = _gameState.CurrentBeast.Skill;
+
+        ITargetSelector skillTargetSelector = TargetSelectorFactory.Create(beastSkillInfo, _gameState, _roundView);
+        SkillEffectsChain skillEffects = SkillEffectFactory.Create(beastSkillInfo, _gameState, _roundView);
+
+        skillTargetSelector.Select();
+        skillEffects.ApplyEffects();
+
         _combatActionView.ShowCombatActionResults();
     }
 }

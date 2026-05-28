@@ -6,10 +6,12 @@ namespace Octopath_Traveler.Skills;
 public abstract class BaseSkillEffect : ISkillEffect
 {
     protected GameState _gameState;
+    private string _skillName;
 
-    public BaseSkillEffect(GameState gameState)
+    public BaseSkillEffect(GameState gameState, string skillName)
     {
         _gameState = gameState;
+        _skillName = skillName;
     }
     
     public void Apply()
@@ -20,13 +22,20 @@ public abstract class BaseSkillEffect : ISkillEffect
             _gameState.LastSkillEffectResult.AddDefaultEntry();
             ApplyEffectTo(target);
         }
+
+        RegisterSkillUsed();
     }
-    
-    protected abstract void ApplyEffectTo(CombatUnit target);
 
     private void InitializeNewSkillEffectResult()
     {
         List<CombatUnit> targets = new List<CombatUnit>(_gameState.CombatTargets);
         _gameState.AppliedSkillEffectResults.Add(new SkillEffectResult(targets));
+    }
+    
+    protected abstract void ApplyEffectTo(CombatUnit target);
+
+    private void RegisterSkillUsed()
+    {
+        _gameState.SkillUsedName = _skillName;
     }
 }

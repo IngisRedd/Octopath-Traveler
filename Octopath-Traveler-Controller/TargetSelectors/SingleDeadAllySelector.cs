@@ -4,18 +4,17 @@ using Octopath_Traveler.Skills;
 
 namespace Octopath_Traveler.TargetSelectors;
 
-public class SingleDeadAllySelector : ITargetSelector
+public class SingleDeadAllySelector : BaseSelector
 {
-    private GameState _gameState;
     private IRoundView _view;
     
     public SingleDeadAllySelector(GameState gameState, IRoundView view)
+        : base(gameState)
     {
-        _gameState = gameState;
         _view = view;
     }
 
-    public void Select()
+    protected override void OnSelect()
     {
         Traveler target = _view.SelectTravelerAllyTarget(_gameState.TravelerTeam.DeadUnits);
         _gameState.CombatTargets.Add(target);

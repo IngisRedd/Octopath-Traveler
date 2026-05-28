@@ -4,8 +4,8 @@ namespace Octopath_Traveler.Skills;
 
 public class ReviveSkillEffect : BaseSkillEffect
 {
-    public ReviveSkillEffect(GameState gameState)
-        : base(gameState){}
+    public ReviveSkillEffect(GameState gameState, string skillName)
+        : base(gameState, skillName){}
 
     protected override void ApplyEffectTo(CombatUnit target)
     {

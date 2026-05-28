@@ -3,16 +3,12 @@ using Octopath_Traveler.Skills;
 
 namespace Octopath_Traveler.TargetSelectors;
 
-public class DeadPartySelector : ITargetSelector
+public class DeadPartySelector : BaseSelector
 {
-    private GameState _gameState;
-    
     public DeadPartySelector(GameState gameState)
-    {
-        _gameState = gameState;
-    }
+        : base(gameState){}
     
-    public void Select()
+    protected override void OnSelect()
     {
         IEnumerable<CombatUnit> units = GetAlivePartyMembers();
         _gameState.CombatTargets.AddRange(units);

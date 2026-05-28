@@ -3,15 +3,13 @@ using Octopath_Traveler_View;
 
 namespace Octopath_Traveler.Skills;
 
-public class MercyStrikeSkillEffect : BaseSkillEffect
+public class MercyStrikeSkillEffect : SkillEffectWithModifier
 {
-    private decimal _modifier;
     private DamageType _damageType;
 
-    public MercyStrikeSkillEffect(GameState gameState, decimal modifier, DamageType damageType)
-        : base(gameState)
+    public MercyStrikeSkillEffect(GameState gameState, string skillName, decimal modifier, DamageType damageType)
+        : base(gameState, skillName, modifier)
     {
-        _modifier = modifier;
         _damageType = damageType;
     }
 

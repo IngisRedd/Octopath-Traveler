@@ -18,14 +18,16 @@ public class UseSkillAction : CombatAction
     {
         TravelerSkillInfo selectedSkillInfo = SelectSkill();
 
-        Skill skillToUse = SkillFactory.Create(selectedSkillInfo, _gameState, _view);
+        ITargetSelector skillTargetSelector = TargetSelectorFactory.Create(selectedSkillInfo, _gameState, _view);
+        SkillEffectsChain skillEffects = SkillEffectFactory.Create(selectedSkillInfo, _gameState, _view);
 
-        skillToUse.SelectTarget();
-
-        _gameState.CurrentTraveler.CurrentSP -= selectedSkillInfo.SP;
-        int BPToUse = _view.AskForBPToUseIfAvailable();
+        skillTargetSelector.Select();
         
-        skillToUse.ApplyEffects();
+        _gameState.CurrentTraveler.CurrentSP -= selectedSkillInfo.SP;
+        int bpToUse = _view.AskForBPToUseIfAvailable();
+
+        skillEffects.ApplyEffects();
+
         _combatActionView.ShowCombatActionResults();
     }
 

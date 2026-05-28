@@ -4,18 +4,17 @@ using Octopath_Traveler.Skills;
 
 namespace Octopath_Traveler.TargetSelectors;
 
-public class TravelerSingleEnemySelector : ITargetSelector
+public class TravelerSingleEnemySelector : BaseSelector
 {
-    private GameState _gameState;
     private IRoundView _view;
     
     public TravelerSingleEnemySelector(GameState gameState, IRoundView view)
+        : base(gameState)
     {
-        _gameState = gameState;
         _view = view;
     }
 
-    public void Select()
+    protected override void OnSelect()
     {
         Beast target = _view.SelectEnemyBeastTarget();
         _gameState.CombatTargets.Add(target);

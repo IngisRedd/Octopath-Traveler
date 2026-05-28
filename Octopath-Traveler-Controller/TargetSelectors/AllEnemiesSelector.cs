@@ -1,17 +1,14 @@
 using Octopath_Traveler_Model;
+using Octopath_Traveler.TargetSelectors;
 
 namespace Octopath_Traveler.Skills;
 
-public class AllEnemiesSelector : ITargetSelector
+public class AllEnemiesSelector : BaseSelector
 {
-    private GameState _gameState;
-    
     public AllEnemiesSelector(GameState gameState)
-    {
-        _gameState = gameState;
-    }
+        : base(gameState){}
     
-    public void Select()
+    protected override void OnSelect()
     {
         IEnumerable<CombatUnit> units = GetAliveUnits();
         _gameState.CombatTargets.AddRange(units);

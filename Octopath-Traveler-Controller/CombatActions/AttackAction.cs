@@ -17,12 +17,15 @@ public class AttackAction : CombatAction
     {
         DamageType selectedWeapon = _view.SelectWeapon(_gameState.CurrentTraveler.Weapons);
         SkillInfo skillInfo = CreateBasicAttackSkillInfo(selectedWeapon);
-        Skill basicAttack = SkillFactory.Create(skillInfo, _gameState, _view);
         
-        basicAttack.SelectTarget();
-        int BPToUse = _view.AskForBPToUseIfAvailable();
+        ITargetSelector skillTargetSelector = TargetSelectorFactory.Create(skillInfo, _gameState, _view);
+        SkillEffectsChain skillEffects = SkillEffectFactory.Create(skillInfo, _gameState, _view);
 
-        basicAttack.ApplyEffects();
+        skillTargetSelector.Select();
+        
+        int bpToUse = _view.AskForBPToUseIfAvailable();
+        
+        skillEffects.ApplyEffects();
         _combatActionView.ShowCombatActionResults();
     }
 

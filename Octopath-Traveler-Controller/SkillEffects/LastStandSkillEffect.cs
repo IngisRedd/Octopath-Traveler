@@ -3,15 +3,13 @@ using Octopath_Traveler_View;
 
 namespace Octopath_Traveler.Skills;
 
-public class LastStandSkillEffect : BaseSkillEffect
+public class LastStandSkillEffect : SkillEffectWithModifier
 {
-    private decimal _modifier;
     private DamageType _damageType;
 
-    public LastStandSkillEffect(GameState gameState, decimal modifier, DamageType damageType)
-        : base(gameState)
+    public LastStandSkillEffect(GameState gameState, string skillName, decimal modifier, DamageType damageType)
+        : base(gameState, skillName, modifier)
     {
-        _modifier = modifier;
         _damageType = damageType;
     }
 

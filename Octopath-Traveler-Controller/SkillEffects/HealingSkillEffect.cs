@@ -3,16 +3,10 @@ using Octopath_Traveler_View;
 
 namespace Octopath_Traveler.Skills;
 
-public class HealingSkillEffect : BaseSkillEffect
+public class HealingSkillEffect : SkillEffectWithModifier
 {
-    private decimal _modifier;
-    private DamageType _damageType;
-
-    public HealingSkillEffect(GameState gameState, decimal modifier)
-        : base(gameState)
-    {
-        _modifier = modifier;
-    }
+    public HealingSkillEffect(GameState gameState, string skillName, decimal modifier)
+        : base(gameState, skillName, modifier){}
 
     protected override void ApplyEffectTo(CombatUnit target)
     {

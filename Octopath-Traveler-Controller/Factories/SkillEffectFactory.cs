@@ -6,118 +6,99 @@ namespace Octopath_Traveler;
 
 public static class SkillEffectFactory
 {
-    public static List<ISkillEffect> Create(SkillInfo skillInfo, GameState gameState, IRoundView view)
+    public static SkillEffectsChain Create(SkillInfo skillInfo, GameState gameState, IRoundView view)
     {
         if (skillInfo.Name == "Shooting Stars")
         {
-            return new List<ISkillEffect>
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new DamageSkillEffect(gameState, skillInfo.Modifier, DamageType.Wind),
-                new DamageSkillEffect(gameState, skillInfo.Modifier, DamageType.Light),
-                new DamageSkillEffect(gameState, skillInfo.Modifier, DamageType.Dark)
+                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, DamageType.Wind),
+                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, DamageType.Light),
+                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, DamageType.Dark)
             };
+            return new SkillEffectsChain(skillEffectList);
         }
         if (skillInfo.Name == "Heal Wounds")
         {
-            return new List<ISkillEffect>
-            {
-                new HealingSkillEffect(gameState, skillInfo.Modifier)
-            };
+            return CreateHealingEffect(skillInfo, gameState);
         }
         if (skillInfo.Name == "Heal More")
         {
-            return new List<ISkillEffect>
-            {
-                new HealingSkillEffect(gameState, skillInfo.Modifier)
-            };
+            return CreateHealingEffect(skillInfo, gameState);
         }
         if (skillInfo.Name == "Rest")
         {
-            return new List<ISkillEffect>
-            {
-                new HealingSkillEffect(gameState, skillInfo.Modifier)
-            };
+            return CreateHealingEffect(skillInfo, gameState);
         }
         if (skillInfo.Name == "First Aid")
         {
-            return new List<ISkillEffect>
-            {
-                new HealingSkillEffect(gameState, skillInfo.Modifier)
-            };
+            return CreateHealingEffect(skillInfo, gameState);
         }
         if (skillInfo.Name == "Heavenly Healing")
         {
-            return new List<ISkillEffect>
-            {
-                new HealingSkillEffect(gameState, skillInfo.Modifier)
-            };
+            return CreateHealingEffect(skillInfo, gameState);
         }
         if (skillInfo.Name == "Revive")
         {
-            return new List<ISkillEffect>
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new ReviveSkillEffect(gameState)
+                new ReviveSkillEffect(gameState, skillInfo.Name)
             };
+            return new SkillEffectsChain(skillEffectList);
         }
         if (skillInfo.Name == "Vivify")
         {
-            return new List<ISkillEffect>
-            {
-                new ReviveSkillEffect(gameState),
-                new HealingSkillEffect(gameState, skillInfo.Modifier)
-            };
+            return CreateReviveAndHealingEffect(skillInfo, gameState);
         }
         if (skillInfo.Name == "Healing Touch")
         {
-            return new List<ISkillEffect>
-            {
-                new ReviveSkillEffect(gameState),
-                new HealingSkillEffect(gameState, skillInfo.Modifier)
-            };
+            return CreateReviveAndHealingEffect(skillInfo, gameState);
         }
         if (skillInfo.Name == "Revive and Rejuvenate")
         {
-            return new List<ISkillEffect>
-            {
-                new ReviveSkillEffect(gameState),
-                new HealingSkillEffect(gameState, skillInfo.Modifier)
-            };
+            return CreateReviveAndHealingEffect(skillInfo, gameState);
         }
         if (skillInfo.Name == "Leghold Trap")
         {
-            return new List<ISkillEffect>
+            int slowedTurns = 2;
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new SlowDownSkillEffect(gameState)
+                new SlowDownSkillEffect(gameState, skillInfo.Name, slowedTurns)
             };
+            return new SkillEffectsChain(skillEffectList);
         }
         if (skillInfo.Name == "Spearhead")
         {
-            return new List<ISkillEffect>
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new DamageSkillEffect(gameState, skillInfo.Modifier, skillInfo.Type),
-                new GetTurnPrioritySkillEffect(gameState)
+                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, skillInfo.Type),
+                new GetTurnPrioritySkillEffect(gameState, skillInfo.Name)
             };
+            return new SkillEffectsChain(skillEffectList);
         }
         if (skillInfo.Name == "Last Stand")
         {
-            return new List<ISkillEffect>
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new LastStandSkillEffect(gameState, skillInfo.Modifier, skillInfo.Type),
+                new LastStandSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, skillInfo.Type),
             };
+            return new SkillEffectsChain(skillEffectList);
         }
         if (skillInfo.Name == "Mercy Strike")
         {
-            return new List<ISkillEffect>
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new MercyStrikeSkillEffect(gameState, skillInfo.Modifier, skillInfo.Type),
+                new MercyStrikeSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, skillInfo.Type),
             };
+            return new SkillEffectsChain(skillEffectList);
         }
         if (skillInfo.Name == "Vortal Claw")
         {
-            return new List<ISkillEffect>
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new HalveHPSkillEffect(gameState),
+                new HalveHPSkillEffect(gameState, skillInfo.Name),
             };
+            return new SkillEffectsChain(skillEffectList);
         }
         if (skillInfo.Name == "Nightmare Chimera")
         {
@@ -126,20 +107,43 @@ public static class SkillEffectFactory
                 DamageType.Sword, DamageType.Spear, DamageType.Dagger, DamageType.Axe, DamageType.Bow, DamageType.Stave
             };
             DamageType weaponType = view.SelectWeapon(weapons);
-            return new List<ISkillEffect>
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new DamageSkillEffect(gameState, skillInfo.Modifier, weaponType)
+                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, weaponType)
             };
+            return new SkillEffectsChain(skillEffectList);
         }
         if (IsItADamagingSkill(skillInfo))
         {
-            return new List<ISkillEffect>
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new DamageSkillEffect(gameState, skillInfo.Modifier, skillInfo.Type)
+                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, skillInfo.Type)
             };
+            return new SkillEffectsChain(skillEffectList);
         }
         throw new ArgumentException($"Unknown skill name: {skillInfo.Name}!.");
     }
+
+    private static SkillEffectsChain CreateHealingEffect(SkillInfo skillInfo, GameState gameState)
+    {
+        List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+        {
+            new HealingSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier)
+        };
+        return new SkillEffectsChain(skillEffectList);
+    }
+
+    private static SkillEffectsChain CreateReviveAndHealingEffect(SkillInfo skillInfo, GameState gameState)
+    {
+        List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+        {
+            new ReviveSkillEffect(gameState, skillInfo.Name),
+            new HealingSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier)
+        };
+        return new SkillEffectsChain(skillEffectList);
+    }
+
     private static bool IsItADamagingSkill(SkillInfo skillInfo)
         => skillInfo.Type != DamageType.None;
+
 }

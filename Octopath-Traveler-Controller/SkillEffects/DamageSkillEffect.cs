@@ -1,17 +1,14 @@
 using Octopath_Traveler_Model;
-using Octopath_Traveler_View;
 
 namespace Octopath_Traveler.Skills;
 
-public class DamageSkillEffect : BaseSkillEffect
+public class DamageSkillEffect : SkillEffectWithModifier
 {
-    private decimal _modifier;
     private DamageType _damageType;
 
-    public DamageSkillEffect(GameState gameState, decimal modifier, DamageType damageType)
-        : base(gameState)
+    public DamageSkillEffect(GameState gameState, string skillName, decimal modifier, DamageType damageType)
+        : base(gameState, skillName, modifier)
     {
-        _modifier = modifier;
         _damageType = damageType;
     }
 

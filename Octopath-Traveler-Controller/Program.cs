@@ -21,7 +21,7 @@ using OctopathTravelerGUI;
  * por:
  *      var view = View.BuildConsoleView();
  */
-bool useGui = true;
+bool useGui = false;
 if (useGui)
 {
     OTGUI window = new OTGUI();

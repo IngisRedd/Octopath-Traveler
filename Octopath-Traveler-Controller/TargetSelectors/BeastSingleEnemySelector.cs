@@ -1,22 +1,22 @@
 using Octopath_Traveler_Model;
 using Octopath_Traveler.Skills;
+using Octopath_Traveler.TargetSelectors;
 
 namespace Octopath_Traveler;
 
-public class BeastSingleEnemySelector : ITargetSelector
+public class BeastSingleEnemySelector : BaseSelector
 {
-    private GameState _gameState;
     private Stat _stat;
     private SelectionType _selectionType;
 
     public BeastSingleEnemySelector(GameState gameState, Stat stat, SelectionType selectionType)
+        : base(gameState)
     {
-        _gameState = gameState;
         _stat = stat;
         _selectionType = selectionType;
     }
     
-    public void Select()
+    protected override void OnSelect()
     {
         IEnumerable<Traveler> travelers = _gameState.TravelerTeam.AliveUnits;
         
