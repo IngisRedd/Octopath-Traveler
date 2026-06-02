@@ -5,5 +5,4 @@ public enum StatusType
     Defend,
     BreakingPoint,
     Slow
-    
 }

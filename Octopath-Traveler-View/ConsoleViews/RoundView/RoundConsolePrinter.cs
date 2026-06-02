@@ -133,7 +133,13 @@ public class RoundConsolePrinter : BaseConsoleView
     public void AskForBPUsage()
     {
         HorizontalRulePrinter.Print(_view);
-        _view.WriteLine($"Seleccione cuantos BP utilizar");
+        _view.WriteLine("Seleccione cuantos BP utilizar");
+    }
+
+    public void ShowInsufficientBPMessage(int bpToUse)
+    {
+        HorizontalRulePrinter.Print(_view);
+        _view.WriteLine($"{_gameState.CurrentUnit.Name} no tiene {bpToUse} BP para utilizar");
     }
 
     public void ShowAvailableSkills()

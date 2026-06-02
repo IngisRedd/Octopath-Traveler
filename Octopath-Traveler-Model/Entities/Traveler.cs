@@ -11,5 +11,12 @@ public class Traveler : CombatUnit
     
     public int BP { get; set; }
     public bool AreThereAnyBPLeft => (BP > 0);
+    public bool UsedBPLastTurn = false;
+
+    public void UseBP(int bpToUse)
+    {
+        BP -= bpToUse;
+        UsedBPLastTurn = true;
+    }
 
 }

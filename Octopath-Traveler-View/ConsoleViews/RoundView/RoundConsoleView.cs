@@ -82,7 +82,15 @@ public class RoundConsoleView : BaseConsoleView, IRoundView
             return 0;
 
         _printer.AskForBPUsage();
-        return ReadPlayerIntInput();
+        int playerInput = ReadPlayerIntInput();
+        while (playerInput > _gameState.CurrentTraveler.BP)
+        {
+            _printer.ShowInsufficientBPMessage(playerInput);
+            _printer.AskForBPUsage();
+            playerInput = ReadPlayerIntInput();
+        }       
+        
+        return playerInput;
     }
     
     public TravelerSkillInfo SelectFromAvailableSkills()

@@ -6,37 +6,81 @@ namespace Octopath_Traveler;
 
 public static class SkillEffectFactory
 {
-    public static SkillEffectsChain Create(SkillInfo skillInfo, GameState gameState, IRoundView view)
+    public static SkillEffectChain Create(SkillInfo skillInfo, GameState gameState, int bpToUse = 0)
     {
+        if (skillInfo.Name == "Basic Attack")
+        {
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>();
+            for (int i = 0; i < (1 + bpToUse); i++)
+            {
+                skillEffects.Add(new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, skillInfo.Type));
+            }
+            return new SkillEffectChain(skillEffects);
+        }
         if (skillInfo.Name == "Shooting Stars")
         {
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
+            
             List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, DamageType.Wind),
-                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, DamageType.Light),
-                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, DamageType.Dark)
+                new DamageSkillEffect(gameState, skillInfo.Name, boostedModifier, DamageType.Wind),
+                new DamageSkillEffect(gameState, skillInfo.Name, boostedModifier, DamageType.Light),
+                new DamageSkillEffect(gameState, skillInfo.Name, boostedModifier, DamageType.Dark)
             };
-            return new SkillEffectsChain(skillEffectList);
+            return new SkillEffectChain(skillEffectList);
         }
         if (skillInfo.Name == "Heal Wounds")
         {
-            return CreateHealingEffect(skillInfo, gameState);
+            decimal boostingBonus = 0.5m;
+            decimal boostedModifier = skillInfo.Modifier + boostingBonus * bpToUse;
+
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            {
+                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+            };
+            return new SkillEffectChain(skillEffectList);
+
         }
         if (skillInfo.Name == "Heal More")
         {
-            return CreateHealingEffect(skillInfo, gameState);
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
+
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            {
+                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+            };
+            return new SkillEffectChain(skillEffectList);
+
         }
         if (skillInfo.Name == "Rest")
         {
-            return CreateHealingEffect(skillInfo, gameState);
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            {
+                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+            };
+            return new SkillEffectChain(skillEffectList);
+
         }
         if (skillInfo.Name == "First Aid")
         {
-            return CreateHealingEffect(skillInfo, gameState);
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            {
+                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+            };
+            return new SkillEffectChain(skillEffectList);
+
         }
         if (skillInfo.Name == "Heavenly Healing")
         {
-            return CreateHealingEffect(skillInfo, gameState);
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            {
+                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+            };
+            return new SkillEffectChain(skillEffectList);
+
         }
         if (skillInfo.Name == "Revive")
         {
@@ -44,53 +88,83 @@ public static class SkillEffectFactory
             {
                 new ReviveSkillEffect(gameState, skillInfo.Name)
             };
-            return new SkillEffectsChain(skillEffectList);
+
+            if (bpToUse > 0)
+            {
+                decimal boostedModifier = skillInfo.Modifier * bpToUse;
+                skillEffectList.Add(
+                    new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+                );
+            }
+            return new SkillEffectChain(skillEffectList);
         }
         if (skillInfo.Name == "Vivify")
         {
-            return CreateReviveAndHealingEffect(skillInfo, gameState);
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            {
+                new ReviveSkillEffect(gameState, skillInfo.Name),
+                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+            };
+            return new SkillEffectChain(skillEffectList);
         }
         if (skillInfo.Name == "Healing Touch")
         {
-            return CreateReviveAndHealingEffect(skillInfo, gameState);
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            {
+                new ReviveSkillEffect(gameState, skillInfo.Name),
+                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+            };
+            return new SkillEffectChain(skillEffectList);
         }
         if (skillInfo.Name == "Revive and Rejuvenate")
         {
-            return CreateReviveAndHealingEffect(skillInfo, gameState);
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
+            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            {
+                new ReviveSkillEffect(gameState, skillInfo.Name),
+                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+            };
+            return new SkillEffectChain(skillEffectList);
         }
         if (skillInfo.Name == "Leghold Trap")
         {
-            int slowedTurns = 2;
+            int baseEffectDuration = 2;
+            int statusEffectDuration = GetBoostedDurationForStatusEffectSkill(skillInfo, bpToUse, baseEffectDuration);
             List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new SlowDownSkillEffect(gameState, skillInfo.Name, slowedTurns)
+                new SlowDownSkillEffect(gameState, skillInfo.Name, StatusType.Slow, statusEffectDuration)
             };
-            return new SkillEffectsChain(skillEffectList);
+            return new SkillEffectChain(skillEffectList);
         }
         if (skillInfo.Name == "Spearhead")
         {
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
             List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, skillInfo.Type),
+                new DamageSkillEffect(gameState, skillInfo.Name, boostedModifier, skillInfo.Type),
                 new GetTurnPrioritySkillEffect(gameState, skillInfo.Name)
             };
-            return new SkillEffectsChain(skillEffectList);
+            return new SkillEffectChain(skillEffectList);
         }
         if (skillInfo.Name == "Last Stand")
         {
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
             List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new LastStandSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, skillInfo.Type),
+                new LastStandSkillEffect(gameState, skillInfo.Name, boostedModifier, skillInfo.Type),
             };
-            return new SkillEffectsChain(skillEffectList);
+            return new SkillEffectChain(skillEffectList);
         }
         if (skillInfo.Name == "Mercy Strike")
         {
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
             List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new MercyStrikeSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, skillInfo.Type),
+                new MercyStrikeSkillEffect(gameState, skillInfo.Name, boostedModifier, skillInfo.Type),
             };
-            return new SkillEffectsChain(skillEffectList);
+            return new SkillEffectChain(skillEffectList);
         }
         if (skillInfo.Name == "Vortal Claw")
         {
@@ -98,52 +172,43 @@ public static class SkillEffectFactory
             {
                 new HalveHPSkillEffect(gameState, skillInfo.Name),
             };
-            return new SkillEffectsChain(skillEffectList);
-        }
-        if (skillInfo.Name == "Nightmare Chimera")
-        {
-            List<DamageType> weapons = new List<DamageType>
-            {
-                DamageType.Sword, DamageType.Spear, DamageType.Dagger, DamageType.Axe, DamageType.Bow, DamageType.Stave
-            };
-            DamageType weaponType = view.SelectWeapon(weapons);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
-            {
-                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, weaponType)
-            };
-            return new SkillEffectsChain(skillEffectList);
+            return new SkillEffectChain(skillEffectList);
         }
         if (IsItADamagingSkill(skillInfo))
         {
+            decimal skillModifier = skillInfo.Modifier;
+            if (gameState.CurrentUnit is Traveler)
+            {
+                skillModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
+            }
             List<ISkillEffect> skillEffectList = new List<ISkillEffect>
             {
-                new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, skillInfo.Type)
+                new DamageSkillEffect(gameState, skillInfo.Name, skillModifier, skillInfo.Type)
             };
-            return new SkillEffectsChain(skillEffectList);
+            return new SkillEffectChain(skillEffectList);
         }
         throw new ArgumentException($"Unknown skill name: {skillInfo.Name}!.");
     }
-
-    private static SkillEffectsChain CreateHealingEffect(SkillInfo skillInfo, GameState gameState)
-    {
-        List<ISkillEffect> skillEffectList = new List<ISkillEffect>
-        {
-            new HealingSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier)
-        };
-        return new SkillEffectsChain(skillEffectList);
-    }
-
-    private static SkillEffectsChain CreateReviveAndHealingEffect(SkillInfo skillInfo, GameState gameState)
-    {
-        List<ISkillEffect> skillEffectList = new List<ISkillEffect>
-        {
-            new ReviveSkillEffect(gameState, skillInfo.Name),
-            new HealingSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier)
-        };
-        return new SkillEffectsChain(skillEffectList);
-    }
-
+    
     private static bool IsItADamagingSkill(SkillInfo skillInfo)
         => skillInfo.Type != DamageType.None;
 
+    private static decimal GetBoostedModifier(TravelerSkillInfo skillInfo, int bpToUse)
+    {
+        decimal bonusPercent = BoostDescriptionParser.ParseBonusPercentage(skillInfo.Boost);
+        decimal bonusRate = bonusPercent / 100m;
+
+        return skillInfo.Modifier * (1m + (bonusRate * bpToUse));
+    }
+
+    private static int GetBoostedDurationForStatusEffectSkill(SkillInfo skillInfo, int bpToUse, int baseStatusDuration)
+    {
+        if (skillInfo is TravelerSkillInfo)
+        {
+            TravelerSkillInfo travelerSkillInfo = (TravelerSkillInfo)skillInfo;
+            int boostMultiplier = BoostDescriptionParser.ParseConditionDurationBonus(travelerSkillInfo.Boost);
+            return baseStatusDuration + boostMultiplier * bpToUse;
+        }
+        return baseStatusDuration;
+    }
 }

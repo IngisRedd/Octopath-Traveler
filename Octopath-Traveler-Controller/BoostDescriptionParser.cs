@@ -29,23 +29,29 @@ public static class BoostDescriptionParser
             return 0;
         }
 
-        string startMarker = "Aumenta la duración en ";
-        string endMarker = " rondas";
+        string targetMarker = " rondas";
+        int markerIndex = boostText.IndexOf(targetMarker);
 
-        int startIndex = boostText.IndexOf(startMarker);
-        int endIndex = boostText.IndexOf(endMarker);
+        int currentIndex = markerIndex - 1;
+        
+        while (IsCharacterANumber(currentIndex, boostText))
+        {
+            currentIndex = currentIndex - 1;
+        }
 
-        // If the string doesn't match our expected pattern, fail safely by returning 0
-        if (startIndex == -1 || endIndex == -1 || endIndex <= startIndex)
+        int numberStartIndex = currentIndex + 1;
+        int numberLength = markerIndex - numberStartIndex;
+
+        if (numberLength <= 0)
         {
             return 0;
         }
 
-        startIndex = startIndex + startMarker.Length;
-        int length = endIndex - startIndex;
-
-        string numberString = boostText.Substring(startIndex, length);
-
+        string numberString = boostText.Substring(numberStartIndex, numberLength);
+        
         return Convert.ToInt32(numberString);
     }
+
+    private static bool IsCharacterANumber(int currentIndex, string boostText)
+        => currentIndex >= 0 && char.IsDigit(boostText[currentIndex]);
 }

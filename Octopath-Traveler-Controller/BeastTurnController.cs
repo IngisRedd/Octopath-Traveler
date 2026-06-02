@@ -23,10 +23,10 @@ public class BeastTurnController : ITurnController
         SkillInfo beastSkillInfo = _gameState.CurrentBeast.Skill;
 
         ITargetSelector skillTargetSelector = TargetSelectorFactory.Create(beastSkillInfo, _gameState, _roundView);
-        SkillEffectsChain skillEffects = SkillEffectFactory.Create(beastSkillInfo, _gameState, _roundView);
+        SkillEffectChain skillEffect = SkillEffectFactory.Create(beastSkillInfo, _gameState);
 
         skillTargetSelector.Select();
-        skillEffects.ApplyEffects();
+        skillEffect.ApplyEffects();
 
         _combatActionView.ShowCombatActionResults();
     }

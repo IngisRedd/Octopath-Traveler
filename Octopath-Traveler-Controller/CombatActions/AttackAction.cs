@@ -6,7 +6,7 @@ namespace Octopath_Traveler.Actions;
 
 public class AttackAction : CombatAction
 {
-    ICombatActionView _combatActionView;
+    private ICombatActionView _combatActionView;
     public AttackAction(GameState gameState, IRoundView view, ICombatActionView combatActionView)
         : base(gameState, view)
     {
@@ -19,19 +19,24 @@ public class AttackAction : CombatAction
         SkillInfo skillInfo = CreateBasicAttackSkillInfo(selectedWeapon);
         
         ITargetSelector skillTargetSelector = TargetSelectorFactory.Create(skillInfo, _gameState, _view);
-        SkillEffectsChain skillEffects = SkillEffectFactory.Create(skillInfo, _gameState, _view);
 
         skillTargetSelector.Select();
         
         int bpToUse = _view.AskForBPToUseIfAvailable();
+        if (bpToUse > 0)
+        {
+            _gameState.CurrentTraveler.UseBP(bpToUse);
+        }
         
-        skillEffects.ApplyEffects();
+        SkillEffectChain skillEffectChain = SkillEffectFactory.Create(skillInfo, _gameState, bpToUse);
+        skillEffectChain.ApplyEffects();
         _combatActionView.ShowCombatActionResults();
     }
-
+    
     private SkillInfo CreateBasicAttackSkillInfo(DamageType selectedWeapon)
     {
         decimal basicAttackModifier = 1.3m;
+
         return new SkillInfo
         {
             Name = "Basic Attack",

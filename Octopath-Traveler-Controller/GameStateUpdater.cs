@@ -76,12 +76,16 @@ public static class GameStateUpdater
         int maxBPs = 5;
         foreach (Traveler traveler in gameState.TravelerTeam.AliveUnits)
         {
-            if (traveler.BP < maxBPs)
+            if (DoesTravelerGainBPThisTurn(traveler, maxBPs))
             {
                 traveler.BP++;
             }
+            traveler.UsedBPLastTurn = false;
         }
     }
+
+    private static bool DoesTravelerGainBPThisTurn(Traveler traveler, int maxBPs)
+        => (traveler.BP < maxBPs) && !traveler.UsedBPLastTurn;
 
     private static void ResetShieldsOfBeastsRecoveringFromBreakingPoint(GameState gameState)
     {

@@ -17,17 +17,21 @@ public class UseSkillAction : CombatAction
     public override void Execute()
     {
         TravelerSkillInfo selectedSkillInfo = SelectSkill();
-
+        TravelerSkillInfoConfigurator.Configure(selectedSkillInfo, _view);
+        
         ITargetSelector skillTargetSelector = TargetSelectorFactory.Create(selectedSkillInfo, _gameState, _view);
-        SkillEffectsChain skillEffects = SkillEffectFactory.Create(selectedSkillInfo, _gameState, _view);
-
         skillTargetSelector.Select();
         
         _gameState.CurrentTraveler.CurrentSP -= selectedSkillInfo.SP;
+
         int bpToUse = _view.AskForBPToUseIfAvailable();
-
-        skillEffects.ApplyEffects();
-
+        if (bpToUse > 0)
+        {
+            _gameState.CurrentTraveler.UseBP(bpToUse);
+        }
+        SkillEffectChain skillEffectChain = SkillEffectFactory.Create(selectedSkillInfo, _gameState, bpToUse);
+        
+        skillEffectChain.ApplyEffects();
         _combatActionView.ShowCombatActionResults();
     }
 
@@ -35,5 +39,4 @@ public class UseSkillAction : CombatAction
     {
         return _view.SelectFromAvailableSkills();
     }
-    
 }

@@ -3,14 +3,14 @@ using Octopath_Traveler_View;
 
 namespace Octopath_Traveler.Skills;
 
-public class SlowDownSkillEffect : ConditionApplierSkillEffect
+public class SlowDownSkillEffect : StatusEffectApplierSkillEffect
 {
-    public SlowDownSkillEffect(GameState gameState, string skillName, int duration)
-        : base(gameState, skillName, duration){}
+    public SlowDownSkillEffect(GameState gameState, string skillName, StatusType statusType, int duration)
+        : base(gameState, skillName, statusType, duration){}
 
     protected override void ApplyEffectTo(CombatUnit target)
     {
-        target.StatusEffects[StatusType.Slow].Duration += _duration;
+        target.StatusEffects[_type].Duration += _duration;
         _gameState.CurrentTurnQueue.ApplyPriority(target, TurnPriorityLevel.Minimun);
         _gameState.NextTurnQueue.ApplyPriority(target, TurnPriorityLevel.Minimun);
         

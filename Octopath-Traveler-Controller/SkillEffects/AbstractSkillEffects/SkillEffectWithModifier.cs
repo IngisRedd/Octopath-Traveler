@@ -3,7 +3,7 @@ using Octopath_Traveler_View;
 
 namespace Octopath_Traveler.Skills;
 
-public abstract class SkillEffectWithModifier : BaseSkillEffect, IBoostableSkillEffect
+public abstract class SkillEffectWithModifier : BaseSkillEffect
 {
     protected decimal _modifier;
 
@@ -12,13 +12,4 @@ public abstract class SkillEffectWithModifier : BaseSkillEffect, IBoostableSkill
     {
         _modifier = modifier;
     }
-    
-    public void Boost(int bpToUse, string boostDescription)
-    {
-            decimal bonusPercent = BoostDescriptionParser.ParseBonusPercentage(boostDescription);
-            decimal bonusRate = bonusPercent / 100m;
-
-            _modifier = _modifier * (1m + (bonusRate * bpToUse));
-    }
-
 }
