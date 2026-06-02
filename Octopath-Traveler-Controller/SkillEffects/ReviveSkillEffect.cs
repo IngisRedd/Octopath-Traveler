@@ -9,10 +9,13 @@ public class ReviveSkillEffect : BaseSkillEffect
 
     protected override void ApplyEffectTo(CombatUnit target)
     {
-        target.CurrentHP = 1;
-        _gameState.NextTurnQueue.Add(target);
+        if (!target.IsAlive)
+        {
+            target.CurrentHP = 1;
+            _gameState.NextTurnQueue.Add(target);
 
-        RegisterResurrection();
+            RegisterResurrection();
+        }
     }
     
     private void RegisterResurrection()

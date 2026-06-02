@@ -7,36 +7,28 @@ namespace Octopath_Traveler.Actions;
 public class UseSkillAction : CombatAction
 {
     ICombatActionView _combatActionView;
+    TravelerSkillInfo _skillInfo;
 
-    public UseSkillAction(GameState gameState, IRoundView view, ICombatActionView combatActionView)
+    public UseSkillAction(GameState gameState, IRoundView view, ICombatActionView combatActionView, TravelerSkillInfo skillInfo)
         : base(gameState, view)
     {
         _combatActionView = combatActionView;
+        _skillInfo = skillInfo;
     }
     
     public override void Execute()
     {
-        TravelerSkillInfo selectedSkillInfo = SelectSkill();
-        TravelerSkillInfoConfigurator.Configure(selectedSkillInfo, _view);
-        
-        ITargetSelector skillTargetSelector = TargetSelectorFactory.Create(selectedSkillInfo, _gameState, _view);
+        ITargetSelector skillTargetSelector = TargetSelectorFactory.Create(_skillInfo, _gameState, _view);
         skillTargetSelector.Select();
         
-        _gameState.CurrentTraveler.CurrentSP -= selectedSkillInfo.SP;
+        _gameState.CurrentTraveler.CurrentSP -= _skillInfo.SP;
 
         int bpToUse = _view.AskForBPToUseIfAvailable();
-        if (bpToUse > 0)
-        {
-            _gameState.CurrentTraveler.UseBP(bpToUse);
-        }
-        SkillEffectChain skillEffectChain = SkillEffectFactory.Create(selectedSkillInfo, _gameState, bpToUse);
-        
-        skillEffectChain.ApplyEffects();
-        _combatActionView.ShowCombatActionResults();
-    }
+        _gameState.CurrentTraveler.UseBP(bpToUse);
 
-    private TravelerSkillInfo SelectSkill()
-    {
-        return _view.SelectFromAvailableSkills();
+        SkillEffectChain skillEffectChain = SkillEffectFactory.Create(_skillInfo, _gameState, bpToUse);
+        skillEffectChain.ApplyEffects();
+        
+        _combatActionView.ShowCombatActionResults();
     }
 }

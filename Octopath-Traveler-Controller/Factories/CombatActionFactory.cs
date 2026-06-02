@@ -11,11 +11,15 @@ public static class CombatActionFactory
     {
         if (actionType == CombatActionType.Attack)
         {
-            return new AttackAction(gameState, roundView, combatActionView);
+            TravelerSkillInfo basicAttackSkillInfo = CreateBasicAttackSkillInfo(gameState, roundView);
+            return new UseSkillAction(gameState, roundView, combatActionView, basicAttackSkillInfo);
         }
         if (actionType == CombatActionType.UseSkill)
         {
-            return new UseSkillAction(gameState, roundView, combatActionView);
+            TravelerSkillInfo selectedSkillInfo = roundView.SelectFromAvailableSkills();
+            TravelerSkillInfoConfigurator.Configure(selectedSkillInfo, roundView);
+
+            return new UseSkillAction(gameState, roundView, combatActionView, selectedSkillInfo);
         }
         if (actionType == CombatActionType.Defend)
         {
@@ -27,4 +31,22 @@ public static class CombatActionFactory
         }
         throw new ArgumentException($"Unknown combat action!");
     }
+    
+    private static TravelerSkillInfo CreateBasicAttackSkillInfo(GameState gameState, IRoundView roundView)
+    {
+        decimal basicAttackModifier = 1.3m;
+        DamageType selectedWeapon = roundView.SelectWeapon(gameState.CurrentTraveler.Weapons);
+
+        return new TravelerSkillInfo
+        {
+            Name = "Basic Attack",
+            Type = selectedWeapon,
+            Description = "",
+            Modifier = basicAttackModifier,
+            Target = SkillTarget.Single,
+            SP = 0,
+            Boost = ""
+        };
+    }
+
 }

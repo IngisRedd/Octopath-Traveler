@@ -1,6 +1,6 @@
 namespace Octopath_Traveler;
 
-public static class BoostDescriptionParser
+public static class SkillDescriptionParser
 {
     
     public static decimal ParseBonusPercentage(string boostText)
@@ -22,15 +22,13 @@ public static class BoostDescriptionParser
         return Convert.ToDecimal(percentageString);
     }   
     
-    public static int ParseConditionDurationBonus(string boostText)
+    public static int ParseValueBeforeMarker(string boostText, string afterValueMarker)
     {
         if (string.IsNullOrEmpty(boostText))
         {
             return 0;
         }
-
-        string targetMarker = " rondas";
-        int markerIndex = boostText.IndexOf(targetMarker);
+        int markerIndex = boostText.IndexOf(afterValueMarker);
 
         int currentIndex = markerIndex - 1;
         

@@ -127,7 +127,7 @@ public static class TargetSelectorFactory
         }
         if (skillInfo.Name == "Revive")
         {
-            return new DeadPartySelector(gameState);
+            return new AllPartySelector(gameState);
         }
         if (skillInfo.Name == "Vivify")
         {

@@ -181,11 +181,14 @@ public static class SkillEffectFactory
             {
                 skillModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
             }
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            
+            int numberOfHits = GetNumberOfHits(skillInfo);
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>();
+            for (int i = 0; i < (numberOfHits); i++)
             {
-                new DamageSkillEffect(gameState, skillInfo.Name, skillModifier, skillInfo.Type)
-            };
-            return new SkillEffectChain(skillEffectList);
+                skillEffects.Add(new DamageSkillEffect(gameState, skillInfo.Name, skillModifier, skillInfo.Type));
+            }
+            return new SkillEffectChain(skillEffects);
         }
         throw new ArgumentException($"Unknown skill name: {skillInfo.Name}!.");
     }
@@ -195,7 +198,7 @@ public static class SkillEffectFactory
 
     private static decimal GetBoostedModifier(TravelerSkillInfo skillInfo, int bpToUse)
     {
-        decimal bonusPercent = BoostDescriptionParser.ParseBonusPercentage(skillInfo.Boost);
+        decimal bonusPercent = SkillDescriptionParser.ParseBonusPercentage(skillInfo.Boost);
         decimal bonusRate = bonusPercent / 100m;
 
         return skillInfo.Modifier * (1m + (bonusRate * bpToUse));
@@ -206,9 +209,31 @@ public static class SkillEffectFactory
         if (skillInfo is TravelerSkillInfo)
         {
             TravelerSkillInfo travelerSkillInfo = (TravelerSkillInfo)skillInfo;
-            int boostMultiplier = BoostDescriptionParser.ParseConditionDurationBonus(travelerSkillInfo.Boost);
+            string afterValueMarker = " rondas";
+            int boostMultiplier = SkillDescriptionParser.ParseValueBeforeMarker(travelerSkillInfo.Boost, afterValueMarker);
             return baseStatusDuration + boostMultiplier * bpToUse;
         }
         return baseStatusDuration;
     }
+    
+    private static int GetNumberOfHits(SkillInfo skillInfo)
+    {
+        if (skillInfo is BeastSkillInfo)
+        {
+            BeastSkillInfo beastSkillInfo = (BeastSkillInfo)skillInfo;
+            return beastSkillInfo.Hits;
+        }
+        else
+        {
+            string afterValueMarker = " veces";
+            int numberOfHits = SkillDescriptionParser.ParseValueBeforeMarker(skillInfo.Description, afterValueMarker);
+            if (numberOfHits <= 0)
+            {
+                numberOfHits = 1;
+            }
+
+            return numberOfHits;
+        }
+    }
+
 }
