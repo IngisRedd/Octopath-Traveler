@@ -5,15 +5,15 @@ namespace Octopath_Traveler.Skills;
 
 public class HealingSkillEffect : SkillEffectWithModifier
 {
-    public HealingSkillEffect(GameState gameState, string skillName, decimal modifier)
-        : base(gameState, skillName, modifier){}
+    public HealingSkillEffect(GameState gameState, decimal modifier)
+        : base(gameState, modifier){}
 
-    protected override void ApplyEffectTo(CombatUnit target)
+    public override void ApplyTo(CombatUnit target)
     {
         int healValue = CalculateHealingEffect();
         target.CurrentHP += healValue;
         
-        RegisterHealing(healValue);
+        RegisterHealing(_gameState, target, healValue);
     }
 
     private int CalculateHealingEffect()
@@ -22,9 +22,9 @@ public class HealingSkillEffect : SkillEffectWithModifier
         return (int)Math.Floor(healingValue);
     }
     
-    private void RegisterHealing(int healValue)
+    public static void RegisterHealing(GameState gameState, CombatUnit target,  int healValue)
     {
-        List<int?> healValues = _gameState.LastSkillEffectResult.HealValues;
-        Utils.SetLast(healValues, healValue);
+        SkillResultInfo resultInfo = new SkillResultInfo(target, ResultType.Heal, healValue);
+        gameState.UsedSkillResults.Add(resultInfo);
     }
 }

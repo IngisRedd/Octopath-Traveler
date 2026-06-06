@@ -2,15 +2,12 @@ using Octopath_Traveler_Model;
 
 namespace Octopath_Traveler.Skills;
 
-public class DamageSkillEffect : SkillEffectWithModifier
+public class HPThiefEffect : SkillEffectWithModifier
 {
-    private DamageType _damageType;
+    private DamageType _damageType = DamageType.Dagger;
 
-    public DamageSkillEffect(GameState gameState, decimal modifier, DamageType damageType)
-        : base(gameState, modifier)
-    {
-        _damageType = damageType;
-    }
+    public HPThiefEffect(GameState gameState, decimal modifier)
+        : base(gameState, modifier){}
 
     public override void ApplyTo(CombatUnit target)
     {
@@ -20,5 +17,9 @@ public class DamageSkillEffect : SkillEffectWithModifier
    
         DamageApplier damageApplier = new DamageApplier(_gameState, damage);
         damageApplier.Apply(target);
+        
+        int healValue = damage.Value / 2;
+        _gameState.CurrentUnit.CurrentHP += healValue;
+        HealingSkillEffect.RegisterHealing(_gameState, healValue);
     }
 }

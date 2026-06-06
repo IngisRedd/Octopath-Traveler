@@ -4,23 +4,23 @@ namespace Octopath_Traveler.Skills;
 
 public class ReviveSkillEffect : BaseSkillEffect
 {
-    public ReviveSkillEffect(GameState gameState, string skillName)
-        : base(gameState, skillName){}
+    public ReviveSkillEffect(GameState gameState)
+        : base(gameState){}
 
-    protected override void ApplyEffectTo(CombatUnit target)
+    public override void ApplyTo(CombatUnit target)
     {
         if (!target.IsAlive)
         {
             target.CurrentHP = 1;
             _gameState.NextTurnQueue.Add(target);
 
-            RegisterResurrection();
+            RegisterResurrection(target);
         }
     }
     
-    private void RegisterResurrection()
+    private void RegisterResurrection(CombatUnit target)
     {
-        List<bool> isTravelerResurrected = _gameState.LastSkillEffectResult.IsTravelerResurrected;
-        Utils.SetLast(isTravelerResurrected, true);
+        SkillResultInfo resultInfo = new SkillResultInfo(target, ResultType.Revive);
+        _gameState.UsedSkillResults.Add(resultInfo);
     }
 }

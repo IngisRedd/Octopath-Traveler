@@ -18,7 +18,7 @@ public class TurnQueue
         return _orderedUnits.GetEnumerator();
     }
     
-    public void AddRange(IEnumerable<CombatUnit> units)
+    public void AddRange(Combatants units)
     {
         foreach (var unit in units)
         {

@@ -28,7 +28,7 @@ public class TeamsBuilder
 
     private void BuildTravelerTeam()
     {
-        TravelerTeam travelerTeam = new TravelerTeam();
+        Combatants travelerTeam = new Combatants();
         
         Dictionary<string, TravelerJsonData> allTravelersData = Utils.LoadJsonDataByName<TravelerJsonData>(
             "data/characters.json",
@@ -39,14 +39,14 @@ public class TeamsBuilder
         _gameState.TravelerTeam = travelerTeam;
     }
 
-    private void PopulateTravelerTeam(TravelerTeam travelerTeam, Dictionary<string, TravelerJsonData> allTravelersData)
+    private void PopulateTravelerTeam(Combatants travelerTeam, Dictionary<string, TravelerJsonData> allTravelersData)
     {
         foreach (string name in _parsedTeamsInfo.TravelerNames)
         {
             Traveler newTraveler = CreateTraveler(allTravelersData[name]);
             AddPassiveSkills(newTraveler, name);
             
-            travelerTeam.Units.Add(newTraveler);
+            travelerTeam.Add(newTraveler);
             _gameState.AllUnits.Add(newTraveler);
         }
     }
@@ -95,7 +95,7 @@ public class TeamsBuilder
     
     private void BuildBeastTeam()
     {
-        BeastTeam beastTeam = new BeastTeam();
+        Combatants beastTeam = new Combatants();
         
         Dictionary<string, BeastJsonData> allBeastsData = Utils.LoadJsonDataByName<BeastJsonData>(
             "data/enemies.json",
@@ -106,7 +106,7 @@ public class TeamsBuilder
         {
             Beast newBeast = CreateBeast(allBeastsData[beastName]);
             
-            beastTeam.Units.Add(newBeast);
+            beastTeam.Add(newBeast);
             _gameState.AllUnits.Add(newBeast);
         }
         

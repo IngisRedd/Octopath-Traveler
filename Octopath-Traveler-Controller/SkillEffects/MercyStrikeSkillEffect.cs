@@ -7,13 +7,13 @@ public class MercyStrikeSkillEffect : SkillEffectWithModifier
 {
     private DamageType _damageType;
 
-    public MercyStrikeSkillEffect(GameState gameState, string skillName, decimal modifier, DamageType damageType)
-        : base(gameState, skillName, modifier)
+    public MercyStrikeSkillEffect(GameState gameState, decimal modifier, DamageType damageType)
+        : base(gameState, modifier)
     {
         _damageType = damageType;
     }
 
-    protected override void ApplyEffectTo(CombatUnit target)
+    public override void ApplyTo(CombatUnit target)
     {
         DamageCalculator damageCalculator =
             new DamageCalculator(_modifier, _gameState.CurrentUnit, target, _damageType);

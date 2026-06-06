@@ -25,18 +25,18 @@ public static class Utils
         return DamageType.None;
     }
     
-    public static void SetLast<T>(List<T> list, T item)
-    {
-        if (list.Count == 0) return;
-        list[^1] = item;
-    }
+    // public static void SetLast<T>(List<T> list, T item)
+    // {
+    //     if (list.Count == 0) return;
+    //     list[^1] = item;
+    // }
     
-    public static void MoveItemInIndexToEnd<T>(List<T> list, int index)
-    {
-        if (index < 0 || index >= list.Count) return;
-
-        var item = list[index];
-        list.RemoveAt(index);
-        list.Add(item);
-    }
+    // public static void MoveItemInIndexToEnd<T>(List<T> list, int index)
+    // {
+    //     if (index < 0 || index >= list.Count) return;
+    //
+    //     var item = list[index];
+    //     list.RemoveAt(index);
+    //     list.Add(item);
+    // }
 }

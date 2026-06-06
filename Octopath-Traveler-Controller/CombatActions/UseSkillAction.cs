@@ -28,6 +28,7 @@ public class UseSkillAction : CombatAction
 
         SkillEffectChain skillEffectChain = SkillEffectFactory.Create(_skillInfo, _gameState, bpToUse);
         skillEffectChain.ApplyEffects();
+        _gameState.SkillUsedName = _skillInfo.Name;
         
         _combatActionView.ShowCombatActionResults();
     }

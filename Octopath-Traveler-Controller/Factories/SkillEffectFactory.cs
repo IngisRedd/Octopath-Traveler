@@ -13,166 +13,175 @@ public static class SkillEffectFactory
             List<ISkillEffect> skillEffects = new List<ISkillEffect>();
             for (int i = 0; i < (1 + bpToUse); i++)
             {
-                skillEffects.Add(new DamageSkillEffect(gameState, skillInfo.Name, skillInfo.Modifier, skillInfo.Type));
+                skillEffects.Add(new DamageSkillEffect(gameState, skillInfo.Modifier, skillInfo.Type));
             }
-            return new SkillEffectChain(skillEffects);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (skillInfo.Name == "Shooting Stars")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
             
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new DamageSkillEffect(gameState, skillInfo.Name, boostedModifier, DamageType.Wind),
-                new DamageSkillEffect(gameState, skillInfo.Name, boostedModifier, DamageType.Light),
-                new DamageSkillEffect(gameState, skillInfo.Name, boostedModifier, DamageType.Dark)
+                new DamageSkillEffect(gameState, boostedModifier, DamageType.Wind),
+                new DamageSkillEffect(gameState, boostedModifier, DamageType.Light),
+                new DamageSkillEffect(gameState, boostedModifier, DamageType.Dark)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (skillInfo.Name == "Heal Wounds")
         {
             decimal boostingBonus = 0.5m;
             decimal boostedModifier = skillInfo.Modifier + boostingBonus * bpToUse;
 
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+                new HealingSkillEffect(gameState, boostedModifier)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
 
         }
         if (skillInfo.Name == "Heal More")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
 
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+                new HealingSkillEffect(gameState, boostedModifier)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
 
         }
         if (skillInfo.Name == "Rest")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+                new HealingSkillEffect(gameState, boostedModifier)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
 
         }
         if (skillInfo.Name == "First Aid")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+                new HealingSkillEffect(gameState, boostedModifier)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
 
         }
         if (skillInfo.Name == "Heavenly Healing")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+                new HealingSkillEffect(gameState, boostedModifier)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
 
         }
         if (skillInfo.Name == "Revive")
         {
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new ReviveSkillEffect(gameState, skillInfo.Name)
+                new ReviveSkillEffect(gameState)
             };
 
             if (bpToUse > 0)
             {
                 decimal boostedModifier = skillInfo.Modifier * bpToUse;
-                skillEffectList.Add(
-                    new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+                skillEffects.Add(
+                    new HealingSkillEffect(gameState, boostedModifier)
                 );
             }
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (skillInfo.Name == "Vivify")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new ReviveSkillEffect(gameState, skillInfo.Name),
-                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+                new ReviveSkillEffect(gameState),
+                new HealingSkillEffect(gameState, boostedModifier)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (skillInfo.Name == "Healing Touch")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new ReviveSkillEffect(gameState, skillInfo.Name),
-                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+                new ReviveSkillEffect(gameState),
+                new HealingSkillEffect(gameState, boostedModifier)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (skillInfo.Name == "Revive and Rejuvenate")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new ReviveSkillEffect(gameState, skillInfo.Name),
-                new HealingSkillEffect(gameState, skillInfo.Name, boostedModifier)
+                new ReviveSkillEffect(gameState),
+                new HealingSkillEffect(gameState, boostedModifier)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (skillInfo.Name == "Leghold Trap")
         {
             int baseEffectDuration = 2;
             int statusEffectDuration = GetBoostedDurationForStatusEffectSkill(skillInfo, bpToUse, baseEffectDuration);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new SlowDownSkillEffect(gameState, skillInfo.Name, StatusType.Slow, statusEffectDuration)
+                new ApplyStatusEffectSkillEffect(gameState, StatusType.Slow, statusEffectDuration)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (skillInfo.Name == "Spearhead")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new DamageSkillEffect(gameState, skillInfo.Name, boostedModifier, skillInfo.Type),
-                new GetTurnPrioritySkillEffect(gameState, skillInfo.Name)
+                new DamageSkillEffect(gameState, boostedModifier, skillInfo.Type),
+                new GetTurnPrioritySkillEffect(gameState)
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (skillInfo.Name == "Last Stand")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new LastStandSkillEffect(gameState, skillInfo.Name, boostedModifier, skillInfo.Type),
+                new LastStandSkillEffect(gameState, boostedModifier, skillInfo.Type),
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (skillInfo.Name == "Mercy Strike")
         {
             decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new MercyStrikeSkillEffect(gameState, skillInfo.Name, boostedModifier, skillInfo.Type),
+                new MercyStrikeSkillEffect(gameState, boostedModifier, skillInfo.Type),
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (skillInfo.Name == "Vortal Claw")
         {
-            List<ISkillEffect> skillEffectList = new List<ISkillEffect>
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
             {
-                new HalveHPSkillEffect(gameState, skillInfo.Name),
+                new HalveHPSkillEffect(gameState),
             };
-            return new SkillEffectChain(skillEffectList);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
+        }
+        if (skillInfo.Name == "HP Thief")
+        {
+            decimal boostedModifier = GetBoostedModifier((TravelerSkillInfo)skillInfo, bpToUse);
+            List<ISkillEffect> skillEffects = new List<ISkillEffect>
+            {
+                new DamageSkillEffect(gameState, boostedModifier, skillInfo.Type),
+            };
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         if (IsItADamagingSkill(skillInfo))
         {
@@ -186,9 +195,9 @@ public static class SkillEffectFactory
             List<ISkillEffect> skillEffects = new List<ISkillEffect>();
             for (int i = 0; i < (numberOfHits); i++)
             {
-                skillEffects.Add(new DamageSkillEffect(gameState, skillInfo.Name, skillModifier, skillInfo.Type));
+                skillEffects.Add(new DamageSkillEffect(gameState, skillModifier, skillInfo.Type));
             }
-            return new SkillEffectChain(skillEffects);
+            return new SkillEffectChain(skillEffects, gameState.CombatTargets);
         }
         throw new ArgumentException($"Unknown skill name: {skillInfo.Name}!.");
     }

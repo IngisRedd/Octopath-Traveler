@@ -11,119 +11,119 @@ public static class TargetSelectorFactory
     {
         if (skillInfo.Name == "Attack")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
         }
         if (skillInfo.Name == "Befuddling claw")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.ElemAtk, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.ElemAtk, SelectionType.Highest);
         }
         if (skillInfo.Name == "Stab")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Meteor Storm")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
         }
         if (skillInfo.Name == "Freeze")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
         }
         if (skillInfo.Name == "Luminescence" && gameState.CurrentUnit is Beast)
         {
-            return new BeastSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
         }
         if (skillInfo.Name == "Enshadow")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
         }
         if (skillInfo.Name == "Wind slash")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
         }
         if (skillInfo.Name == "Boar Rush")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Windshot")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Firesand")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Thundershot")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Lightshot")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Iceshot")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Shadowshot")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.ElemDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Vorpal Fang")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "decimal Bite")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Triple Slash")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
         }
         if (skillInfo.Name == "Consume Armor")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Highest);
         }
         if (skillInfo.Name == "Flap")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
         }
         if (skillInfo.Name == "Acid Spray")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
         }
         if (skillInfo.Name == "Gather Strength")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Soporific Sting")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.PhysAtk, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysAtk, SelectionType.Highest);
         }
         if (skillInfo.Name == "Soporific Strike")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.PhysAtk, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysAtk, SelectionType.Highest);
         }
         if (skillInfo.Name == "Constrictor")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.PhysAtk, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysAtk, SelectionType.Highest);
         }
         if (skillInfo.Name == "Savage Fang")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.PhysAtk, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysAtk, SelectionType.Highest);
         }
         if (skillInfo.Name == "Poison Strike")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
         }
         if (skillInfo.Name == "Soporific Fang")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.Speed, SelectionType.Lowest);
+            return new ByStatSingleEnemySelector(gameState, Stat.Speed, SelectionType.Lowest);
         }
         if (skillInfo.Name == "Web Storm")
         {
-            return new BeastSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
+            return new ByStatSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
         }
         if (skillInfo.Name == "Revive")
         {
@@ -148,6 +148,54 @@ public static class TargetSelectorFactory
         if (skillInfo.Name == "Spearhead")
         {
             return new TravelerSingleEnemySelector(gameState, view);
+        }
+        if (skillInfo.Name == "Thousand Spears")
+        {
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
+        }
+        if (skillInfo.Name == "Rain of Arrows")
+        {
+            return new ByStatSingleEnemySelector(gameState, Stat.HP, SelectionType.Lowest);
+        }
+        if (skillInfo.Name == "Guardian Liondog")
+        {
+            return new ByStatSingleEnemySelector(gameState, Stat.Speed, SelectionType.Highest);
+        }
+        if (skillInfo.Name == "Double Bite")
+        {
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
+        }
+        if (skillInfo.Name == "Shadow Magic")
+        {
+            return new AllEnemiesSelector(gameState); 
+        }
+        if (skillInfo.Name == "Triple Slash")
+        {
+            return new ByStatSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
+        }
+        if (skillInfo.Name == "Consume Armor")
+        {
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Highest);
+        }
+        if (skillInfo.Name == "Flap")
+        {
+            return new ByStatSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
+        }
+        if (skillInfo.Name == "Acid Spray")
+        {
+            return new ByStatSingleEnemySelector(gameState, Stat.HP, SelectionType.Highest);
+        } 
+        if (skillInfo.Name == "Gather Strength")
+        {
+            return new ByStatSingleEnemySelector(gameState, Stat.PhysDef, SelectionType.Lowest);
+        }
+        if (skillInfo.Name == "Augmented Magic")
+        {
+            return new AlivePartySelector(gameState);
+        }
+        if (skillInfo.Name == "Volcano")
+        {
+            return new AllEnemiesSelector(gameState);
         }
         if (IsSkillTargetEnemies(skillInfo))
         {

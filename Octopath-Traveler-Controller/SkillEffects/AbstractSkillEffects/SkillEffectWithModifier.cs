@@ -7,8 +7,8 @@ public abstract class SkillEffectWithModifier : BaseSkillEffect
 {
     protected decimal _modifier;
 
-    public SkillEffectWithModifier(GameState gameState, string skillName, decimal modifier)
-        : base(gameState, skillName)
+    public SkillEffectWithModifier(GameState gameState, decimal modifier)
+        : base(gameState)
     {
         _modifier = modifier;
     }

@@ -4,12 +4,12 @@ using Octopath_Traveler.TargetSelectors;
 
 namespace Octopath_Traveler;
 
-public class BeastSingleEnemySelector : BaseSelector
+public class ByStatSingleEnemySelector : BaseSelector
 {
     private Stat _stat;
     private SelectionType _selectionType;
 
-    public BeastSingleEnemySelector(GameState gameState, Stat stat, SelectionType selectionType)
+    public ByStatSingleEnemySelector(GameState gameState, Stat stat, SelectionType selectionType)
         : base(gameState)
     {
         _stat = stat;
@@ -18,9 +18,9 @@ public class BeastSingleEnemySelector : BaseSelector
     
     protected override void OnSelect()
     {
-        IEnumerable<Traveler> travelers = _gameState.TravelerTeam.AliveUnits;
+        Combatants avaliableTargets = GetTargets();
         
-        Func<Traveler, int> selector = _stat switch
+        Func<CombatUnit, int> selector = _stat switch
         {
             Stat.HP => t => t.CurrentHP,
             Stat.PhysAtk => t => t.PhysAtk,
@@ -31,10 +31,22 @@ public class BeastSingleEnemySelector : BaseSelector
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        Traveler selectedTarget = _selectionType == SelectionType.Highest
-            ? travelers.MaxBy(selector)
-            : travelers.MinBy(selector);
+        CombatUnit selectedTarget = _selectionType == SelectionType.Highest
+            ? avaliableTargets.MaxBy(selector)
+            : avaliableTargets.MinBy(selector);
         
         _gameState.CombatTargets.Add(selectedTarget);
+    }
+
+    private Combatants GetTargets()
+    {
+        if (_gameState.CurrentUnit is Traveler)
+        {
+            return _gameState.BeastTeam.AliveUnits;
+        }
+        else
+        {
+            return _gameState.TravelerTeam.AliveUnits;
+        }    
     }
 }

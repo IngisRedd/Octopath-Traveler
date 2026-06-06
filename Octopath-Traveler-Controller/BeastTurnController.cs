@@ -27,6 +27,8 @@ public class BeastTurnController : ITurnController
 
         skillTargetSelector.Select();
         skillEffect.ApplyEffects();
+        _gameState.SkillUsedName = beastSkillInfo.Name;
+
 
         _combatActionView.ShowCombatActionResults();
     }

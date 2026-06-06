@@ -21,8 +21,8 @@ public static class GameStateUpdater
     public static void ResetNextTurnQueue(GameState gameState)
     {
         gameState.NextTurnQueue.Clear();
-        gameState.NextTurnQueue.AddRange(gameState.TravelerTeam.Units);
-        gameState.NextTurnQueue.AddRange(gameState.BeastTeam.Units);
+        gameState.NextTurnQueue.AddRange(gameState.TravelerTeam);
+        gameState.NextTurnQueue.AddRange(gameState.BeastTeam);
         gameState.NextTurnQueue.RemoveAll(unit => !unit.IsGoingToActNextTurn);
 
         ApplyPriorities(gameState);

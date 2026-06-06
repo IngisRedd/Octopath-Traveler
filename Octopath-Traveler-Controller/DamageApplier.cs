@@ -6,6 +6,7 @@ public class DamageApplier
 {
     private GameState _gameState;
     private Damage _damage;
+    private SkillResultInfo _skillResultInfo;
 
     public DamageApplier(GameState gameState, Damage damage)
     {
@@ -16,28 +17,24 @@ public class DamageApplier
     public void Apply(CombatUnit target)
     {
         DamageTarget(target, _damage);
+        RegisterDamage();
     }
-    
+
     private void DamageTarget(CombatUnit target, Damage damage)
     {
         CheckForDefend(target);
         CheckForWeakness(target, damage);
         
         target.CurrentHP -= damage.Value;
-        List<Damage> damages = _gameState.LastSkillEffectResult.Damages;
-        Utils.SetLast(damages, damage);
+        
+        _skillResultInfo = new SkillResultInfo(target, ResultType.Damage, damage.Value);
     }
     
     private void CheckForDefend(CombatUnit target)
     {
-        List<bool> isTravelerDefending = _gameState.LastSkillEffectResult.IsTravelerDefending;
         if (IsTravelerDefendingAgainstAttack(target))
         {
-            Utils.SetLast(isTravelerDefending, true);
-        }
-        else
-        {
-            Utils.SetLast(isTravelerDefending, false);
+            _skillResultInfo.IsTargetDefending = true;
         }
     }
 
@@ -62,21 +59,21 @@ public class DamageApplier
     
     private void CheckForAndApplyBreakingPoint(Beast beast)
     {
-        List<bool> isBreakingPointAchieved = _gameState.LastSkillEffectResult.IsBreakingPointAchieved;
         if (IsBreakingPointAchieved(beast))
         {
             beast.StatusEffects[StatusType.BreakingPoint].Duration = 2;
             _gameState.CurrentTurnQueue.Remove(beast);
             _gameState.NextTurnQueue.Remove(beast);
             
-            Utils.SetLast(isBreakingPointAchieved, true);
-        }
-        else
-        {
-            Utils.SetLast(isBreakingPointAchieved, false);
+            _skillResultInfo.HasEnteredBreakingPoint = true;
         }
     }
     
     private bool IsBreakingPointAchieved(Beast beast)
         => beast.CurrentShields == 0 && !beast.StatusEffects[StatusType.BreakingPoint].IsActive;
+
+    private void RegisterDamage()
+    {
+        _gameState.UsedSkillResults.Add(_skillResultInfo);
+    }
 }

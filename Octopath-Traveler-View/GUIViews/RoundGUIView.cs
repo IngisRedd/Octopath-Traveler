@@ -51,6 +51,7 @@ public class RoundGUIView : IRoundView
     {
         _guiGameState.Option = Option.Weapon;
         List<string> weaponsInString = weapons.ConvertAll(weaponType => weaponType.ToString());
+
         weaponsInString.Add("Cancelar");
         _guiGameState.Options = weaponsInString;
         _window.Update(_guiGameState);
@@ -74,22 +75,20 @@ public class RoundGUIView : IRoundView
 
     public Beast SelectEnemyBeastTarget()
     {
-        List<Beast> availableTargets = _realGameState.BeastTeam.AliveUnits;
-        List<CombatUnit> combatUnits = availableTargets.ConvertAll(beast => (CombatUnit)beast);
-        return (Beast)SelectTarget(combatUnits);
+        Combatants availableTargets = _realGameState.BeastTeam.AliveUnits;
+        return (Beast)SelectTarget(availableTargets);
     }
 
-    public Traveler SelectTravelerAllyTarget(List<Traveler> allies)
+    public Traveler SelectTravelerAllyTarget(Combatants allies)
     {
-        List<CombatUnit> combatUnits = allies.ConvertAll(traveler => (CombatUnit)traveler);
-        return (Traveler)SelectTarget(combatUnits);
+        return (Traveler)SelectTarget(allies);
     }
 
-    private CombatUnit SelectTarget(List<CombatUnit> availableTargets)
+    private CombatUnit SelectTarget(Combatants availableTargets)
     {
         _guiGameState.Option = Option.Target;
-        List<string> availableTargetNames = availableTargets.ConvertAll(target => target.Name);
-        availableTargetNames.Add("Cancelar");
+        string[] availableTargetNames = availableTargets.UnitNames;
+        availableTargetNames = availableTargetNames.Append("Cancelar").ToArray();
         _guiGameState.Options = availableTargetNames;
 
         _window.Update(_guiGameState);
@@ -150,9 +149,9 @@ public class RoundGUIView : IRoundView
 
     private void ShowEndOfGameMessage(WinnerOption winnerOption)
     {
-        List<Traveler> travelerTeam = _realGameState.TravelerTeam.Units;
-        List<string> travelerTeamInString = travelerTeam.ConvertAll(traveler => traveler.Name);
-        GUIWinner winner = new GUIWinner(winnerOption, travelerTeamInString);
+        Combatants travelerTeam = _realGameState.TravelerTeam;
+        string[] travelerTeamNames = travelerTeam.UnitNames;
+        GUIWinner winner = new GUIWinner(winnerOption, travelerTeamNames);
         _window.ShowWinner(winner);
     }
     

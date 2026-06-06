@@ -1,30 +1,26 @@
+using Octopath_Traveler_Model;
+
 namespace Octopath_Traveler.Skills;
 
 public class SkillEffectChain
 {
+    private GameState _gameState;
     private List<ISkillEffect> _skillEffects;
 
-    public SkillEffectChain(List<ISkillEffect> skillEffects)
+    public SkillEffectChain(GameState _gameState, List<ISkillEffect> skillEffects)
     {
+        _gameState = _gameState;
         _skillEffects = skillEffects;
     }
-
-    public void Add(ISkillEffect skillEffect)
-    {
-        _skillEffects.Add(skillEffect);
-    }
-
-    public void AddRange(List<ISkillEffect> skillEffects)
-    {
-        _skillEffects.AddRange(skillEffects);
-    }
-
     
     public void ApplyEffects()
     {
-        foreach (ISkillEffect effect in _skillEffects)
+        foreach (CombatUnit target in _gameState.CombatTargets)
         {
-            effect.Apply();
+            foreach (ISkillEffect effect in _skillEffects)
+            {
+                effect.ApplyTo(target);
+            }
         }
     }
 }

@@ -20,7 +20,7 @@ public class SkillsBuilder
             skillData => skillData.Name
         );
 
-        foreach (Traveler traveler in _gameState.TravelerTeam.Units)
+        foreach (Traveler traveler in _gameState.TravelerTeam)
         {
             foreach (string skillName in _parsedTeamsInfo.TravelerSkills[traveler.Name])
             {
@@ -52,7 +52,7 @@ public class SkillsBuilder
             skillData => skillData.Name
         );
 
-        foreach (Beast beast in _gameState.BeastTeam.Units)
+        foreach (Beast beast in _gameState.BeastTeam)
         {
             BeastSkillInfo newSkillInfo = CreateBeastSkill(allSkillsData[beast.SkillName]);
             beast.Skill = newSkillInfo;

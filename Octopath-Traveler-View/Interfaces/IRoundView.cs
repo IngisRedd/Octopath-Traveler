@@ -9,7 +9,7 @@ public interface IRoundView
     public CombatActionType SelectTravelerCombatAction();
     public DamageType SelectWeapon(List<DamageType> weapons);
     public Beast SelectEnemyBeastTarget();
-    public Traveler SelectTravelerAllyTarget(List<Traveler> allies);
+    public Traveler SelectTravelerAllyTarget(Combatants allies);
     public int AskForBPToUseIfAvailable();
     public TravelerSkillInfo SelectFromAvailableSkills();
     public void ShowFleeMessage();

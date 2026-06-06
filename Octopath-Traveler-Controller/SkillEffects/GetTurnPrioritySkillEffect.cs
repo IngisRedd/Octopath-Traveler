@@ -5,10 +5,10 @@ namespace Octopath_Traveler.Skills;
 
 public class GetTurnPrioritySkillEffect : BaseSkillEffect
 {
-    public GetTurnPrioritySkillEffect(GameState gameState, string skillName)
-        : base(gameState, skillName){}
+    public GetTurnPrioritySkillEffect(GameState gameState)
+        : base(gameState){}
 
-    protected override void ApplyEffectTo(CombatUnit target)
+    public override void ApplyTo(CombatUnit target)
     {
         _gameState.NextTurnQueue.ApplyPriority(_gameState.CurrentUnit, TurnPriorityLevel.UsedTurnPrioritySkill);
     }

@@ -10,11 +10,11 @@ public class AlivePartySelector : BaseSelector
     
     protected override void OnSelect()
     {
-        IEnumerable<CombatUnit> units = GetAlivePartyMembers();
+        Combatants units = GetAlivePartyMembers();
         _gameState.CombatTargets.AddRange(units);
     }
 
-    private IEnumerable<CombatUnit> GetAlivePartyMembers()
+    private Combatants GetAlivePartyMembers()
     {
         if (_gameState.CurrentUnit is Traveler)
         {

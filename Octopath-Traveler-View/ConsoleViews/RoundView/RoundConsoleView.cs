@@ -55,25 +55,24 @@ public class RoundConsoleView : BaseConsoleView, IRoundView
             throw new SelectionCanceledException("Selection canceled");
         }
     }
-
     
     public Beast SelectEnemyBeastTarget()
     {
         _printer.ShowAvailableEnemyBeastTargets();
         int selectedIndex = ReadPlayerIntInput() - 1;
 
-        List<Beast> aliveBeasts = _gameState.BeastTeam.AliveUnits;
+        Combatants aliveBeasts = _gameState.BeastTeam.AliveUnits;
         ValidateSelectionCanceling(selectedIndex, aliveBeasts.Count);
-        return _gameState.BeastTeam.AliveUnits[selectedIndex];
+        return (Beast)aliveBeasts[selectedIndex];
     }
 
-    public Traveler SelectTravelerAllyTarget(List<Traveler> allies)
+    public Traveler SelectTravelerAllyTarget(Combatants allies)
     {
         _printer.ShowAvailableAllyTravelerTargets(allies);
         int selectedIndex = ReadPlayerIntInput() - 1;
 
         ValidateSelectionCanceling(selectedIndex, allies.Count);
-        return allies[selectedIndex];
+        return (Traveler)allies[selectedIndex];
     }
     
     public int AskForBPToUseIfAvailable()

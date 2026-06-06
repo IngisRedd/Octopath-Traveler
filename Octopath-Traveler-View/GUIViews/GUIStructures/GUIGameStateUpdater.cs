@@ -13,7 +13,7 @@ public static class GUIGameStateUpdater
         guiGameState.NextRoundTurns = GetTurnsQueueInString(realGameState.NextTurnQueue);
     }
 
-    private static List<GUITraveler> GetGUITravelerTeam(TravelerTeam travelerTeam)
+    private static List<GUITraveler> GetGUITravelerTeam(Combatants travelerTeam)
     {
         List<GUITraveler> guiTravelers = new List<GUITraveler>();
         foreach (Traveler realTraveler in travelerTeam)
@@ -31,7 +31,7 @@ public static class GUIGameStateUpdater
         return guiTravelers;
     }
     
-    private static List<GUIBeast> GetGUIBeastTeam(BeastTeam beastTeam)
+    private static List<GUIBeast> GetGUIBeastTeam(Combatants beastTeam)
     {
         List<GUIBeast> guiBeasts = new List<GUIBeast>();
         foreach (Beast realBeast in beastTeam)

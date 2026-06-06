@@ -5,10 +5,10 @@ namespace Octopath_Traveler.Skills;
 
 public class HalveHPSkillEffect : BaseSkillEffect
 {
-    public HalveHPSkillEffect(GameState gameState, string skillName)
-        : base(gameState, skillName){}
+    public HalveHPSkillEffect(GameState gameState)
+        : base(gameState){}
 
-    protected override void ApplyEffectTo(CombatUnit target)
+    public override void ApplyTo(CombatUnit target)
     {
         HPHalverDamageCalculator damageCalculator =
             new HPHalverDamageCalculator(target);

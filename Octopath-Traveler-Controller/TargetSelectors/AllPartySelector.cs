@@ -10,19 +10,19 @@ public class AllPartySelector : BaseSelector
     
     protected override void OnSelect()
     {
-        IEnumerable<CombatUnit> units = GetAlivePartyMembers();
+        Combatants units = GetPartyMembers();
         _gameState.CombatTargets.AddRange(units);
     }
 
-    private IEnumerable<CombatUnit> GetAlivePartyMembers()
+    private Combatants GetPartyMembers()
     {
         if (_gameState.CurrentUnit is Traveler)
         {
-            return _gameState.TravelerTeam.Units;
+            return _gameState.TravelerTeam;
         }
         else
         {
-            return _gameState.BeastTeam.Units;
+            return _gameState.BeastTeam;
         }
     }
 }

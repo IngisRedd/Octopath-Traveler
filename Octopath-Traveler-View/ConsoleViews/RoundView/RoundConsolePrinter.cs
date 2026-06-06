@@ -18,7 +18,7 @@ public class RoundConsolePrinter : BaseConsoleView
     {
         _view.WriteLine("Equipo del jugador");
         char labelLetter = 'A';
-        foreach (Traveler traveler in _gameState.TravelerTeam.Units)
+        foreach (Traveler traveler in _gameState.TravelerTeam)
         {
             _view.WriteLine(
                 $"{labelLetter}-{traveler.Name} - " +
@@ -34,7 +34,7 @@ public class RoundConsolePrinter : BaseConsoleView
     {
         _view.WriteLine("Equipo del enemigo");
         char labelLetter = 'A';
-        foreach (Beast beast in _gameState.BeastTeam.Units)
+        foreach (Beast beast in _gameState.BeastTeam)
         {
             _view.WriteLine(
                 $"{labelLetter}-{beast.Name} - " +
@@ -97,7 +97,7 @@ public class RoundConsolePrinter : BaseConsoleView
         HorizontalRulePrinter.Print(_view);
         _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");
         int label = 1;
-        List<Beast> aliveBeasts = _gameState.BeastTeam.AliveUnits;
+        Combatants aliveBeasts = _gameState.BeastTeam.AliveUnits;
         foreach (Beast beast in aliveBeasts)
         {
             _view.WriteLine(
@@ -111,7 +111,7 @@ public class RoundConsolePrinter : BaseConsoleView
         _view.WriteLine($"{label}: Cancelar");
     }
 
-    public void ShowAvailableAllyTravelerTargets(List<Traveler> travelers)
+    public void ShowAvailableAllyTravelerTargets(Combatants travelers)
     {
         HorizontalRulePrinter.Print(_view);
         _view.WriteLine($"Seleccione un objetivo para {_gameState.CurrentUnit.Name}");

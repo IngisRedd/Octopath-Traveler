@@ -10,11 +10,11 @@ public class AllEnemiesSelector : BaseSelector
     
     protected override void OnSelect()
     {
-        IEnumerable<CombatUnit> units = GetAliveUnits();
+        Combatants units = GetAliveUnits();
         _gameState.CombatTargets.AddRange(units);
     }
 
-    private IEnumerable<CombatUnit> GetAliveUnits()
+    private Combatants GetAliveUnits()
     {
         if (_gameState.CurrentUnit is Traveler)
         {
